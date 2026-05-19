@@ -1,5 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { getState } from './state/index.js';
+import { Observable } from './lib/observable.js';
 
 /**
  * An example element.
@@ -24,9 +25,25 @@ export class MyElement extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.state = getState();
+    const state$ = new Observable(getState());
 
-    console.log(this.state);
+    // console.log(this.state$.data);
+
+    state$.watch(state$.data.products[0], (e) => {
+      console.log('products[0]', e);
+    })
+
+    state$.watch(state$.data.products[2], (e) => {
+      console.log('products[2]', e);
+    })
+
+    state$.watch(state$.data, (e) => {
+      console.log('iets veranderd', e);
+    })
+
+    state$.update(state$.data.options[0].price, 'amount', 0);
+
+
   }
 
   disconnectedCallback() {
