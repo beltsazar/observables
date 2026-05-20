@@ -36,7 +36,7 @@ describe('getPathsToDeepObject', () => {
 
     observable$.update(observable$.data.clock, 'counter', 1)
     expect(callBackSpy.calledOnce).to.equal(true);
-    expect(eventData.newValue).to.equal(1);
+    expect(eventData.value).to.equal(1);
     expect(eventData.oldValue).to.equal(0);
     expect(eventData.target).to.equal(observable$.data.clock);
     expect(eventData.property).to.equal('counter');
@@ -47,7 +47,7 @@ describe('getPathsToDeepObject', () => {
 
     observable$.update(observable$.data.clock, 'counter', 1)
     expect(callBackSpy.calledOnce).to.equal(true);
-    expect(eventData.newValue).to.equal(1);
+    expect(eventData.value).to.equal(1);
     expect(eventData.oldValue).to.equal(0);
     expect(eventData.target).to.equal(observable$.data.clock);
     expect(eventData.property).to.equal('counter');
@@ -58,7 +58,7 @@ describe('getPathsToDeepObject', () => {
 
     observable$.update(observable$.data.options[1].price, 'amount', 20)
     expect(callBackSpy.calledOnce).to.equal(true);
-    expect(eventData.newValue).to.equal(20);
+    expect(eventData.value).to.equal(20);
     expect(eventData.oldValue).to.equal(200);
     expect(eventData.target).to.equal(observable$.data.options[1].price);
     expect(eventData.property).to.equal('amount');
@@ -85,6 +85,25 @@ describe('getPathsToDeepObject', () => {
     subscription2.unwatch();
     observable$.update(observable$.data.clock, 'counter', 3)
     expect(callBackSpy.callCount).to.equal(3);
+  })
+
+  it('objects references should persist through version clones', () => {
+    observable$.watch(observable$.data.clock, 'counter', callBackWrapper.callBack)
+    expect(eventData).to.deep.equal({});
+
+    observable$.update(observable$.data.clock, 'counter', 1)
+    expect(callBackSpy.calledOnce).to.equal(true);
+    expect(eventData.value).to.equal(1);
+    expect(eventData.oldValue).to.equal(0);
+    expect(eventData.target).to.equal(observable$.data.clock);
+    expect(eventData.property).to.equal('counter');
+
+    observable$.update(observable$.data.clock, 'counter', 2)
+    expect(callBackSpy.calledTwice).to.equal(true);
+    expect(eventData.value).to.equal(2);
+    expect(eventData.oldValue).to.equal(1);
+    expect(eventData.target).to.equal(observable$.data.clock);
+    expect(eventData.property).to.equal('counter');
   })
 });
 

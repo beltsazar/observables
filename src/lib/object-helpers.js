@@ -1,45 +1,30 @@
-export function traverseObject (source, path = []) {
-  for (const propertyKey in source) {
-    const value = source[propertyKey]
-    console.log(`${path} ${propertyKey}`, value)
-
-    if (typeof value === 'object' && value !== null) {
-      traverseObject(value, [...path, propertyKey])
-    }
-  }
-}
-
-export function getPathsToTargetObjectInSourceObject (sourceObject, targetObject, path = [], objectPaths = []) {
+export function getPathsToTargetObject (sourceObject, targetObject, path = [], objectPaths = []) {
   for (const propertyKey in sourceObject) {
-    const value = sourceObject[propertyKey];
+    const value = sourceObject[propertyKey]
 
-    if(value === targetObject) {
-      objectPaths.push([...path, propertyKey]);
+    if (value === targetObject) {
+      objectPaths.push([...path, propertyKey])
     }
 
     if (typeof value === 'object' && value !== null) {
-      getPathsToTargetObjectInSourceObject(value, targetObject,[...path, propertyKey], objectPaths)
+      getPathsToTargetObject(value, targetObject, [...path, propertyKey], objectPaths)
     }
   }
-  return objectPaths;
+  return objectPaths
 }
 
-export function isTargetObjectChildOfSourceObject(source, target) {
-  return getPathsToTargetObjectInSourceObject(source, target).length > 0;
-}
-
-export function deepFreeze(object) {
+export function deepFreeze (object) {
   // Retrieve the property names defined on object
-  const propNames = Reflect.ownKeys(object);
+  const propNames = Reflect.ownKeys(object)
 
   // Freeze properties before freezing self
   for (const name of propNames) {
-    const value = object[name];
+    const value = object[name]
 
     if ((value && typeof value === 'object') || typeof value === 'function') {
-      deepFreeze(value);
+      deepFreeze(value)
     }
   }
 
-  return Object.freeze(object);
+  return Object.freeze(object)
 }

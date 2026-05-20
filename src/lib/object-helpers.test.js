@@ -1,7 +1,7 @@
 import { expect, describe, it, beforeEach, afterEach } from 'vitest'
 import { cloneDeep } from 'lodash-es'
 import { getState } from '../state/index.js'
-import { getPathsToTargetObjectInSourceObject, isTargetObjectChildOfSourceObject } from './object-helpers.js'
+import { getPathsToTargetObject } from './object-helpers.js'
 
 describe('getPathsToDeepObject', () => {
   let dataObject
@@ -10,13 +10,13 @@ describe('getPathsToDeepObject', () => {
   })
 
   it('should get the path to a unique nested object', () => {
-    const pathsToObject = getPathsToTargetObjectInSourceObject(dataObject, dataObject.products)
+    const pathsToObject = getPathsToTargetObject(dataObject, dataObject.products)
     expect(pathsToObject.length).to.equal(1)
     expect(pathsToObject).to.deep.equal([['products']])
   })
 
   it('should get the path to a unique nested object', () => {
-    const pathsToObject = getPathsToTargetObjectInSourceObject(dataObject, dataObject.products[0].options[0])
+    const pathsToObject = getPathsToTargetObject(dataObject, dataObject.products[0].options[0])
     expect(pathsToObject.length).to.equal(4)
     expect(pathsToObject).to.deep.equal([
       ['options', '0'],
@@ -27,7 +27,7 @@ describe('getPathsToDeepObject', () => {
   })
 
   it('should get the path to a property of an object', () => {
-    const pathsToObject = getPathsToTargetObjectInSourceObject(dataObject, dataObject.products[0].options[0].price.amount)
+    const pathsToObject = getPathsToTargetObject(dataObject, dataObject.products[0].options[0].price.amount)
     expect(pathsToObject.length).to.equal(4)
     expect(pathsToObject).to.deep.equal([
       ['options', '0', 'price', 'amount'],
@@ -38,44 +38,35 @@ describe('getPathsToDeepObject', () => {
   })
 
   it('should reflect mutations in the source object', () => {
-    let pathsToObject = getPathsToTargetObjectInSourceObject(dataObject, dataObject.products[1]);
+    let pathsToObject = getPathsToTargetObject(dataObject, dataObject.products[1])
     expect(pathsToObject.length).to.equal(1)
     expect(pathsToObject).to.deep.equal([['products', '1']])
 
-    dataObject.customer.selectedProduct = dataObject.products[1];
-    pathsToObject = getPathsToTargetObjectInSourceObject(dataObject, dataObject.products[1]);
+    dataObject.customer.selectedProduct = dataObject.products[1]
+    pathsToObject = getPathsToTargetObject(dataObject, dataObject.products[1])
     expect(pathsToObject.length).to.equal(2)
     expect(pathsToObject).to.deep.equal([
       ['customer', 'selectedProduct'],
       ['products', '1']
     ])
   })
-});
-
-describe('isTargetObjectChildOfSourceObject', () => {
-  let dataObject
-  beforeEach(() => {
-    dataObject = cloneDeep(getState())
-  })
 
   it('should get parent child relationship based on deep path structure', () => {
-    expect(isTargetObjectChildOfSourceObject(dataObject, dataObject.products)).to.equal(true);
-    expect(isTargetObjectChildOfSourceObject(dataObject, dataObject.customer)).to.equal(true);
-    expect(isTargetObjectChildOfSourceObject(dataObject.products, dataObject.customer)).to.equal(false);
-    expect(isTargetObjectChildOfSourceObject(dataObject.products, dataObject.options[0])).to.equal(true);
-    expect(isTargetObjectChildOfSourceObject(dataObject.products, dataObject.options[1].price)).to.equal(true);
-    expect(isTargetObjectChildOfSourceObject(dataObject.products[0], dataObject.options[0])).to.equal(true);
-    expect(isTargetObjectChildOfSourceObject(dataObject.products[2], dataObject.options[1])).to.equal(false);
-    expect(isTargetObjectChildOfSourceObject(dataObject.products[0], dataObject.options[0].price)).to.equal(true);
+    expect(getPathsToTargetObject(dataObject, dataObject.products).length > 0).to.equal(true)
+    expect(getPathsToTargetObject(dataObject, dataObject.customer).length > 0).to.equal(true)
+    expect(getPathsToTargetObject(dataObject.products, dataObject.customer).length > 0).to.equal(false)
+    expect(getPathsToTargetObject(dataObject.products, dataObject.options[0]).length > 0).to.equal(true)
+    expect(getPathsToTargetObject(dataObject.products, dataObject.options[1].price).length > 0).to.equal(true)
+    expect(getPathsToTargetObject(dataObject.products[0], dataObject.options[0]).length > 0).to.equal(true)
+    expect(getPathsToTargetObject(dataObject.products[2], dataObject.options[1]).length > 0).to.equal(false)
+    expect(getPathsToTargetObject(dataObject.products[0], dataObject.options[0].price).length > 0).to.equal(true)
+    expect(getPathsToTargetObject(dataObject.customer, dataObject.options[0].price).length > 0).to.equal(false)
 
-    expect(isTargetObjectChildOfSourceObject(dataObject.customer, dataObject.options[0].price)).to.equal(false);
+    dataObject.customer.selectedProduct = dataObject.products[0]
+    expect(getPathsToTargetObject(dataObject.customer, dataObject.options[0].price).length > 0).to.equal(true)
 
-    dataObject.customer.selectedProduct = dataObject.products[0];
-    expect(isTargetObjectChildOfSourceObject(dataObject.customer, dataObject.options[0].price)).to.equal(true);
-
-    dataObject.customer.selectedProduct = dataObject.products[1];
-    expect(isTargetObjectChildOfSourceObject(dataObject.customer, dataObject.options[0].price)).to.equal(false);
-    expect(isTargetObjectChildOfSourceObject(dataObject.customer, dataObject.options[1].price)).to.equal(true);
-
+    dataObject.customer.selectedProduct = dataObject.products[1]
+    expect(getPathsToTargetObject(dataObject.customer, dataObject.options[0].price).length > 0).to.equal(false)
+    expect(getPathsToTargetObject(dataObject.customer, dataObject.options[1].price).length > 0).to.equal(true)
   })
 })

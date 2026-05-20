@@ -26,6 +26,7 @@ export class MyElement extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     const state$ = new Observable(getState());
+    this.state$ = state$;
 
     // console.log(this.state$.data);
 
@@ -38,6 +39,7 @@ export class MyElement extends LitElement {
     })
 
     state$.watch(state$.data, (e) => {
+      console.log('data', state$._data);
       console.log('iets veranderd', e);
     })
 
@@ -45,13 +47,15 @@ export class MyElement extends LitElement {
       console.log('prijs veranderd', e);
     })
 
-    state$.watch(state$.data.clock, (e) => {
-      console.log('klok tikt', e);
+    state$.watch(state$.data.clock, 'counter', (e) => {
+      console.log('klok tikt', e.value);
+      this.count = e.value;
     })
 
     state$.update(state$.data.options[0].price, 'amount', 0);
-    state$.update(state$.data.clock, 'counter', 1);
+    state$.update(state$.data.clock, 'counter', 0);
 
+    state$.data.products = ''
   }
 
   disconnectedCallback() {
@@ -79,7 +83,8 @@ export class MyElement extends LitElement {
   }
 
   _onClick() {
-    this.count++
+    this.state$.update(this.state$.data.clock, 'counter', this.state$.data.clock.counter + 1);
+    //this.count++
   }
 
   static get styles() {
