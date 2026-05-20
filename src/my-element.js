@@ -41,8 +41,16 @@ export class MyElement extends LitElement {
       console.log('iets veranderd', e);
     })
 
-    state$.update(state$.data.options[0].price, 'amount', 0);
+    state$.watch(state$.data.options[0].price, 'amount', (e) => {
+      console.log('prijs veranderd', e);
+    })
 
+    state$.watch(state$.data.clock, (e) => {
+      console.log('klok tikt', e);
+    })
+
+    state$.update(state$.data.options[0].price, 'amount', 0);
+    state$.update(state$.data.clock, 'counter', 1);
 
   }
 

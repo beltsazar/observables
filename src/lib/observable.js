@@ -1,4 +1,5 @@
-import { isTargetObjectChildOfSourceObject } from './object-helpers.js'
+import { getPathsToTargetObjectInSourceObject, isTargetObjectChildOfSourceObject } from './object-helpers.js'
+import { get } from 'lodash-es'
 
 export class Observable extends EventTarget {
   constructor (initialData) {
@@ -32,15 +33,35 @@ export class Observable extends EventTarget {
       property = null
     }
 
-    return this.addEventListener('update', (e) => {
-      if (e.detail.target === target && e.detail.property === property) {
+    const pathsToTarget = getPathsToTargetObjectInSourceObject(this.data, target)
+
+    const callBackWrapper = (e) => {
+      const targetByPath = get(this.data, pathsToTarget[0], this.data)
+      const pathsToTargetEvent = getPathsToTargetObjectInSourceObject(this.data, e.detail.target)
+
+      // console.log('pathsToTarget', pathsToTarget);
+      // console.log('pathsToTargetEvent', pathsToTargetEvent);
+
+      if (e.detail.target === targetByPath && e.detail.property === property) {
         callBack(e.detail)
         return
       }
 
-      if (e.detail.target === target || isTargetObjectChildOfSourceObject(target, e.detail.target)) {
+      if (e.detail.target === targetByPath || isTargetObjectChildOfSourceObject(targetByPath, e.detail.target)) {
         callBack(e.detail)
       }
-    })
+    }
+
+    this.addEventListener('update', callBackWrapper)
+
+    return new Watcher(() => this.removeEventListener('update', callBackWrapper))
+  }
+}
+
+class Watcher {
+  unwatch
+
+  constructor (unwatch) {
+    this.unwatch = unwatch
   }
 }
