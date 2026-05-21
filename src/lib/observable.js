@@ -14,54 +14,28 @@ export class Observable extends EventTarget {
     return this._data
   }
 
-  update (target, property, value) {
-    // save a path to the target inside the current data object
-    const persistedTargetPath = getPathsToTargetObject(this.data, target)[0]
+  update (callBack) {
+    const newData = cloneDeep(this.data)
 
-    // replace the current version of data with a new cloned version
-    this._data = cloneDeep(this.data)
-
-    // retrieve the cloned target object, based on one of the saved paths
-    const persistedTarget = get(this.data, persistedTargetPath, this.data)
-
-    // save the old value and apply the update on the target
-    const oldValue = persistedTarget[property]
-    persistedTarget[property] = value
-
-    deepFreeze(this.data)
+    callBack(newData)
 
     this.dispatchEvent(new CustomEvent('update', {
       detail: {
-        target: persistedTarget, property, value, oldValue,
+        data: newData,
+        oldData: this.data
       },
     }),)
+
+    this._data = newData
+    deepFreeze(this._data)
   }
 
-  watch (target, property, callBack) {
-    if (typeof property === 'function') {
-      callBack = property
-      property = null
-    }
-
-    // save a path to the target inside the current data object
-    const persistedTargetPath = getPathsToTargetObject(this.data, target)[0]
-
-    // wrap the user callback in a function for unsubscribing
+  watch (callBack) {
     const callBackWrapper = (e) => {
-      // retrieve the cloned target object, based on one of the saved paths
-      const persistedTarget = get(this.data, persistedTargetPath, this.data)
-
-      // both target object AND property match
-      if (e.detail.target === persistedTarget && e.detail.property === property) {
-        callBack(e.detail)
-        return
-      }
-
-      // if updated target matches watched target or is a nested child of the watched target
-      if (e.detail.target === persistedTarget || getPathsToTargetObject(persistedTarget, e.detail.target).length > 0) {
-        callBack(e.detail)
-      }
+      callBack(e.detail.data, e.detail.oldData)
     }
+
+    callBack(this.data)
 
     this.addEventListener('update', callBackWrapper)
     return new Watcher(() => this.removeEventListener('update', callBackWrapper))

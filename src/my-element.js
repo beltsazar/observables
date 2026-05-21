@@ -1,6 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { getState } from './state/index.js';
 import { Observable } from './lib/observable.js';
+import { Product } from './state/objects/Product.js'
 
 /**
  * An example element.
@@ -25,37 +26,14 @@ export class MyElement extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    const state$ = new Observable(getState());
-    this.state$ = state$;
+    this.state$ = new Observable(getState());
 
-    // console.log(this.state$.data);
-
-    state$.watch(state$.data.products[0], (e) => {
-      console.log('products[0]', e);
+    this.state$.watch((data, oldData) => {
+      this.count = data.clock.counter;
+      console.log('data', data, oldData);
     })
 
-    state$.watch(state$.data.products[2], (e) => {
-      console.log('products[2]', e);
-    })
-
-    state$.watch(state$.data, (e) => {
-      console.log('data', state$._data);
-      console.log('iets veranderd', e);
-    })
-
-    state$.watch(state$.data.options[0].price, 'amount', (e) => {
-      console.log('prijs veranderd', e);
-    })
-
-    state$.watch(state$.data.clock, 'counter', (e) => {
-      console.log('klok tikt', e.value);
-      this.count = e.value;
-    })
-
-    state$.update(state$.data.options[0].price, 'amount', 0);
-    state$.update(state$.data.clock, 'counter', 0);
-
-    state$.data.products = ''
+    this.state$.data.products = ''
   }
 
   disconnectedCallback() {
@@ -83,8 +61,11 @@ export class MyElement extends LitElement {
   }
 
   _onClick() {
-    this.state$.update(this.state$.data.clock, 'counter', this.state$.data.clock.counter + 1);
-    //this.count++
+    this.state$.update(data => {
+      data.clock.counter++;
+      data.products.push(new Product(20, 'New Product', [data.options[1]]));
+      data.version = `step${data.clock.counter}`;
+    });
   }
 
   static get styles() {
