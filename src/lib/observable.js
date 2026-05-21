@@ -1,54 +1,52 @@
 import { cloneDeep } from 'lodash-es'
-import {
-  getPathsToTargetObject, deepFreeze
-} from './object-helpers.js'
+import { deepFreeze } from './object-helpers.js'
 
 export class Observable extends EventTarget {
-  constructor (initialData) {
+  constructor (initialValue) {
     super()
     // populate data object with new immutable deep clone
-    this._data = deepFreeze(cloneDeep(initialData))
+    this._value = deepFreeze(cloneDeep(initialValue))
   }
 
-  get data () {
-    return this._data
+  get value () {
+    return this._value
   }
 
-  update (updateCallBack) {
-    const data = this.data
-    const nextData = cloneDeep(this.data)
+  next (callBack) {
+    const value = this.value
+    const nextValue = cloneDeep(this.value)
 
     // mutate data with consumer callback
-    updateCallBack(nextData)
+    callBack(nextValue)
 
     // commit the mutated data as the current data
-    this._data = deepFreeze(nextData)
+    this._value = deepFreeze(nextValue)
 
-    this.dispatchEvent(new CustomEvent('update', {
+    this.dispatchEvent(new CustomEvent('next', {
       detail: {
-        data: this.data,
-        previousData: data
+        value: this.value,
+        previousValue: value
       },
     }),)
   }
 
-  watch (observerCallBack) {
+  observe (callBack) {
     const callBackWrapper = (e) => {
-      observerCallBack(e.detail.data, e.detail.previousData)
+      callBack(e.detail.value, e.detail.previousValue)
     }
 
     // execute the consumer callback function immediately without having to wait for an update
-    observerCallBack(this.data, null)
+    callBack(this.value, null)
 
-    this.addEventListener('update', callBackWrapper)
-    return new Watcher(() => this.removeEventListener('update', callBackWrapper))
+    this.addEventListener('next', callBackWrapper)
+    return new Subscription(() => this.removeEventListener('next', callBackWrapper))
   }
 }
 
-class Watcher {
-  unwatch
+class Subscription {
+  unsubscribe
 
-  constructor (unwatch) {
-    this.unwatch = unwatch
+  constructor (unsubscribe) {
+    this.unsubscribe = unsubscribe
   }
 }

@@ -28,15 +28,16 @@ export class MyElement extends LitElement {
     super.connectedCallback();
     this.state$ = new Observable(getState());
 
-    this.state$.watch((data, prevData) => {
-      this.count = data.clock.counter;
+    this.subscription = this.state$.observe((state) => {
+      this.count = state.clock.counter;
     })
 
-   this.state$.data.products = ''
+   this.state$.value.products = ''
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
+    this.subscription.unsubscribe();
   }
 
   render() {
@@ -60,10 +61,10 @@ export class MyElement extends LitElement {
   }
 
   _onClick() {
-    this.state$.update(data => {
-      data.clock.counter++;
-      data.products.push(new Product(20, 'New Product', [data.options[1]]));
-      data.version = `step${data.clock.counter}`;
+    this.state$.next(state => {
+      state.clock.counter++;
+      state.products.push(new Product(20, 'New Product', [state.options[1]]));
+      state.version = `step${state.clock.counter}`;
     });
   }
 
