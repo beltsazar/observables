@@ -1,6 +1,6 @@
 import { LitElement, css, html } from 'lit';
 import { getState } from './state/index.js';
-import { Observable } from './lib/observable.js';
+import { ObservableData } from './lib/observableData.js';
 import { Product } from './state/objects/Product.js'
 
 /**
@@ -26,45 +26,44 @@ export class MyElement extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.state$ = new Observable(getState());
-
-    this.subscription = this.state$.observe((state) => {
-      this.count = state.clock.counter;
+    this.state$ = new ObservableData(getState());
+    this.subscription = this.state$.watch(data => {
+      this.count = data.clock.counter;
     })
 
-   this.state$.value.products = ''
+   this.state$.data.products = ''
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.subscription.unsubscribe();
+    this.subscription.unwatch();
   }
 
   render() {
     return html`
-      <section id="center">
-        <div>
-          <p>
-          <h1>Hello world!
-          </p>
-        </div>
-        <button
-          type="button"
-          class="counter"
-          @click=${this._onClick}
-          part="button"
-        >
-          Count is ${this.count}
-        </button>
-      </section>
+        <section id="center">
+            <div>
+                <p>
+                <h1>Hello world!
+                    </p>
+            </div>
+            <button
+                    type="button"
+                    class="counter"
+                    @click=${this._onClick}
+                    part="button"
+            >
+                Count is ${this.count}
+            </button>
+        </section>
     `
   }
 
   _onClick() {
-    this.state$.next(state => {
-      state.clock.counter++;
-      state.products.push(new Product(20, 'New Product', [state.options[1]]));
-      state.version = `step${state.clock.counter}`;
+    this.state$.update(data => {
+      data.clock.counter++;
+      data.products.push(new Product(20, 'New Product', [data.options[1]]));
+      data.version = `step${data.clock.counter}`;
     });
   }
 
