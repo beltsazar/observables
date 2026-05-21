@@ -28,12 +28,11 @@ export class MyElement extends LitElement {
     super.connectedCallback();
     this.state$ = new Observable(getState());
 
-    this.state$.watch((data, oldData) => {
+    this.state$.watch((data, prevData) => {
       this.count = data.clock.counter;
-      console.log('data', data, oldData);
     })
 
-    this.state$.data.products = ''
+   this.state$.data.products = ''
   }
 
   disconnectedCallback() {

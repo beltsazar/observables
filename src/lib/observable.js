@@ -1,4 +1,4 @@
-import { get, cloneDeep } from 'lodash-es'
+import { cloneDeep } from 'lodash-es'
 import {
   getPathsToTargetObject, deepFreeze
 } from './object-helpers.js'
@@ -14,28 +14,31 @@ export class Observable extends EventTarget {
     return this._data
   }
 
-  update (callBack) {
-    const newData = cloneDeep(this.data)
+  update (updateCallBack) {
+    const data = this.data
+    const nextData = cloneDeep(this.data)
 
-    callBack(newData)
+    // mutate data with consumer callback
+    updateCallBack(nextData)
+
+    // commit the mutated data as the current data
+    this._data = deepFreeze(nextData)
 
     this.dispatchEvent(new CustomEvent('update', {
       detail: {
-        data: newData,
-        oldData: this.data
+        data: this.data,
+        previousData: data
       },
     }),)
-
-    this._data = newData
-    deepFreeze(this._data)
   }
 
-  watch (callBack) {
+  watch (observerCallBack) {
     const callBackWrapper = (e) => {
-      callBack(e.detail.data, e.detail.oldData)
+      observerCallBack(e.detail.data, e.detail.previousData)
     }
 
-    callBack(this.data)
+    // execute the consumer callback function immediately without having to wait for an update
+    observerCallBack(this.data, null)
 
     this.addEventListener('update', callBackWrapper)
     return new Watcher(() => this.removeEventListener('update', callBackWrapper))
