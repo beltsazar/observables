@@ -101,6 +101,7 @@ describe('ObservableData', () => {
 
   it('should be immutable!!!', () => {
     expect(() => { observable$.data.options[1].price.amount = 20 }).to.throw(Error)
+    expect(() => { observable$.data.products[0] = {} }).to.throw(Error)
   })
 })
 
