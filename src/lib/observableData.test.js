@@ -98,5 +98,9 @@ describe('ObservableData', () => {
     observable$.next(() => {})
     expect(callBackSpy.callCount).to.equal(5)
   })
+
+  it('should be immutable!!!', () => {
+    expect(() => { observable$.data.options[1].price.amount = 20 }).to.throw(Error)
+  })
 })
 
