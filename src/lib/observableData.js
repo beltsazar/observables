@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash-es'
+import { cloneDeep, isEqual } from 'lodash-es'
 import { deepFreeze } from './object-helpers.js'
 
 export class ObservableData extends EventTarget {
@@ -53,3 +53,6 @@ class Subscription {
     this.unsubscribe = unsubscribe
   }
 }
+
+export const isUpdated = (data, previousData) => !isEqual(data, previousData);
+

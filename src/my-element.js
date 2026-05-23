@@ -1,8 +1,7 @@
 import { LitElement, css, html } from 'lit'
 import { getState } from './state/index.js'
-import { ObservableData } from './lib/observableData.js'
+import { ObservableData, isUpdated } from './lib/observableData.js'
 import { Product } from './state/objects/Product.js'
-import { isEqual } from 'lodash-es'
 
 /**
  * An example element.
@@ -28,16 +27,19 @@ export class MyElement extends LitElement {
   connectedCallback () {
     super.connectedCallback()
     this.state$ = new ObservableData(getState())
-    this.subscription = this.state$.observe((data, oldData) => {
-        console.log('called!')
+    this.subscription = this.state$.observe((data) => {
         this.count = data.clock.counter
-      }, (data, oldData) => !isEqual(data.clock.counter, oldData.clock.counter)
+      }, (data, previousData) => isUpdated(data.clock.counter, previousData.clock.counter)
     )
 
-    this.subscription = this.state$.observe((data, oldData) => {
-        console.log('counter is five!!!')
+    this.subscription = this.state$.observe((data) => {
         this.count = data.clock.counter
       }, data => data.clock.counter === 5
+    )
+
+    this.subscription = this.state$.observe((data) => {
+        console.log('data', data)
+      },
     )
 
     this.state$.data.products = ''

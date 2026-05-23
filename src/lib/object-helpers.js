@@ -25,6 +25,5 @@ export function deepFreeze (object) {
       deepFreeze(value)
     }
   }
-
   return Object.freeze(object)
 }
