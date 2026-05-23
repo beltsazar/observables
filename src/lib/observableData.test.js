@@ -95,7 +95,6 @@ describe('ObservableData', () => {
       data.clock.counter = 5
     })
     expect(callBackSpy.callCount).to.equal(2)
-
   })
 
   it('should be able to unsubscribe', () => {
