@@ -2,24 +2,26 @@ import { expect, describe, it, beforeEach, afterEach } from 'vitest'
 import { spy } from 'sinon'
 import { cloneDeep } from 'lodash-es'
 import { getState } from '../state/index.js'
-import { ObservableData } from './observableData.js'
+import { ObservableData, isEqual } from './observableData.js'
 
-describe('getPathsToDeepObject', () => {
+describe('ObservableData', () => {
   let observable$
-  let eventData
+  let event
   let callBackSpy
-  let callBackWrapper
+  let observerWrapper
 
   beforeEach(() => {
     observable$ = new ObservableData(cloneDeep(getState()))
 
-    eventData = {}
-    callBackWrapper = {
-      callBack: (e) => {
-        eventData = e
+    event = {}
+    observerWrapper = {
+      observer: (data, previousData) => {
+        event = {
+          data, previousData
+        }
       }
     }
-    callBackSpy = spy(callBackWrapper, 'callBack')
+    callBackSpy = spy(observerWrapper, 'observer')
   })
 
   afterEach(() => {
@@ -30,80 +32,71 @@ describe('getPathsToDeepObject', () => {
     expect(observable$ instanceof ObservableData).to.equal(true)
   })
 
-  it('should observe changes to a specific property of an object', () => {
-    observable$.observe(observable$.data.clock, 'counter', callBackWrapper.callBack)
-    expect(eventData).to.deep.equal({})
-
-    observable$.next(observable$.data.clock, 'counter', 1)
+  it('should register observer and call it immediately with initial data', () => {
+    observable$.observe(observerWrapper.observer)
+    expect(event.data).to.deep.equal(getState())
+    expect(event.previousData).to.deep.equal(null)
     expect(callBackSpy.calledOnce).to.equal(true)
-    expect(eventData.data).to.equal(1)
-    expect(eventData.oldValue).to.equal(0)
-    expect(eventData.target).to.equal(observable$.data.clock)
-    expect(eventData.property).to.equal('counter')
+
+    observable$.next(() => {})
+    expect(callBackSpy.calledTwice).to.equal(true)
   })
 
-  it('should observe any nested changes from the root object', () => {
-    observable$.observe(observable$.data, callBackWrapper.callBack)
+  it('should change a simple property', () => {
+    observable$.observe(observerWrapper.observer)
 
-    observable$.next(observable$.data.clock, 'counter', 1)
-    expect(callBackSpy.calledOnce).to.equal(true)
-    expect(eventData.data).to.equal(1)
-    expect(eventData.oldValue).to.equal(0)
-    expect(eventData.target).to.equal(observable$.data.clock)
-    expect(eventData.property).to.equal('counter')
+    observable$.next(data => {
+      data.clock.counter = 100
+    })
+    expect(event.data.clock.counter).to.equal(100)
+    expect(event.previousData.clock.counter).to.equal(0)
+    expect(isEqual(event.data.clock.counter, event.previousData.clock.counter)).to.equal(false)
+    expect(observable$.data.clock.counter).to.equal(100)
   })
 
-  it('should observe deep nested child objects changes', () => {
-    observable$.observe(observable$.data.products[0], callBackWrapper.callBack)
+  it('should clone objects matching original properties', () => {
+    observable$.observe(observerWrapper.observer)
 
-    observable$.next(observable$.data.options[1].price, 'amount', 20)
-    expect(callBackSpy.calledOnce).to.equal(true)
-    expect(eventData.data).to.equal(20)
-    expect(eventData.oldValue).to.equal(200)
-    expect(eventData.target).to.equal(observable$.data.options[1].price)
-    expect(eventData.property).to.equal('amount')
+    observable$.next(data => {})
+    expect(event.data.products === event.previousData.products).not.to.equal(true)
+    expect(event.data.products).to.deep.equal(event.previousData.products)
   })
 
-  it('should NOT observe changes in objects that are not children', () => {
-    observable$.observe(observable$.data.products[2], callBackWrapper.callBack)
+  it('should respect deep nested child objects changes', () => {
+    observable$.observe(observerWrapper.observer)
+    expect(observable$.data.options[1].price.amount).to.equal(200)
+    expect(observable$.data.products[0].options[1].price.amount).to.equal(200)
 
-    observable$.next(observable$.data.options[1].price, 'amount', 20)
-    expect(eventData).to.deep.equal({})
+    observable$.next(data => {
+        data.options[1].price.amount = 20
+      }
+    )
+    expect(event.data.products === event.previousData.products).not.to.equal(true)
+    expect(event.data.products).not.to.deep.equal(event.previousData.products)
+    expect(isEqual(event.data.products, event.previousData.products)).to.equal(false)
+    expect(isEqual(event.data.products[0], event.previousData.products[0])).to.equal(false)
+    expect(isEqual(event.data.products[2], event.previousData.products[2])).to.equal(true)
+
+    expect(observable$.data.options[1].price.amount).to.equal(20)
+    expect(observable$.data.products[0].options[1].price.amount).to.equal(20)
   })
 
   it('should be able to unsubscribe', () => {
-    const subscription1 = observable$.observe(observable$.data.clock, 'counter', callBackWrapper.callBack)
-    const subscription2 = observable$.observe(observable$.data.clock, 'counter', callBackWrapper.callBack)
+    const subscription1 = observable$.observe(observerWrapper.observer)
+    const subscription2 = observable$.observe(observerWrapper.observer)
 
-    observable$.next(observable$.data.clock, 'counter', 1)
     expect(callBackSpy.callCount).to.equal(2)
 
+    observable$.next(() => {})
+    expect(callBackSpy.callCount).to.equal(4)
+
     subscription1.unsubscribe()
-    observable$.next(observable$.data.clock, 'counter', 2)
-    expect(callBackSpy.callCount).to.equal(3)
+    observable$.next(() => {})
+    expect(callBackSpy.callCount).to.equal(5)
 
     subscription2.unsubscribe()
-    observable$.next(observable$.data.clock, 'counter', 3)
-    expect(callBackSpy.callCount).to.equal(3)
-  })
-
-  it('objects references should persist through version clones', () => {
-    observable$.observe(observable$.data.clock, 'counter', callBackWrapper.callBack)
-    expect(eventData).to.deep.equal({})
-
-    observable$.next(observable$.data.clock, 'counter', 1)
-    expect(callBackSpy.calledOnce).to.equal(true)
-    expect(eventData.data).to.equal(1)
-    expect(eventData.oldValue).to.equal(0)
-    expect(eventData.target).to.equal(observable$.data.clock)
-    expect(eventData.property).to.equal('counter')
-
-    observable$.next(observable$.data.clock, 'counter', 2)
-    expect(callBackSpy.calledTwice).to.equal(true)
-    expect(eventData.data).to.equal(2)
-    expect(eventData.oldValue).to.equal(1)
-    expect(eventData.target).to.equal(observable$.data.clock)
-    expect(eventData.property).to.equal('counter')
+    observable$.next(() => {})
+    expect(callBackSpy.callCount).to.equal(5)
   })
 })
 

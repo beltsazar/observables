@@ -1,6 +1,6 @@
 import { LitElement, css, html } from 'lit'
 import { getState } from './state/index.js'
-import { ObservableData, isUpdated } from './lib/observableData.js'
+import { ObservableData, isEqual } from './lib/observableData.js'
 import { Product } from './state/objects/Product.js'
 
 /**
@@ -29,7 +29,7 @@ export class MyElement extends LitElement {
     this.state$ = new ObservableData(getState())
     this.subscription = this.state$.observe((data) => {
         this.count = data.clock.counter
-      }, (data, previousData) => isUpdated(data.clock.counter, previousData.clock.counter)
+      }, (data, previousData) => !isEqual(data.clock.counter, previousData.clock.counter)
     )
 
     this.subscription = this.state$.observe((data) => {
