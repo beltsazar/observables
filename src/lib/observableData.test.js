@@ -81,6 +81,23 @@ describe('ObservableData', () => {
     expect(observable$.data.products[0].options[1].price.amount).to.equal(20)
   })
 
+  it('should call observer conditionally', () => {
+    observable$.observe(observerWrapper.observer,
+      data => data.clock.counter === 5)
+    expect(callBackSpy.callCount).to.equal(1)
+
+    observable$.next(data => {
+      data.clock.counter = 100
+    })
+    expect(callBackSpy.callCount).to.equal(1)
+
+    observable$.next(data => {
+      data.clock.counter = 5
+    })
+    expect(callBackSpy.callCount).to.equal(2)
+
+  })
+
   it('should be able to unsubscribe', () => {
     const subscription1 = observable$.observe(observerWrapper.observer)
     const subscription2 = observable$.observe(observerWrapper.observer)
