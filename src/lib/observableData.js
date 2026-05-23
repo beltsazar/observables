@@ -12,41 +12,44 @@ export class ObservableData extends EventTarget {
     return this._data
   }
 
-  update (callBack) {
-    const oldData = this.data
-    const newData = cloneDeep(this.data)
+  next (callBack) {
+    const previousData = this.data
+    const data = cloneDeep(this.data)
 
     // mutate data with consumer callback
-    callBack(newData)
+    callBack(data)
 
     // commit the mutated data as the current data
-    this._data = deepFreeze(newData)
+    this._data = deepFreeze(data)
 
-    this.dispatchEvent(new CustomEvent('updated', {
+    this.dispatchEvent(new CustomEvent('next', {
       detail: {
-        newData,
-        oldData
+        data,
+        previousData
       },
     }),)
   }
 
-  watch (callBack) {
+  observe (observer, condition = (data, previousData) => true) {
     const callBackWrapper = (e) => {
-      callBack(e.detail.newData, e.detail.oldData)
+      const { data, previousData } = e.detail
+      if (condition(data, previousData)) {
+        observer(data, previousData)
+      }
     }
 
-    // execute the consumer callback to trigger the watcher with the initial data state
-    callBack(this.data, null)
+    // always execute the observer callback first time to for initialization purposes
+    observer(this.data, null)
 
-    this.addEventListener('updated', callBackWrapper)
+    this.addEventListener('next', callBackWrapper)
     return new Subscription(() => this.removeEventListener('next', callBackWrapper))
   }
 }
 
 class Subscription {
-  unwatch
+  unsubscribe
 
-  constructor (unwatch) {
-    this.unwatch = unwatch
+  constructor (unsubscribe) {
+    this.unsubscribe = unsubscribe
   }
 }

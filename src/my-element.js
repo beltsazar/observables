@@ -1,7 +1,8 @@
-import { LitElement, css, html } from 'lit';
-import { getState } from './state/index.js';
-import { ObservableData } from './lib/observableData.js';
+import { LitElement, css, html } from 'lit'
+import { getState } from './state/index.js'
+import { ObservableData } from './lib/observableData.js'
 import { Product } from './state/objects/Product.js'
+import { isEqual } from 'lodash-es'
 
 /**
  * An example element.
@@ -10,7 +11,7 @@ import { Product } from './state/objects/Product.js'
  * @csspart button - The button
  */
 export class MyElement extends LitElement {
-  static get properties() {
+  static get properties () {
     return {
       /**
        * The number of times the button has been clicked.
@@ -19,27 +20,35 @@ export class MyElement extends LitElement {
     }
   }
 
-  constructor() {
+  constructor () {
     super()
     this.count = 0
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-    this.state$ = new ObservableData(getState());
-    this.subscription = this.state$.watch(data => {
-      this.count = data.clock.counter;
-    })
+  connectedCallback () {
+    super.connectedCallback()
+    this.state$ = new ObservableData(getState())
+    this.subscription = this.state$.observe((data, oldData) => {
+        console.log('called!')
+        this.count = data.clock.counter
+      }, (data, oldData) => !isEqual(data.clock.counter, oldData.clock.counter)
+    )
 
-   this.state$.data.products = ''
+    this.subscription = this.state$.observe((data, oldData) => {
+        console.log('counter is five!!!')
+        this.count = data.clock.counter
+      }, data => data.clock.counter === 5
+    )
+
+    this.state$.data.products = ''
   }
 
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    this.subscription.unwatch();
+  disconnectedCallback () {
+    super.disconnectedCallback()
+    this.subscription.unsubscribe()
   }
 
-  render() {
+  render () {
     return html`
         <section id="center">
             <div>
@@ -59,21 +68,21 @@ export class MyElement extends LitElement {
     `
   }
 
-  _onClick() {
-    this.state$.update(data => {
-      data.clock.counter++;
-      data.products.push(new Product(20, 'New Product', [data.options[1]]));
-      data.version = `step${data.clock.counter}`;
-    });
+  _onClick () {
+    this.state$.next(data => {
+      data.clock.counter++
+      data.products.push(new Product(20, 'New Product', [data.options[1]]))
+      data.version = `step${data.clock.counter}`
+    })
   }
 
-  static get styles() {
+  static get styles () {
     return css`
         :host {
             --text: #6b6375;
             --bg: #fff;
             --border: #e5e4e7;
-            
+
             font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
             width: 1126px;
             max-width: 100%;
