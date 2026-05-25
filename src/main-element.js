@@ -1,14 +1,14 @@
 import { LitElement, css, html } from 'lit'
 import {ContextProvider} from '@lit/context';
 import { context} from './context.js'
-import { getState } from './state/index.js'
+import { State } from './state/index.js'
 import { ObservableData, isEqual } from './lib/observableData.js'
 import { Product } from './state/objects/Product.js'
 import './child-element.js';
 
 export class MainElement extends LitElement {
   contextProvider = new ContextProvider(this, {context});
-  state$ = new ObservableData(getState())
+  state$ = new ObservableData(new State())
 
   static get properties () {
     return {
