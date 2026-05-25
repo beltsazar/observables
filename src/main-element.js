@@ -1,15 +1,15 @@
 import { LitElement, css, html } from 'lit'
+import {ContextProvider} from '@lit/context';
+import { context} from './context.js'
 import { getState } from './state/index.js'
 import { ObservableData, isEqual } from './lib/observableData.js'
 import { Product } from './state/objects/Product.js'
+import './child-element.js';
 
-/**
- * An example element.
- *
- * @slot - This element has a slot
- * @csspart button - The button
- */
-export class MyElement extends LitElement {
+export class MainElement extends LitElement {
+  contextProvider = new ContextProvider(this, {context});
+  state$ = new ObservableData(getState())
+
   static get properties () {
     return {
       /**
@@ -21,12 +21,13 @@ export class MyElement extends LitElement {
 
   constructor () {
     super()
+    this.contextProvider.setValue({ state$: this.state$ });
     this.count = 0
   }
 
   connectedCallback () {
     super.connectedCallback()
-    this.state$ = new ObservableData(getState())
+
     this.subscription = this.state$.observe((data) => {
         this.count = data.clock.counter
       }, (data, previousData) => !isEqual(data.clock.counter, previousData.clock.counter)
@@ -66,6 +67,7 @@ export class MyElement extends LitElement {
             >
                 Count is ${this.count}
             </button>
+            <child-element></child-element>
         </section>
     `
   }
@@ -111,4 +113,4 @@ export class MyElement extends LitElement {
   }
 }
 
-window.customElements.define('my-element', MyElement)
+window.customElements.define('main-element', MainElement)
