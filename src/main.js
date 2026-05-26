@@ -7,6 +7,7 @@ import { ObservableData } from "./lib/observableData.js";
 import { Product } from "./state/objects/Product.js";
 import { letClockTick } from "./services.js";
 import { SelectedProductComponent } from "./components/selected-product.js";
+import { SelectorComponent } from "./components/selector.js";
 import { ProductsComponent } from "./components/products.js";
 import { NotificationComponent } from "./components/notification.js";
 import { ClockComponent } from "./components/clock.js";
@@ -34,7 +35,7 @@ export class Main extends ScopedElementsMixin(LitElement) {
 
   static get scopedElements() {
     return {
-      // "selector-component": SelectorComponent,
+      "selector-component": SelectorComponent,
       "products-component": ProductsComponent,
       "selected-product-component": SelectedProductComponent,
       "notification-component": NotificationComponent,
@@ -114,6 +115,7 @@ export class Main extends ScopedElementsMixin(LitElement) {
         flex-direction: column;
         box-sizing: border-box;
         color: var(--text);
+        padding: 0 16px;
       }
 
       .container {
