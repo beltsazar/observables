@@ -5,7 +5,8 @@ import { stateContext } from "./stateContext.js";
 import { State } from "./state/index.js";
 import { ObservableData } from "./lib/observableData.js";
 import { letClockTick } from "./services.js";
-import { ProductsComponent } from  './components/products.js'
+import { SelectedProductComponent } from "./components/selected-product.js";
+import { ProductsComponent } from "./components/products.js";
 import { ClockComponent } from "./components/clock.js";
 
 export class MainElement extends ScopedElementsMixin(LitElement) {
@@ -33,7 +34,7 @@ export class MainElement extends ScopedElementsMixin(LitElement) {
     return {
       // "selector-component": SelectorComponent,
       "products-component": ProductsComponent,
-      // "selected-product-component": SelectedProductComponent,
+      "selected-product-component": SelectedProductComponent,
       // "notification-component": NotificationComponent,
       "clock-component": ClockComponent,
     };

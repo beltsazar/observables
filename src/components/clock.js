@@ -3,7 +3,7 @@ import { ContextConsumer } from "@lit/context";
 import { stateContext } from "../stateContext.js";
 
 export class ClockComponent extends LitElement {
-  state$
+  state$;
 
   constructor() {
     super();

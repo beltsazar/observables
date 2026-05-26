@@ -31,11 +31,9 @@ export class ProductsComponent extends ScopedElementsMixin(LitElement) {
   connectedCallback() {
     super.connectedCallback();
     this.products = [...this.state$.data.products];
-    this.subscription = this.state$.observe(data => {
+    this.subscription = this.state$.observe((data) => {
       this.products = [
-        ...data.products.filterByOptions(
-          data.customer.selectedOptions,
-        ),
+        ...data.products.filterByOptions(data.customer.selectedOptions),
       ];
     });
   }
@@ -46,7 +44,7 @@ export class ProductsComponent extends ScopedElementsMixin(LitElement) {
   }
 
   handleProductSelection(e, product) {
-    this.state$.next(data => data.customer.selectedProduct = product)
+    this.state$.next((data) => (data.customer.selectedProduct = product));
     e.preventDefault();
   }
 
@@ -58,8 +56,7 @@ export class ProductsComponent extends ScopedElementsMixin(LitElement) {
             html`<li>
               <a
                 href="#"
-                @click="${(e) =>
-                  this.handleProductSelection(e, product)}"
+                @click="${(e) => this.handleProductSelection(e, product)}"
                 >${product.name}</a
               >
             </li>`,
