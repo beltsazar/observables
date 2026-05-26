@@ -1,3 +1,4 @@
+import { ObservableData } from "../lib/observableData.js";
 import { Option } from "./objects/Option.js";
 import { Product } from "./objects/Product.js";
 import { ProductList } from "./objects/ProductList.js";

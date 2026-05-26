@@ -1,11 +1,11 @@
 import { LitElement, css, html } from "lit";
 import { ContextProvider } from "@lit/context";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { stateContext } from "./stateContext.js";
-import { State } from "./state/index.js";
+import { context } from "./context.js";
+import { State } from "./state/State.js";
 import { ObservableData } from "./lib/observableData.js";
 import { Product } from "./state/objects/Product.js";
-import { letClockTick } from "./services.js";
+import { letClockTick } from "./services/services.js";
 import { SelectedProductComponent } from "./components/selected-product.js";
 import { SelectorComponent } from "./components/selector.js";
 import { ProductsComponent } from "./components/products.js";
@@ -18,7 +18,7 @@ export class Main extends ScopedElementsMixin(LitElement) {
   constructor() {
     super();
     new ContextProvider(this, {
-      context: stateContext,
+      context: context,
       initialValue: { state$: this.state$ },
     });
     this.count = 0;
@@ -100,7 +100,7 @@ export class Main extends ScopedElementsMixin(LitElement) {
   static get styles() {
     return css`
       :host {
-        --text: #6b6375;
+        --text: #000;
         --bg: #fff;
         --border: #e5e4e7;
 

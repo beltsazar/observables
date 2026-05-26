@@ -1,7 +1,7 @@
 import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { ContextConsumer } from "@lit/context";
-import { stateContext } from "../stateContext.js";
+import { context } from "../context.js";
 
 export class SelectorComponent extends ScopedElementsMixin(LitElement) {
   state$;
@@ -9,7 +9,7 @@ export class SelectorComponent extends ScopedElementsMixin(LitElement) {
   constructor() {
     super();
     new ContextConsumer(this, {
-      context: stateContext,
+      context: context,
       callback: ({ state$ }) => (this.state$ = state$),
     });
     this.products = [];

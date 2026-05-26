@@ -1,6 +1,6 @@
 import { LitElement, css, html } from "lit";
 import { ContextConsumer } from "@lit/context";
-import { stateContext } from "../stateContext.js";
+import { context } from "../context.js";
 
 export class ClockComponent extends LitElement {
   state$;
@@ -8,7 +8,7 @@ export class ClockComponent extends LitElement {
   constructor() {
     super();
     new ContextConsumer(this, {
-      context: stateContext,
+      context: context,
       callback: ({ state$ }) => (this.state$ = state$),
     });
     this.counter = 0;
