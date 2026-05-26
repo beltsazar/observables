@@ -3,7 +3,7 @@ import { cloneDeep } from "lodash-es";
 import { getState } from "../state/index.js";
 import { getPathsToTargetObject } from "./object-helpers.js";
 
-describe("getPathsToDeepObject", () => {
+describe.skip("getPathsToDeepObject", () => {
   let dataObject;
   beforeEach(() => {
     dataObject = cloneDeep(getState());

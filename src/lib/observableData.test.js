@@ -1,7 +1,7 @@
 import { expect, describe, it, beforeEach, afterEach } from "vitest";
 import { spy } from "sinon";
 import { cloneDeep } from "lodash-es";
-import { getState } from "../state/index.js";
+import { State } from "../state/index.js";
 import { ObservableData, isEqual } from "./observableData.js";
 
 describe("ObservableData", () => {
@@ -11,7 +11,7 @@ describe("ObservableData", () => {
   let observerWrapper;
 
   beforeEach(() => {
-    observable$ = new ObservableData(cloneDeep(getState()));
+    observable$ = new ObservableData(cloneDeep(new State()));
 
     event = {};
     observerWrapper = {
@@ -35,7 +35,7 @@ describe("ObservableData", () => {
 
   it("should register observer and call it immediately with initial data", () => {
     observable$.observe(observerWrapper.observer);
-    expect(event.data).to.deep.equal(getState());
+    expect(event.data).to.deep.equal(cloneDeep(new State()));
     expect(event.previousData).to.deep.equal(null);
     expect(callBackSpy.calledOnce).to.equal(true);
 
@@ -136,5 +136,13 @@ describe("ObservableData", () => {
     expect(() => {
       observable$.data.products[0] = {};
     }).to.throw(Error);
+  });
+
+  it("should call an object method", () => {
+    observable$.observe(observerWrapper.observer);
+    observable$.next(() => {});
+    expect(
+      observable$.data.products[0].hasOption(observable$.data.options[1]),
+    ).to.equal(true);
   });
 });
