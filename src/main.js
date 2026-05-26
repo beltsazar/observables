@@ -57,6 +57,9 @@ export class Main extends ScopedElementsMixin(LitElement) {
             </div>
           </div>
           <div class="column">
+            <div>
+              <button @click="${() => this._onClick()}">Add product</button>
+            </div>
             <products-component></products-component>
           </div>
         </div>
@@ -64,9 +67,6 @@ export class Main extends ScopedElementsMixin(LitElement) {
           <div class="notification">
             <notification-component></notification-component>
           </div>
-        </div>
-        <div>
-          <button @click="${() => this._onClick()}">Add product</button>
         </div>
       </div>
     `;
@@ -92,7 +92,7 @@ export class Main extends ScopedElementsMixin(LitElement) {
         width: 1126px;
         max-width: 100%;
         margin: 0 auto;
-        text-align: center;
+        //text-align: center;
         border-inline: 1px solid var(--border);
         min-height: 100svh;
         display: flex;
