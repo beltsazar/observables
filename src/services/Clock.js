@@ -1,0 +1,14 @@
+import { ObservableData } from "../lib/observableData.js";
+
+export class Clock extends ObservableData {
+  constructor(startCount = 0) {
+    super({
+      counter: 0,
+    });
+    setInterval(() => this.next((data) => data.counter++), 1000);
+  }
+
+  reset() {
+    this.next((data) => (data.counter = 0));
+  }
+}

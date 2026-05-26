@@ -5,12 +5,16 @@ import { context } from "../context.js";
 
 export class SelectorComponent extends ScopedElementsMixin(LitElement) {
   state$;
+  clock$;
 
   constructor() {
     super();
     new ContextConsumer(this, {
       context: context,
-      callback: ({ state$ }) => (this.state$ = state$),
+      callback: ({ state$, clock$ }) => {
+        this.state$ = state$;
+        this.clock$ = clock$;
+      },
     });
     this.products = [];
   }
@@ -35,6 +39,13 @@ export class SelectorComponent extends ScopedElementsMixin(LitElement) {
     });
   }
 
+  _onClick() {
+    this.shadowRoot
+      ?.querySelector('[name="optionsForm"]')
+      ?.dispatchEvent(new Event("submit"));
+    this.clock$.reset();
+  }
+
   render() {
     return html`<h2>Filter products</h2>
       <div class="select-options">
@@ -53,11 +64,7 @@ export class SelectorComponent extends ScopedElementsMixin(LitElement) {
                     type="checkbox"
                     id="${option.id}"
                     name="${option.id}"
-                    @click=${() => {
-                      this.shadowRoot
-                        ?.querySelector('[name="optionsForm"]')
-                        ?.dispatchEvent(new Event("submit"));
-                    }}
+                    @click=${() => this._onClick()}
                   />
                   <label for="${option.id}">${option.name}</label>
                 </div>`,

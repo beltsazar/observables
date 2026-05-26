@@ -3,13 +3,13 @@ import { ContextConsumer } from "@lit/context";
 import { context } from "../context.js";
 
 export class ClockComponent extends LitElement {
-  state$;
+  clock$;
 
   constructor() {
     super();
     new ContextConsumer(this, {
       context: context,
-      callback: ({ state$ }) => (this.state$ = state$),
+      callback: ({ clock$ }) => (this.clock$ = clock$),
     });
     this.counter = 0;
   }
@@ -22,8 +22,8 @@ export class ClockComponent extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.subscription = this.state$.observe((data) => {
-      this.counter = data.clock.counter;
+    this.subscription = this.clock$.observe((data) => {
+      this.counter = data.counter;
     });
   }
 
@@ -32,8 +32,14 @@ export class ClockComponent extends LitElement {
     this.subscription.unsubscribe();
   }
 
+  _onClick() {
+    this.clock$.reset();
+  }
+
   render() {
-    return html`<div>${this.counter}</div> `;
+    return html`<button @click="${() => this._onClick()}">
+      <div>${this.counter}</div>
+    </button> `;
   }
 
   static get styles() {
@@ -42,7 +48,7 @@ export class ClockComponent extends LitElement {
         display: inline-block;
       }
 
-      div {
+      button {
         display: inline-block;
         min-width: 40px;
         text-align: center;

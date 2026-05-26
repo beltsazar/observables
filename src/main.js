@@ -3,13 +3,12 @@ import { ContextProvider } from "@lit/context";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { context } from "./context.js";
 import { ApplicationState, model } from "./state/State.js";
+import { Clock } from "./services/Clock.js";
 import { Product } from "./state/objects/Product.js";
-import { letClockTick } from "./services/services.js";
 import { SelectedProductComponent } from "./components/selected-product.js";
 import { SelectorComponent } from "./components/selector.js";
 import { ProductsComponent } from "./components/products.js";
 import { NotificationComponent } from "./components/notification.js";
-import { ClockComponent } from "./components/clock.js";
 
 export class Main extends ScopedElementsMixin(LitElement) {
   state$ = new ApplicationState(model);
@@ -18,18 +17,9 @@ export class Main extends ScopedElementsMixin(LitElement) {
     super();
     new ContextProvider(this, {
       context: context,
-      initialValue: { state$: this.state$ },
+      initialValue: { state$: this.state$, clock$: new Clock() },
     });
     this.count = 0;
-  }
-
-  static get properties() {
-    return {
-      /**
-       * The number of times the button has been clicked.
-       */
-      count: { type: Number },
-    };
   }
 
   static get scopedElements() {
@@ -38,15 +28,11 @@ export class Main extends ScopedElementsMixin(LitElement) {
       "products-component": ProductsComponent,
       "selected-product-component": SelectedProductComponent,
       "notification-component": NotificationComponent,
-      "clock-component": ClockComponent,
     };
   }
 
   connectedCallback() {
     super.connectedCallback();
-
-    letClockTick(this.state$);
-
     this.subscription = this.state$.observe((data) => {
       console.log("data", data);
     });
@@ -82,7 +68,6 @@ export class Main extends ScopedElementsMixin(LitElement) {
         <div>
           <button @click="${() => this._onClick()}">Add product</button>
         </div>
-        <clock-component></clock-component>
       </div>
     `;
   }
