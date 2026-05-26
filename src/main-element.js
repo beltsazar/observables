@@ -5,6 +5,7 @@ import { stateContext } from "./stateContext.js";
 import { State } from "./state/index.js";
 import { ObservableData, isEqual } from "./lib/observableData.js";
 import { Product } from "./state/objects/Product.js";
+import { letClockTick } from "./services.js";
 import { ClockComponent } from "./components/clock.js";
 
 export class MainElement extends ScopedElementsMixin(LitElement) {
@@ -41,20 +42,7 @@ export class MainElement extends ScopedElementsMixin(LitElement) {
   connectedCallback() {
     super.connectedCallback();
 
-    this.subscription = this.state$.observe(
-      (data) => {
-        this.count = data.clock.counter;
-      },
-      (data, previousData) =>
-        !isEqual(data.clock.counter, previousData.clock.counter),
-    );
-
-    this.subscription = this.state$.observe(
-      (data) => {
-        this.count = data.clock.counter;
-      },
-      (data) => data.clock.counter === 5,
-    );
+    letClockTick(this.state$);
 
     this.subscription = this.state$.observe((data) => {
       console.log("data", data);
@@ -98,9 +86,7 @@ export class MainElement extends ScopedElementsMixin(LitElement) {
 
   _onClick() {
     this.state$.next((data) => {
-      data.clock.counter++;
-      data.products.push(new Product(20, "New Product", [data.options[1]]));
-      data.version = `step${data.clock.counter}`;
+      data.clock.counter = 5;
     });
   }
 
