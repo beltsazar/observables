@@ -3,9 +3,9 @@ import { ContextProvider } from "@lit/context";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { stateContext } from "./stateContext.js";
 import { State } from "./state/index.js";
-import { ObservableData, isEqual } from "./lib/observableData.js";
-import { Product } from "./state/objects/Product.js";
+import { ObservableData } from "./lib/observableData.js";
 import { letClockTick } from "./services.js";
+import { ProductsComponent } from  './components/products.js'
 import { ClockComponent } from "./components/clock.js";
 
 export class MainElement extends ScopedElementsMixin(LitElement) {
@@ -32,7 +32,7 @@ export class MainElement extends ScopedElementsMixin(LitElement) {
   static get scopedElements() {
     return {
       // "selector-component": SelectorComponent,
-      // "products-component": ProductsComponent,
+      "products-component": ProductsComponent,
       // "selected-product-component": SelectedProductComponent,
       // "notification-component": NotificationComponent,
       "clock-component": ClockComponent,
@@ -45,7 +45,7 @@ export class MainElement extends ScopedElementsMixin(LitElement) {
     letClockTick(this.state$);
 
     this.subscription = this.state$.observe((data) => {
-      console.log("data", data);
+      console.log("selectedProduct", data.customer.selectedProduct);
     });
   }
 
