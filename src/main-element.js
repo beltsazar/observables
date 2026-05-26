@@ -7,6 +7,7 @@ import { ObservableData } from "./lib/observableData.js";
 import { letClockTick } from "./services.js";
 import { SelectedProductComponent } from "./components/selected-product.js";
 import { ProductsComponent } from "./components/products.js";
+import { NotificationComponent } from "./components/notification.js";
 import { ClockComponent } from "./components/clock.js";
 
 export class MainElement extends ScopedElementsMixin(LitElement) {
@@ -35,7 +36,7 @@ export class MainElement extends ScopedElementsMixin(LitElement) {
       // "selector-component": SelectorComponent,
       "products-component": ProductsComponent,
       "selected-product-component": SelectedProductComponent,
-      // "notification-component": NotificationComponent,
+      "notification-component": NotificationComponent,
       "clock-component": ClockComponent,
     };
   }
