@@ -1,21 +1,21 @@
 import { LitElement, css, html } from "lit";
 import { ContextProvider } from "@lit/context";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { context } from "./context.js";
+import { stateContext } from "./stateContext.js";
 import { State } from "./state/index.js";
 import { ObservableData, isEqual } from "./lib/observableData.js";
 import { Product } from "./state/objects/Product.js";
-
-import { ChildElement } from "./child-element.js";
 import { ClockComponent } from "./components/clock.js";
 
 export class MainElement extends ScopedElementsMixin(LitElement) {
-  contextProvider = new ContextProvider(this, { context });
   state$ = new ObservableData(new State());
 
   constructor() {
     super();
-    this.contextProvider.setValue({ state$: this.state$ });
+    new ContextProvider(this, {
+      context: stateContext,
+      initialValue: { state$: this.state$ },
+    });
     this.count = 0;
   }
 
@@ -30,7 +30,6 @@ export class MainElement extends ScopedElementsMixin(LitElement) {
 
   static get scopedElements() {
     return {
-      "child-element": ChildElement,
       // "selector-component": SelectorComponent,
       // "products-component": ProductsComponent,
       // "selected-product-component": SelectedProductComponent,
@@ -90,9 +89,7 @@ export class MainElement extends ScopedElementsMixin(LitElement) {
           </div>
         </div>
         <div>
-          <button @click="${() => this._onClick()}">
-            Add product
-          </button>
+          <button @click="${() => this._onClick()}">Add product</button>
         </div>
         <clock-component></clock-component>
       </div>

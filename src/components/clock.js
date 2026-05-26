@@ -1,12 +1,14 @@
 import { LitElement, css, html } from "lit";
 import { ContextConsumer } from "@lit/context";
-import { context } from "../context.js";
+import { stateContext } from "../stateContext.js";
 
 export class ClockComponent extends LitElement {
-  contextConsumer = new ContextConsumer(this, { context });
-
   constructor() {
     super();
+    new ContextConsumer(this, {
+      context: stateContext,
+      callback: ({ state$ }) => (this.state$ = state$),
+    });
     this.counter = 0;
   }
 
@@ -18,7 +20,6 @@ export class ClockComponent extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.state$ = this.contextConsumer.value.state$;
     this.subscription = this.state$.observe((data) => {
       this.counter = data.clock.counter;
     });
