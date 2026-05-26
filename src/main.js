@@ -4,13 +4,14 @@ import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { stateContext } from "./stateContext.js";
 import { State } from "./state/index.js";
 import { ObservableData } from "./lib/observableData.js";
+import { Product } from "./state/objects/Product.js";
 import { letClockTick } from "./services.js";
 import { SelectedProductComponent } from "./components/selected-product.js";
 import { ProductsComponent } from "./components/products.js";
 import { NotificationComponent } from "./components/notification.js";
 import { ClockComponent } from "./components/clock.js";
 
-export class MainElement extends ScopedElementsMixin(LitElement) {
+export class Main extends ScopedElementsMixin(LitElement) {
   state$ = new ObservableData(new State());
 
   constructor() {
@@ -47,7 +48,7 @@ export class MainElement extends ScopedElementsMixin(LitElement) {
     letClockTick(this.state$);
 
     this.subscription = this.state$.observe((data) => {
-      console.log("selectedProduct", data.customer.selectedProduct);
+      console.log("data", data);
     });
   }
 
@@ -88,7 +89,10 @@ export class MainElement extends ScopedElementsMixin(LitElement) {
 
   _onClick() {
     this.state$.next((data) => {
-      data.clock.counter = 5;
+      const id = data.products.length + 1;
+      const randomOption =
+        data.options[Math.floor(Math.random() * data.options.length)];
+      data.products.push(new Product(id, `Product ${id}`, [randomOption]));
     });
   }
 
@@ -133,4 +137,4 @@ export class MainElement extends ScopedElementsMixin(LitElement) {
   }
 }
 
-window.customElements.define("main-element", MainElement);
+window.customElements.define("main-component", Main);
