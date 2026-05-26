@@ -2,8 +2,7 @@ import { LitElement, css, html } from "lit";
 import { ContextProvider } from "@lit/context";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { context } from "./context.js";
-import { State } from "./state/State.js";
-import { ObservableData } from "./lib/observableData.js";
+import { ApplicationState, model } from "./state/State.js";
 import { Product } from "./state/objects/Product.js";
 import { letClockTick } from "./services/services.js";
 import { SelectedProductComponent } from "./components/selected-product.js";
@@ -13,7 +12,7 @@ import { NotificationComponent } from "./components/notification.js";
 import { ClockComponent } from "./components/clock.js";
 
 export class Main extends ScopedElementsMixin(LitElement) {
-  state$ = new ObservableData(new State());
+  state$ = new ApplicationState(model);
 
   constructor() {
     super();

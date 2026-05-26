@@ -43,7 +43,7 @@ export class SelectedProductComponent extends ScopedElementsMixin(LitElement) {
   }
 
   render() {
-    return html`<h2>Selected Product</h2>
+    return html`<h2>Selection</h2>
       ${this.selectedProduct
         ? html`${this.showProduct(this.selectedProduct)}`
         : "No product selected yet"} `;

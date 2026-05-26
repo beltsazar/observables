@@ -21,23 +21,26 @@ const options = [
   new Option(3, "Option 3", prices.expensive),
 ];
 
-export class State {
-  customer = {
+export const model = {
+  customer: {
     selectedProduct: null,
     selectedOptions: [],
-  };
-
-  options = options;
-
-  products = new ProductList(
+  },
+  options: options,
+  products: new ProductList(
     new Product(1, "Product 1", [options[0], options[1], options[2]]),
     new Product(2, "Product 2", [options[1], options[2]]),
     new Product(3, "Product 3", [options[0]]),
     new Product(4, "Product 4", [options[1], options[2]]),
     new Product(5, "Product 5", [options[0], options[2]]),
-  );
-
-  clock = {
+  ),
+  clock: {
     counter: 0,
-  };
+  },
+};
+
+export class ApplicationState extends ObservableData {
+  constructor(model) {
+    super(model);
+  }
 }
