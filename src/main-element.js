@@ -1,116 +1,151 @@
-import { LitElement, css, html } from 'lit'
-import {ContextProvider} from '@lit/context';
-import { context} from './context.js'
-import { State } from './state/index.js'
-import { ObservableData, isEqual } from './lib/observableData.js'
-import { Product } from './state/objects/Product.js'
-import './child-element.js';
+import { LitElement, css, html } from "lit";
+import { ContextProvider } from "@lit/context";
+import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
+import { context } from "./context.js";
+import { State } from "./state/index.js";
+import { ObservableData, isEqual } from "./lib/observableData.js";
+import { Product } from "./state/objects/Product.js";
 
-export class MainElement extends LitElement {
-  contextProvider = new ContextProvider(this, {context});
-  state$ = new ObservableData(new State())
+import { ChildElement } from "./child-element.js";
+import { ClockComponent } from "./components/clock.js";
 
-  static get properties () {
+export class MainElement extends ScopedElementsMixin(LitElement) {
+  contextProvider = new ContextProvider(this, { context });
+  state$ = new ObservableData(new State());
+
+  constructor() {
+    super();
+    this.contextProvider.setValue({ state$: this.state$ });
+    this.count = 0;
+  }
+
+  static get properties() {
     return {
       /**
        * The number of times the button has been clicked.
        */
       count: { type: Number },
-    }
+    };
   }
 
-  constructor () {
-    super()
-    this.contextProvider.setValue({ state$: this.state$ });
-    this.count = 0
+  static get scopedElements() {
+    return {
+      "child-element": ChildElement,
+      // "selector-component": SelectorComponent,
+      // "products-component": ProductsComponent,
+      // "selected-product-component": SelectedProductComponent,
+      // "notification-component": NotificationComponent,
+      "clock-component": ClockComponent,
+    };
   }
 
-  connectedCallback () {
-    super.connectedCallback()
+  connectedCallback() {
+    super.connectedCallback();
 
-    this.subscription = this.state$.observe((data) => {
-        this.count = data.clock.counter
-      }, (data, previousData) => !isEqual(data.clock.counter, previousData.clock.counter)
-    )
-
-    this.subscription = this.state$.observe((data) => {
-        this.count = data.clock.counter
-      }, data => data.clock.counter === 5
-    )
-
-    this.subscription = this.state$.observe((data) => {
-        console.log('data', data)
+    this.subscription = this.state$.observe(
+      (data) => {
+        this.count = data.clock.counter;
       },
-    )
+      (data, previousData) =>
+        !isEqual(data.clock.counter, previousData.clock.counter),
+    );
 
-    this.state$.data.products = ''
+    this.subscription = this.state$.observe(
+      (data) => {
+        this.count = data.clock.counter;
+      },
+      (data) => data.clock.counter === 5,
+    );
+
+    this.subscription = this.state$.observe((data) => {
+      console.log("data", data);
+    });
   }
 
-  disconnectedCallback () {
-    super.disconnectedCallback()
-    this.subscription.unsubscribe()
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    this.subscription.unsubscribe();
   }
 
-  render () {
+  render() {
     return html`
-        <section id="center">
-            <div>
-                <p>
-                <h1>Hello world!
-                    </p>
+      <h1>Product selector</h1>
+      <div class="container">
+        <div class="row">
+          <div class="column">
+            <div class="selector">
+              <selector-component></selector-component>
             </div>
-            <button
-                    type="button"
-                    class="counter"
-                    @click=${this._onClick}
-                    part="button"
-            >
-                Count is ${this.count}
-            </button>
-            <child-element></child-element>
-        </section>
-    `
+            <div class="selected-product">
+              <selected-product-component></selected-product-component>
+            </div>
+          </div>
+          <div class="column">
+            <products-component></products-component>
+          </div>
+        </div>
+        <div class="row">
+          <div class="notification">
+            <notification-component></notification-component>
+          </div>
+        </div>
+        <div>
+          <button @click="${() => this._onClick()}">
+            Add product
+          </button>
+        </div>
+        <clock-component></clock-component>
+      </div>
+    `;
   }
 
-  _onClick () {
-    this.state$.next(data => {
-      data.clock.counter++
-      data.products.push(new Product(20, 'New Product', [data.options[1]]))
-      data.version = `step${data.clock.counter}`
-    })
+  _onClick() {
+    this.state$.next((data) => {
+      data.clock.counter++;
+      data.products.push(new Product(20, "New Product", [data.options[1]]));
+      data.version = `step${data.clock.counter}`;
+    });
   }
 
-  static get styles () {
+  static get styles() {
     return css`
-        :host {
-            --text: #6b6375;
-            --bg: #fff;
-            --border: #e5e4e7;
+      :host {
+        --text: #6b6375;
+        --bg: #fff;
+        --border: #e5e4e7;
 
-            font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
-            width: 1126px;
-            max-width: 100%;
-            margin: 0 auto;
-            text-align: center;
-            border-inline: 1px solid var(--border);
-            min-height: 100svh;
-            display: flex;
-            flex-direction: column;
-            box-sizing: border-box;
-            color: var(--text);
-        }
+        font-family: system-ui, "Segoe UI", Roboto, sans-serif;
+        width: 1126px;
+        max-width: 100%;
+        margin: 0 auto;
+        text-align: center;
+        border-inline: 1px solid var(--border);
+        min-height: 100svh;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        color: var(--text);
+      }
 
-        h1 {
-            font-size: 56px;
-            letter-spacing: -1.68px;
-            margin: 32px 0;
-        }
+      .container {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
 
-        p {
-            margin: 0;
-        }
-    `
+      .row {
+        display: flex;
+        flex-direction: row;
+        gap: 16px;
+      }
+
+      .column {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+    `;
   }
 }
 
-window.customElements.define('main-element', MainElement)
+window.customElements.define("main-element", MainElement);

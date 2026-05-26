@@ -1,58 +1,61 @@
-import { cloneDeep } from 'lodash-es'
-import { deepFreeze } from './object-helpers.js'
+import { cloneDeep } from "lodash-es";
+import { deepFreeze } from "./object-helpers.js";
 
-export { isEqual } from 'lodash-es'
+export { isEqual } from "lodash-es";
 
 export class ObservableData extends EventTarget {
-  constructor (initialData) {
-    super()
+  constructor(initialData) {
+    super();
     // populate data object with new immutable deep clone
-    this._data = deepFreeze(cloneDeep(initialData))
+    this._data = deepFreeze(cloneDeep(initialData));
   }
 
-  get data () {
-    return this._data
+  get data() {
+    return this._data;
   }
 
-  next (callBack) {
-    const previousData = this.data
-    const data = cloneDeep(this.data)
+  next(callBack) {
+    const previousData = this.data;
+    const data = cloneDeep(this.data);
 
     // mutate data with consumer callback
-    callBack(data)
+    callBack(data);
 
     // commit the mutated data as the current data
-    this._data = deepFreeze(data)
+    this._data = deepFreeze(data);
 
-    this.dispatchEvent(new CustomEvent('next', {
-      detail: {
-        data,
-        previousData
-      },
-    }),)
+    this.dispatchEvent(
+      new CustomEvent("next", {
+        detail: {
+          data,
+          previousData,
+        },
+      }),
+    );
   }
 
-  observe (observer, condition = (data, previousData) => true) {
+  observe(observer, condition = (data, previousData) => true) {
     const callBackWrapper = (e) => {
-      const { data, previousData } = e.detail
+      const { data, previousData } = e.detail;
       if (condition(data, previousData)) {
-        observer(data, previousData)
+        observer(data, previousData);
       }
-    }
+    };
 
     // always execute the observer callback first time to for initialization purposes
-    observer(this.data, null)
+    observer(this.data, null);
 
-    this.addEventListener('next', callBackWrapper)
-    return new Subscription(() => this.removeEventListener('next', callBackWrapper))
+    this.addEventListener("next", callBackWrapper);
+    return new Subscription(() =>
+      this.removeEventListener("next", callBackWrapper),
+    );
   }
 }
 
 class Subscription {
-  unsubscribe
+  unsubscribe;
 
-  constructor (unsubscribe) {
-    this.unsubscribe = unsubscribe
+  constructor(unsubscribe) {
+    this.unsubscribe = unsubscribe;
   }
 }
-

@@ -1,32 +1,31 @@
-import { html, LitElement } from 'lit'
-import { ContextConsumer } from '@lit/context'
-import { context } from './context.js'
+import { html, LitElement } from "lit";
+import { ContextConsumer } from "@lit/context";
+import { context } from "./context.js";
 
 export class ChildElement extends LitElement {
-  contextConsumer = new ContextConsumer(this, { context })
+  contextConsumer = new ContextConsumer(this, { context });
 
-  static get properties () {
+  static get properties() {
     return {
       /**
        * The number of times the button has been clicked.
        */
       count: { type: Number },
-    }
+    };
   }
 
-  connectedCallback () {
-    super.connectedCallback()
-    this.state$ = this.contextConsumer.value.state$
+  connectedCallback() {
+    super.connectedCallback();
+    this.state$ = this.contextConsumer.value.state$;
 
     this.subscription = this.state$.observe((data) => {
-        this.count = data.clock.counter
-      }
-    )
+      this.count = data.clock.counter;
+    });
   }
 
-  render () {
-    return html`<h3>Consumer data: <code>${this.count}</code></h3>`
+  render() {
+    return html`<h3>Consumer data: <code>${this.count}</code></h3>`;
   }
 }
 
-customElements.define('child-element', ChildElement)
+window.customElements.define("child-element", ChildElement);
