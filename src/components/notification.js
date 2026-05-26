@@ -5,14 +5,18 @@ import { context } from "../context.js";
 
 export class NotificationComponent extends ScopedElementsMixin(LitElement) {
   state$;
+  clock$;
 
   constructor() {
     super();
     new ContextConsumer(this, {
       context: context,
-      callback: ({ state$ }) => (this.state$ = state$),
+      callback: ({ state$, clock$ }) => {
+        this.state$ = state$;
+        this.clock$ = clock$;
+      },
     });
-    this.message = "Please select a product :)";
+    this.message = "";
   }
 
   static get properties() {
@@ -24,9 +28,8 @@ export class NotificationComponent extends ScopedElementsMixin(LitElement) {
   connectedCallback() {
     super.connectedCallback();
 
-    // Watch customer changes
-    this.subscription = this.state$.observe((data) => {
-      if (data.customer.selectedProduct) {
+    this.subscriptionSelectedProduct = this.state$.observe(
+      (data) => {
         if (
           !data.customer.selectedProduct.hasOptions(
             data.customer.selectedOptions,
@@ -37,25 +40,37 @@ export class NotificationComponent extends ScopedElementsMixin(LitElement) {
         } else {
           this.message = "Valid product selected";
         }
-      } else {
+      },
+      (data) => data.customer.selectedProduct,
+    );
+
+    this.subscriptionClock = this.clock$.observe(
+      (data) => {
         this.message = "Please select a product :)";
-      }
-    });
+      },
+      (data) => data.counter > 5 && !this.state$.data.customer.selectedProduct,
+    );
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.subscription.unsubscribe();
+    this.subscriptionSelectedProduct.unsubscribe();
+    this.subscriptionClock.unsubscribe();
   }
 
   render() {
-    return html` <div>${this.message}</div> `;
+    return html`${this.message.length > 0
+      ? html`<div>${this.message}</div>`
+      : ""} `;
   }
 
   static get styles() {
     return css`
       :host {
         display: block;
+      }
+
+      div {
         border: 1px solid #000;
         padding: 16px;
       }

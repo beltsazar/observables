@@ -1,7 +1,7 @@
 import { expect, describe, it, beforeEach, afterEach } from "vitest";
 import { spy } from "sinon";
 import { cloneDeep } from "lodash-es";
-import { State } from "../state/State.js";
+import { model } from "../state/State.js";
 import { ObservableData, isEqual } from "./observableData.js";
 
 describe("ObservableData", () => {
@@ -11,7 +11,7 @@ describe("ObservableData", () => {
   let observerWrapper;
 
   beforeEach(() => {
-    observable$ = new ObservableData(cloneDeep(new State()));
+    observable$ = new ObservableData(cloneDeep(model));
 
     event = {};
     observerWrapper = {
@@ -35,7 +35,7 @@ describe("ObservableData", () => {
 
   it("should register observer and call it immediately with initial data", () => {
     observable$.observe(observerWrapper.observer);
-    expect(event.data).to.deep.equal(cloneDeep(new State()));
+    expect(event.data).to.deep.equal(new ObservableData(cloneDeep(model)).data);
     expect(event.previousData).to.deep.equal(null);
     expect(callBackSpy.calledOnce).to.equal(true);
 
@@ -52,8 +52,11 @@ describe("ObservableData", () => {
     expect(event.data.clock.counter).to.equal(100);
     expect(event.previousData.clock.counter).to.equal(0);
     expect(
-      isEqual(event.data.clock.counter, event.previousData.clock.counter),
-    ).to.equal(false);
+      observable$.isChanged(
+        event.data.clock.counter,
+        event.previousData.clock.counter,
+      ),
+    ).to.equal(true);
     expect(observable$.data.clock.counter).to.equal(100);
   });
 
@@ -79,36 +82,43 @@ describe("ObservableData", () => {
       true,
     );
     expect(event.data.products).not.to.deep.equal(event.previousData.products);
-    expect(isEqual(event.data.products, event.previousData.products)).to.equal(
-      false,
-    );
     expect(
-      isEqual(event.data.products[0], event.previousData.products[0]),
-    ).to.equal(false);
-    expect(
-      isEqual(event.data.products[2], event.previousData.products[2]),
+      observable$.isChanged(event.data.products, event.previousData.products),
     ).to.equal(true);
+    expect(
+      observable$.isChanged(
+        event.data.products[0],
+        event.previousData.products[0],
+      ),
+    ).to.equal(true);
+    expect(
+      observable$.isChanged(
+        event.data.products[2],
+        event.previousData.products[2],
+      ),
+    ).to.equal(false);
 
     expect(observable$.data.options[1].price.amount).to.equal(20);
     expect(observable$.data.products[0].options[1].price.amount).to.equal(20);
   });
 
   it("should call observer conditionally", () => {
+    observable$.next((data) => (data.clock.counter = 0));
     observable$.observe(
       observerWrapper.observer,
       (data) => data.clock.counter === 5,
     );
-    expect(callBackSpy.callCount).to.equal(1);
+    expect(callBackSpy.callCount).to.equal(0);
 
     observable$.next((data) => {
       data.clock.counter = 100;
     });
-    expect(callBackSpy.callCount).to.equal(1);
+    expect(callBackSpy.callCount).to.equal(0);
 
     observable$.next((data) => {
       data.clock.counter = 5;
     });
-    expect(callBackSpy.callCount).to.equal(2);
+    expect(callBackSpy.callCount).to.equal(1);
   });
 
   it("should be able to unsubscribe", () => {

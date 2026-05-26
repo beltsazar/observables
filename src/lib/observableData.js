@@ -1,7 +1,5 @@
-import { cloneDeep } from "lodash-es";
+import { cloneDeep, isEqual } from "lodash-es";
 import { deepFreeze } from "./object-helpers.js";
-
-export { isEqual } from "lodash-es";
 
 export class ObservableData extends EventTarget {
   constructor(initialData) {
@@ -43,12 +41,18 @@ export class ObservableData extends EventTarget {
     };
 
     // always execute the observer callback first time to for initialization purposes
-    observer(this.data, null);
+    if (condition(this.data, null)) {
+      observer(this.data, null);
+    }
 
     this.addEventListener("next", callBackWrapper);
     return new Subscription(() =>
       this.removeEventListener("next", callBackWrapper),
     );
+  }
+
+  isChanged(data, previousData) {
+    return !isEqual(data, previousData);
   }
 }
 
