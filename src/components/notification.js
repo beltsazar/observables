@@ -10,7 +10,7 @@ export class NotificationComponent extends ScopedElementsMixin(LitElement) {
   constructor() {
     super();
     new ContextConsumer(this, {
-      context: context,
+      context,
       callback: ({ state$, clock$ }) => {
         this.state$ = state$;
         this.clock$ = clock$;

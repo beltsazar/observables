@@ -8,7 +8,7 @@ export class ClockComponent extends LitElement {
   constructor() {
     super();
     new ContextConsumer(this, {
-      context: context,
+      context,
       callback: ({ clock$ }) => (this.clock$ = clock$),
     });
     this.counter = 0;

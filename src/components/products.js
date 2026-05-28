@@ -10,7 +10,7 @@ export class ProductsComponent extends ScopedElementsMixin(LitElement) {
   constructor() {
     super();
     new ContextConsumer(this, {
-      context: context,
+      context,
       callback: ({ state$ }) => (this.state$ = state$),
     });
     this.products = [];

@@ -16,7 +16,7 @@ export class FeatureComponent extends ScopedElementsMixin(LitElement) {
   constructor() {
     super();
     new ContextProvider(this, {
-      context: context,
+      context,
       initialValue: { state$: this.state$, clock$: new Clock() },
     });
     this.count = 0;
