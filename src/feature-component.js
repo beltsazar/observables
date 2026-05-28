@@ -10,7 +10,7 @@ import { SelectorComponent } from "./components/selector.js";
 import { ProductsComponent } from "./components/products.js";
 import { NotificationComponent } from "./components/notification.js";
 
-export class MainFeature extends ScopedElementsMixin(LitElement) {
+export class FeatureComponent extends ScopedElementsMixin(LitElement) {
   state$ = new ApplicationState(model);
 
   constructor() {
@@ -20,6 +20,12 @@ export class MainFeature extends ScopedElementsMixin(LitElement) {
       initialValue: { state$: this.state$, clock$: new Clock() },
     });
     this.count = 0;
+  }
+
+  static get properties() {
+    return {
+      title: { type: String },
+    };
   }
 
   static get scopedElements() {
@@ -45,7 +51,7 @@ export class MainFeature extends ScopedElementsMixin(LitElement) {
 
   render() {
     return html`
-      <h1>Product selector</h1>
+      <h1>${this.title}</h1>
       <div class="container">
         <div class="row">
           <div class="column">
@@ -89,11 +95,8 @@ export class MainFeature extends ScopedElementsMixin(LitElement) {
         --border: #e5e4e7;
 
         font-family: system-ui, "Segoe UI", Roboto, sans-serif;
-        //width: 1126px;
         max-width: 100%;
         margin: 0 auto;
-       // border-inline: 1px solid var(--border);
-        //min-height: 100svh;
         display: flex;
         flex-direction: column;
         box-sizing: border-box;
@@ -122,4 +125,4 @@ export class MainFeature extends ScopedElementsMixin(LitElement) {
   }
 }
 
-window.customElements.define("main-feature", MainFeature);
+window.customElements.define("feature-component", FeatureComponent);
