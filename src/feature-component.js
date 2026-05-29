@@ -1,8 +1,9 @@
 import { LitElement, css, html } from "lit";
 import { ContextProvider } from "@lit/context";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
+import { ReactiveData } from "./lib/ReactiveData.js";
 import { context } from "./context.js";
-import { ApplicationState, model } from "./state/State.js";
+import { model } from "./state/model.js";
 import { Clock } from "./services/Clock.js";
 import { Product } from "./state/objects/Product.js";
 import { SelectedProductComponent } from "./components/selected-product.js";
@@ -11,7 +12,7 @@ import { ProductsComponent } from "./components/products.js";
 import { NotificationComponent } from "./components/notification.js";
 
 export class FeatureComponent extends ScopedElementsMixin(LitElement) {
-  state$ = new ApplicationState(model);
+  state$ = new ReactiveData(model);
 
   constructor() {
     super();

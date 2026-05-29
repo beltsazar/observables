@@ -1,6 +1,6 @@
 import { expect, describe, it, beforeEach, afterEach } from "vitest";
 import { cloneDeep } from "lodash-es";
-import { getState } from "../state/State.js";
+import { getState } from "../state/model.js";
 import { getPathsToTargetObject } from "./object-helpers.js";
 
 describe.skip("getPathsToDeepObject", () => {

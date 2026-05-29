@@ -29,6 +29,8 @@ export class NotificationComponent extends ScopedElementsMixin(LitElement) {
   connectedCallback() {
     super.connectedCallback();
 
+    this.counter = this.clock$.counter;
+
     this.subscriptionSelectedProduct = this.state$.react((data) => {
       if (
         !data.customer.selectedProduct.hasOptions(data.customer.selectedOptions)

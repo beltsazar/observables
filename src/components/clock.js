@@ -11,7 +11,6 @@ export class ClockComponent extends LitElement {
       context,
       callback: ({ clock$ }) => (this.clock$ = clock$),
     });
-    this.counter = 0;
   }
 
   static get properties() {
@@ -22,6 +21,9 @@ export class ClockComponent extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
+
+    this.counter = this.clock$.counter;
+
     this.subscription = this.clock$.react((data) => {
       this.counter = data.counter;
     });

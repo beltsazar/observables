@@ -1,4 +1,3 @@
-import { ReactiveData } from "../lib/ReactiveData.js";
 import { Option } from "./objects/Option.js";
 import { Product } from "./objects/Product.js";
 import { ProductList } from "./objects/ProductList.js";
@@ -39,8 +38,11 @@ export const model = {
   },
 };
 
-export class ApplicationState extends ReactiveData {
-  constructor(model) {
-    super(model);
-  }
-}
+export const actions = {
+  DATA_FOUND: "data_found",
+  DATA_NOT_FOUND: "data_not_found",
+  UPDATE_SUCCESSFUL: "update_successful",
+  FLOW_COMPLETED: "flow_completed",
+  FLOW_REJECTED: "flow_rejected",
+  ERROR: "error",
+};

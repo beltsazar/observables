@@ -1,7 +1,7 @@
 import { expect, describe, it, beforeEach, afterEach } from "vitest";
 import { spy } from "sinon";
 import { cloneDeep } from "lodash-es";
-import { model } from "../state/State.js";
+import { model } from "../state/model.js";
 import { ReactiveData, isEqual } from "./ReactiveData.js";
 
 describe("ObservableData", () => {
