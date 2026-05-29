@@ -16,40 +16,33 @@ export class NotificationComponent extends ScopedElementsMixin(LitElement) {
         this.clock$ = clock$;
       },
     });
-    this.message = "";
+    this.message = "Please select a product ...";
   }
 
   static get properties() {
     return {
       message: { type: String },
+      counter: { type: Number },
     };
   }
 
   connectedCallback() {
     super.connectedCallback();
 
-    this.subscriptionSelectedProduct = this.state$.observe(
-      (data) => {
-        if (
-          !data.customer.selectedProduct.hasOptions(
-            data.customer.selectedOptions,
-          )
-        ) {
-          this.message =
-            "The selected product does not contain the selected options. Please select a different product!";
-        } else {
-          this.message = "Valid product selected";
-        }
-      },
-      (data) => data.customer.selectedProduct,
-    );
+    this.subscriptionSelectedProduct = this.state$.observe((data) => {
+      if (
+        !data.customer.selectedProduct.hasOptions(data.customer.selectedOptions)
+      ) {
+        this.message =
+          "The selected product does not contain the selected options. Please select a different product!";
+      } else {
+        this.message = "Valid product selected";
+      }
+    });
 
-    this.subscriptionClock = this.clock$.observe(
-      (data) => {
-        this.message = "Please select a product :)";
-      },
-      (data) => data.counter > 5 && !this.state$.data.customer.selectedProduct,
-    );
+    this.subscriptionClock = this.clock$.observe((data) => {
+      this.counter = data.counter;
+    });
   }
 
   disconnectedCallback() {
@@ -59,9 +52,7 @@ export class NotificationComponent extends ScopedElementsMixin(LitElement) {
   }
 
   render() {
-    return html`${this.message.length > 0
-      ? html`<div>${this.message}</div>`
-      : ""} `;
+    return html`<div>${this.message} (${this.counter})</div>`;
   }
 
   static get styles() {

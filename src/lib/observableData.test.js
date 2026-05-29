@@ -33,16 +33,6 @@ describe("ObservableData", () => {
     expect(observable$ instanceof ObservableData).to.equal(true);
   });
 
-  it("should register observer and call it immediately with initial data", () => {
-    observable$.observe(observerWrapper.observer);
-    expect(event.data).to.deep.equal(new ObservableData(cloneDeep(model)).data);
-    expect(event.previousData).to.deep.equal(null);
-    expect(callBackSpy.calledOnce).to.equal(true);
-
-    observable$.next(() => {});
-    expect(callBackSpy.calledTwice).to.equal(true);
-  });
-
   it("should change a simple property", () => {
     observable$.observe(observerWrapper.observer);
 
@@ -102,41 +92,22 @@ describe("ObservableData", () => {
     expect(observable$.data.products[0].options[1].price.amount).to.equal(20);
   });
 
-  it("should call observer conditionally", () => {
-    observable$.next((data) => (data.clock.counter = 0));
-    observable$.observe(
-      observerWrapper.observer,
-      (data) => data.clock.counter === 5,
-    );
-    expect(callBackSpy.callCount).to.equal(0);
-
-    observable$.next((data) => {
-      data.clock.counter = 100;
-    });
-    expect(callBackSpy.callCount).to.equal(0);
-
-    observable$.next((data) => {
-      data.clock.counter = 5;
-    });
-    expect(callBackSpy.callCount).to.equal(1);
-  });
-
   it("should be able to unsubscribe", () => {
     const subscription1 = observable$.observe(observerWrapper.observer);
     const subscription2 = observable$.observe(observerWrapper.observer);
 
-    expect(callBackSpy.callCount).to.equal(2);
+    expect(callBackSpy.callCount).to.equal(0);
 
     observable$.next(() => {});
-    expect(callBackSpy.callCount).to.equal(4);
+    expect(callBackSpy.callCount).to.equal(2);
 
     subscription1.unsubscribe();
     observable$.next(() => {});
-    expect(callBackSpy.callCount).to.equal(5);
+    expect(callBackSpy.callCount).to.equal(3);
 
     subscription2.unsubscribe();
     observable$.next(() => {});
-    expect(callBackSpy.callCount).to.equal(5);
+    expect(callBackSpy.callCount).to.equal(3);
   });
 
   it("should be immutable!!!", () => {

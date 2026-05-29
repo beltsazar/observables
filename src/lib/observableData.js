@@ -32,18 +32,11 @@ export class ObservableData extends EventTarget {
     );
   }
 
-  observe(observer, condition = (data, previousData) => true) {
+  observe(observer) {
     const callBackWrapper = (e) => {
       const { data, previousData } = e.detail;
-      if (condition(data, previousData)) {
-        observer(data, previousData);
-      }
+      observer(data, previousData);
     };
-
-    // always execute the observer callback first time to for initialization purposes
-    if (condition(this.data, null)) {
-      observer(this.data, null);
-    }
 
     this.addEventListener("next", callBackWrapper);
     return new Subscription(() =>
