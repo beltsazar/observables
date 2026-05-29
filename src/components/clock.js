@@ -22,7 +22,7 @@ export class ClockComponent extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.subscription = this.clock$.observe((data) => {
+    this.subscription = this.clock$.react((data) => {
       this.counter = data.counter;
     });
   }

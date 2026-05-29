@@ -1,7 +1,7 @@
 import { cloneDeep, isEqual } from "lodash-es";
 import { deepFreeze } from "./object-helpers.js";
 
-export class ObservableData extends EventTarget {
+export class ReactiveData extends EventTarget {
   constructor(initialData) {
     super();
     // populate data object with new immutable deep clone
@@ -12,18 +12,18 @@ export class ObservableData extends EventTarget {
     return this._data;
   }
 
-  next(callBack) {
+  act(actor) {
     const previousData = this.data;
     const data = cloneDeep(this.data);
 
     // mutate data with consumer callback
-    callBack(data);
+    actor(data);
 
     // commit the mutated data as the current data
     this._data = deepFreeze(data);
 
     this.dispatchEvent(
-      new CustomEvent("next", {
+      new CustomEvent("action", {
         detail: {
           data,
           previousData,
@@ -32,15 +32,15 @@ export class ObservableData extends EventTarget {
     );
   }
 
-  observe(observer) {
+  react(reactor) {
     const callBackWrapper = (e) => {
       const { data, previousData } = e.detail;
-      observer(data, previousData);
+      reactor(data, previousData);
     };
 
-    this.addEventListener("next", callBackWrapper);
+    this.addEventListener("action", callBackWrapper);
     return new Subscription(() =>
-      this.removeEventListener("next", callBackWrapper),
+      this.removeEventListener("action", callBackWrapper),
     );
   }
 

@@ -1,4 +1,4 @@
-import { ObservableData } from "../lib/observableData.js";
+import { ReactiveData } from "../lib/ReactiveData.js";
 import { Option } from "./objects/Option.js";
 import { Product } from "./objects/Product.js";
 import { ProductList } from "./objects/ProductList.js";
@@ -39,7 +39,7 @@ export const model = {
   },
 };
 
-export class ApplicationState extends ObservableData {
+export class ApplicationState extends ReactiveData {
   constructor(model) {
     super(model);
   }

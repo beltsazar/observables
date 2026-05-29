@@ -29,7 +29,7 @@ export class SelectorComponent extends ScopedElementsMixin(LitElement) {
 
   _onSubmit(e) {
     // Set selected customer options based on checked checkboxes
-    this.state$.next((data) => {
+    this.state$.act((data) => {
       data.customer.selectedOptions = data.options.filter((option) => {
         const form = e.target;
         const input = form ? form.elements.namedItem(String(option.id)) : null;

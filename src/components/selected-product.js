@@ -23,7 +23,7 @@ export class SelectedProductComponent extends ScopedElementsMixin(LitElement) {
 
   connectedCallback() {
     super.connectedCallback();
-    this.subscription = this.state$.observe(
+    this.subscription = this.state$.react(
       (data) => (this.selectedProduct = data.customer.selectedProduct),
     );
   }

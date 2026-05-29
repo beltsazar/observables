@@ -39,7 +39,7 @@ export class FeatureComponent extends ScopedElementsMixin(LitElement) {
 
   connectedCallback() {
     super.connectedCallback();
-    this.subscription = this.state$.observe((data) => {
+    this.subscription = this.state$.react((data) => {
       console.log("data", data);
     });
   }
@@ -79,7 +79,7 @@ export class FeatureComponent extends ScopedElementsMixin(LitElement) {
   }
 
   _onClick() {
-    this.state$.next((data) => {
+    this.state$.act((data) => {
       const id = data.products.length + 1;
       const randomOption =
         data.options[Math.floor(Math.random() * data.options.length)];

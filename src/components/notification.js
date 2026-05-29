@@ -29,7 +29,7 @@ export class NotificationComponent extends ScopedElementsMixin(LitElement) {
   connectedCallback() {
     super.connectedCallback();
 
-    this.subscriptionSelectedProduct = this.state$.observe((data) => {
+    this.subscriptionSelectedProduct = this.state$.react((data) => {
       if (
         !data.customer.selectedProduct.hasOptions(data.customer.selectedOptions)
       ) {
@@ -40,7 +40,7 @@ export class NotificationComponent extends ScopedElementsMixin(LitElement) {
       }
     });
 
-    this.subscriptionClock = this.clock$.observe((data) => {
+    this.subscriptionClock = this.clock$.react((data) => {
       this.counter = data.counter;
     });
   }
