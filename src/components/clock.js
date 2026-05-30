@@ -24,7 +24,7 @@ export class ClockComponent extends LitElement {
 
     this.counter = this.clock$.counter;
 
-    this.subscription = this.clock$.react((data) => {
+    this.subscription = this.clock$.observe((data) => {
       this.counter = data.counter;
     });
   }

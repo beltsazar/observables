@@ -1,11 +1,11 @@
-import { ReactiveData } from "../lib/ReactiveData.js";
+import { ObservableData } from "../lib/ObservableData.js";
 
-export class Clock extends ReactiveData {
+export class Clock extends ObservableData {
   constructor(startCount = 0) {
     super({
       counter: startCount,
     });
-    setInterval(() => this.act((data) => data.counter++), 1000);
+    // setInterval(() => this.act((data) => data.counter++), 1000);
   }
 
   get counter() {
@@ -13,6 +13,6 @@ export class Clock extends ReactiveData {
   }
 
   reset() {
-    this.act((data) => (data.counter = 0));
+    this.action((data) => (data.counter = 0));
   }
 }

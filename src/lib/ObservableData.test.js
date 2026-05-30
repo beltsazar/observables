@@ -2,7 +2,7 @@ import { expect, describe, it, beforeEach, afterEach } from "vitest";
 import { spy } from "sinon";
 import { cloneDeep } from "lodash-es";
 import { model } from "../state/model.js";
-import { ReactiveData, isEqual } from "./ReactiveData.js";
+import { ObservableData, isEqual } from "./ObservableData.js";
 
 describe("ObservableData", () => {
   let observable$;
@@ -11,7 +11,7 @@ describe("ObservableData", () => {
   let observerWrapper;
 
   beforeEach(() => {
-    observable$ = new ReactiveData(cloneDeep(model));
+    observable$ = new ObservableData(cloneDeep(model));
 
     event = {};
     observerWrapper = {
@@ -30,13 +30,13 @@ describe("ObservableData", () => {
   });
 
   it("should correctly instantiate an observable data object", () => {
-    expect(observable$ instanceof ReactiveData).to.equal(true);
+    expect(observable$ instanceof ObservableData).to.equal(true);
   });
 
   it("should change a simple property", () => {
-    observable$.react(observerWrapper.observer);
+    observable$.observe(observerWrapper.observer);
 
-    observable$.act((data) => {
+    observable$.action((data) => {
       data.clock.counter = 100;
     });
     expect(event.data.clock.counter).to.equal(100);
@@ -51,9 +51,9 @@ describe("ObservableData", () => {
   });
 
   it("should clone objects matching original properties", () => {
-    observable$.react(observerWrapper.observer);
+    observable$.observe(observerWrapper.observer);
 
-    observable$.act((data) => {});
+    observable$.action((data) => {});
     expect(event.data.products === event.previousData.products).not.to.equal(
       true,
     );
@@ -61,11 +61,11 @@ describe("ObservableData", () => {
   });
 
   it("should respect deep nested child objects changes", () => {
-    observable$.react(observerWrapper.observer);
+    observable$.observe(observerWrapper.observer);
     expect(observable$.data.options[1].price.amount).to.equal(200);
     expect(observable$.data.products[0].options[1].price.amount).to.equal(200);
 
-    observable$.act((data) => {
+    observable$.action((data) => {
       data.options[1].price.amount = 20;
     });
     expect(event.data.products === event.previousData.products).not.to.equal(
@@ -93,20 +93,20 @@ describe("ObservableData", () => {
   });
 
   it("should be able to unsubscribe", () => {
-    const subscription1 = observable$.react(observerWrapper.observer);
-    const subscription2 = observable$.react(observerWrapper.observer);
+    const subscription1 = observable$.observe(observerWrapper.observer);
+    const subscription2 = observable$.observe(observerWrapper.observer);
 
     expect(callBackSpy.callCount).to.equal(0);
 
-    observable$.act(() => {});
+    observable$.action(() => {});
     expect(callBackSpy.callCount).to.equal(2);
 
     subscription1.unsubscribe();
-    observable$.act(() => {});
+    observable$.action(() => {});
     expect(callBackSpy.callCount).to.equal(3);
 
     subscription2.unsubscribe();
-    observable$.act(() => {});
+    observable$.action(() => {});
     expect(callBackSpy.callCount).to.equal(3);
   });
 
@@ -120,8 +120,8 @@ describe("ObservableData", () => {
   });
 
   it("should call an object method", () => {
-    observable$.react(observerWrapper.observer);
-    observable$.act(() => {});
+    observable$.observe(observerWrapper.observer);
+    observable$.action(() => {});
     expect(
       observable$.data.products[0].hasOption(observable$.data.options[1]),
     ).to.equal(true);

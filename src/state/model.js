@@ -37,12 +37,3 @@ export const model = {
     counter: 0,
   },
 };
-
-export const actions = {
-  DATA_FOUND: "data_found",
-  DATA_NOT_FOUND: "data_not_found",
-  UPDATE_SUCCESSFUL: "update_successful",
-  FLOW_COMPLETED: "flow_completed",
-  FLOW_REJECTED: "flow_rejected",
-  ERROR: "error",
-};
