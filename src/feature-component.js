@@ -3,7 +3,7 @@ import { ContextProvider } from "@lit/context";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { ObservableData } from "./lib/ObservableData.js";
 import { context } from "./context.js";
-import { model } from "./state";
+import { actions, model } from "./state";
 import { Clock } from "./services/Clock.js";
 import { Product } from "./state/objects/Product.js";
 import { SelectedProductComponent } from "./components/selected-product.js";
@@ -85,7 +85,7 @@ export class FeatureComponent extends ScopedElementsMixin(LitElement) {
       const randomOption =
         data.options[Math.floor(Math.random() * data.options.length)];
       data.products.push(new Product(id, `Product ${id}`, [randomOption]));
-    });
+    }, actions.ADD_PRODUCT);
   }
 
   static get styles() {

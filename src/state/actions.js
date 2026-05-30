@@ -1,4 +1,5 @@
 export const actions = {
-  PRODUCT_SELECTED: "product-selected",
-  OPTIONS_SELECTED: "options-selected",
+  SELECT_PRODUCT: "select-product",
+  SELECT_OPTIONS: "select-options",
+  ADD_PRODUCT: "add-product",
 };

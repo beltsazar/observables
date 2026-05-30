@@ -1,6 +1,8 @@
 import { cloneDeep, isEqual } from "lodash-es";
 import { deepFreeze } from "./object-helpers.js";
 
+const DATA_CHANGED = "data-changed";
+
 export class ObservableData extends EventTarget {
   constructor(initialData) {
     super();
@@ -8,13 +10,11 @@ export class ObservableData extends EventTarget {
     this._data = deepFreeze(cloneDeep(initialData));
   }
 
-  static DEFAULT_ACTION_NAME = "data-changed";
-
   get data() {
     return this._data;
   }
 
-  action(callback, actionName = null) {
+  action(callback, action = null) {
     const previousData = this.data;
     const data = cloneDeep(this.data);
 
@@ -25,46 +25,27 @@ export class ObservableData extends EventTarget {
     this._data = deepFreeze(data);
 
     this.dispatchEvent(
-      new CustomEvent(actionName, {
+      new CustomEvent(DATA_CHANGED, {
         detail: {
           data,
           previousData,
-        },
-      }),
-    );
-
-    // if a specific action was provided, trigger specific event for specific observers
-    if (actionName) {
-      this.dispatchEvent(
-        new CustomEvent(actionName, {
-          detail: {
-            data,
-            previousData,
-          },
-        }),
-      );
-    }
-
-    // always trigger the default data change event for non-specific observers
-    this.dispatchEvent(
-      new CustomEvent(ObservableData.DEFAULT_ACTION_NAME, {
-        detail: {
-          data,
-          previousData,
+          action,
         },
       }),
     );
   }
 
-  observe(callback, actionName = ObservableData.DEFAULT_ACTION_NAME) {
+  observe(callback, observeAction) {
     const callBackWrapper = (e) => {
-      const { data, previousData } = e.detail;
-      callback(data, previousData);
+      const { data, previousData, action } = e.detail;
+      if (!observeAction || observeAction === action) {
+        callback(data, previousData);
+      }
     };
 
-    this.addEventListener(actionName, callBackWrapper);
+    this.addEventListener(DATA_CHANGED, callBackWrapper);
     return new Subscription(() =>
-      this.removeEventListener(actionName, callBackWrapper),
+      this.removeEventListener(DATA_CHANGED, callBackWrapper),
     );
   }
 

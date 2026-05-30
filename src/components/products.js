@@ -33,23 +33,31 @@ export class ProductsComponent extends ScopedElementsMixin(LitElement) {
     super.connectedCallback();
 
     this.products = [...this.state$.data.products];
-    this.subscription = this.state$.observe((data) => {
-      console.log("products callback");
-      this.products = [
-        ...data.products.filterByOptions(data.customer.selectedOptions),
-      ];
-    }, actions.OPTIONS_SELECTED);
+    this.selectOptionsSubscription = this.state$.observe((data) => {
+      this.updateProducts(data);
+    }, actions.SELECT_OPTIONS);
+
+    this.addProductSubscription = this.state$.observe((data) => {
+      this.updateProducts(data);
+    }, actions.ADD_PRODUCT);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.subscription.unsubscribe();
+    this.selectOptionsSubscription.unsubscribe();
+    this.addProductSubscription.unsubscribe();
+  }
+
+  updateProducts(data) {
+    this.products = [
+      ...data.products.filterByOptions(data.customer.selectedOptions),
+    ];
   }
 
   handleProductSelection(e, product) {
     this.state$.action(
       (data) => (data.customer.selectedProduct = product),
-      actions.PRODUCT_SELECTED,
+      actions.SELECT_PRODUCT,
     );
     e.preventDefault();
   }

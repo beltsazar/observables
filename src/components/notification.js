@@ -42,7 +42,7 @@ export class NotificationComponent extends ScopedElementsMixin(LitElement) {
       } else {
         this.message = "Valid product selected";
       }
-    }, actions.PRODUCT_SELECTED);
+    }, actions.SELECT_PRODUCT);
 
     this.subscriptionClock = this.clock$.observe((data) => {
       this.counter = data.counter;

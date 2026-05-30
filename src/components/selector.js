@@ -36,7 +36,7 @@ export class SelectorComponent extends ScopedElementsMixin(LitElement) {
         const input = form ? form.elements.namedItem(String(option.id)) : null;
         return Boolean(input?.checked);
       });
-    }, actions.OPTIONS_SELECTED);
+    }, actions.SELECT_OPTIONS);
 
     e.preventDefault();
   }
