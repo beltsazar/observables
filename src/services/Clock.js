@@ -5,7 +5,7 @@ export class Clock extends ObservableData {
     super({
       counter: startCount,
     });
-    // setInterval(() => this.act((data) => data.counter++), 1000);
+    setInterval(() => this.update((data) => data.counter++), 1000);
   }
 
   get counter() {

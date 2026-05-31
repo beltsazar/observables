@@ -16,7 +16,6 @@ export class NotificationComponent extends ScopedElementsMixin(LitElement) {
         this.clock$ = clock$;
       },
     });
-    this.message = "Please select a product ...";
   }
 
   static get properties() {
@@ -29,26 +28,30 @@ export class NotificationComponent extends ScopedElementsMixin(LitElement) {
   connectedCallback() {
     super.connectedCallback();
     this.counter = this.clock$.counter;
-    this.subscriptionSelectedProduct = this.state$.observe((data) => {
-      if (
-        !data.customer.selectedProduct.hasOptions(data.customer.selectedOptions)
-      ) {
+    this.selectedProductSubscription = this.state$.observe((data) => {
+      const {
+        customer: { selectedProduct, selectedOptions },
+      } = data;
+
+      if (selectedProduct && !selectedProduct.hasOptions(selectedOptions))
         this.message =
           "The selected product does not contain the selected options. Please select a different product!";
-      } else {
+      else if (selectedProduct) {
         this.message = "Valid product selected";
+      } else {
+        this.message = "Please select a product ...";
       }
     });
 
-    this.subscriptionClock = this.clock$.observe((data) => {
+    this.clockSubscription = this.clock$.observe((data) => {
       this.counter = data.counter;
     });
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.subscriptionSelectedProduct.unsubscribe();
-    this.subscriptionClock.unsubscribe();
+    this.selectedProductSubscription.unsubscribe();
+    this.clockSubscription.unsubscribe();
   }
 
   render() {

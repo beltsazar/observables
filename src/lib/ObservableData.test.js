@@ -1,8 +1,8 @@
 import { expect, describe, it, beforeEach, afterEach } from "vitest";
 import { spy } from "sinon";
-import { cloneDeep } from "lodash-es";
+import { cloneDeep, isEqual } from "lodash-es";
 import { model } from "../state/model.js";
-import { ObservableData, isEqual } from "./ObservableData.js";
+import { ObservableData } from "./ObservableData.js";
 
 describe("ObservableData", () => {
   let observable$;
@@ -52,11 +52,8 @@ describe("ObservableData", () => {
     expect(event.data.clock.counter).to.equal(100);
     expect(event.previousData.clock.counter).to.equal(0);
     expect(
-      observable$.isUpdated(
-        event.data.clock.counter,
-        event.previousData.clock.counter,
-      ),
-    ).to.equal(true);
+      isEqual(event.data.clock.counter, event.previousData.clock.counter),
+    ).to.equal(false);
     expect(observable$.data.clock.counter).to.equal(100);
   });
 
@@ -82,21 +79,15 @@ describe("ObservableData", () => {
       true,
     );
     expect(event.data.products).not.to.deep.equal(event.previousData.products);
+    expect(isEqual(event.data.products, event.previousData.products)).to.equal(
+      false,
+    );
     expect(
-      observable$.isUpdated(event.data.products, event.previousData.products),
-    ).to.equal(true);
-    expect(
-      observable$.isUpdated(
-        event.data.products[0],
-        event.previousData.products[0],
-      ),
-    ).to.equal(true);
-    expect(
-      observable$.isUpdated(
-        event.data.products[2],
-        event.previousData.products[2],
-      ),
+      isEqual(event.data.products[0], event.previousData.products[0]),
     ).to.equal(false);
+    expect(
+      isEqual(event.data.products[2], event.previousData.products[2]),
+    ).to.equal(true);
 
     expect(observable$.data.options[1].price.amount).to.equal(20);
     expect(observable$.data.products[0].options[1].price.amount).to.equal(20);
