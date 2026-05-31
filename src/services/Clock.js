@@ -13,6 +13,6 @@ export class Clock extends ObservableData {
   }
 
   reset() {
-    this.action((data) => (data.counter = 0));
+    this.update((data) => (data.counter = 0));
   }
 }

@@ -2,7 +2,6 @@ import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { ContextConsumer } from "@lit/context";
 import { context } from "../context.js";
-import { actions } from "../state";
 
 export class SelectorComponent extends ScopedElementsMixin(LitElement) {
   state$;
@@ -30,13 +29,13 @@ export class SelectorComponent extends ScopedElementsMixin(LitElement) {
 
   _onSubmit(e) {
     // Set selected customer options based on checked checkboxes
-    this.state$.action((data) => {
+    this.state$.update((data) => {
       data.customer.selectedOptions = data.options.filter((option) => {
         const form = e.target;
         const input = form ? form.elements.namedItem(String(option.id)) : null;
         return Boolean(input?.checked);
       });
-    }, actions.SELECT_OPTIONS);
+    });
 
     e.preventDefault();
   }

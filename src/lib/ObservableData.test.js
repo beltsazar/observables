@@ -33,10 +33,20 @@ describe("ObservableData", () => {
     expect(observable$ instanceof ObservableData).to.equal(true);
   });
 
+  it("should register observer and call it immediately with initial data", () => {
+    observable$.observe(observerWrapper.observer);
+    expect(event.data).to.deep.equal(new ObservableData(cloneDeep(model)).data);
+    expect(event.previousData).to.deep.equal(null);
+    expect(callBackSpy.calledOnce).to.equal(true);
+
+    observable$.update(() => {});
+    expect(callBackSpy.calledTwice).to.equal(true);
+  });
+
   it("should change a simple property", () => {
     observable$.observe(observerWrapper.observer);
 
-    observable$.action((data) => {
+    observable$.update((data) => {
       data.clock.counter = 100;
     });
     expect(event.data.clock.counter).to.equal(100);
@@ -53,7 +63,7 @@ describe("ObservableData", () => {
   it("should clone objects matching original properties", () => {
     observable$.observe(observerWrapper.observer);
 
-    observable$.action((data) => {});
+    observable$.update((data) => {});
     expect(event.data.products === event.previousData.products).not.to.equal(
       true,
     );
@@ -65,7 +75,7 @@ describe("ObservableData", () => {
     expect(observable$.data.options[1].price.amount).to.equal(200);
     expect(observable$.data.products[0].options[1].price.amount).to.equal(200);
 
-    observable$.action((data) => {
+    observable$.update((data) => {
       data.options[1].price.amount = 20;
     });
     expect(event.data.products === event.previousData.products).not.to.equal(
@@ -96,18 +106,18 @@ describe("ObservableData", () => {
     const subscription1 = observable$.observe(observerWrapper.observer);
     const subscription2 = observable$.observe(observerWrapper.observer);
 
-    expect(callBackSpy.callCount).to.equal(0);
-
-    observable$.action(() => {});
     expect(callBackSpy.callCount).to.equal(2);
 
+    observable$.update(() => {});
+    expect(callBackSpy.callCount).to.equal(4);
+
     subscription1.unsubscribe();
-    observable$.action(() => {});
-    expect(callBackSpy.callCount).to.equal(3);
+    observable$.update(() => {});
+    expect(callBackSpy.callCount).to.equal(5);
 
     subscription2.unsubscribe();
-    observable$.action(() => {});
-    expect(callBackSpy.callCount).to.equal(3);
+    observable$.update(() => {});
+    expect(callBackSpy.callCount).to.equal(5);
   });
 
   it("should be immutable!!!", () => {
@@ -121,7 +131,7 @@ describe("ObservableData", () => {
 
   it("should call an object method", () => {
     observable$.observe(observerWrapper.observer);
-    observable$.action(() => {});
+    observable$.update(() => {});
     expect(
       observable$.data.products[0].hasOption(observable$.data.options[1]),
     ).to.equal(true);

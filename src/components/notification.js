@@ -2,7 +2,6 @@ import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { ContextConsumer } from "@lit/context";
 import { context } from "../context.js";
-import { actions } from "../state";
 
 export class NotificationComponent extends ScopedElementsMixin(LitElement) {
   state$;
@@ -29,11 +28,8 @@ export class NotificationComponent extends ScopedElementsMixin(LitElement) {
 
   connectedCallback() {
     super.connectedCallback();
-
     this.counter = this.clock$.counter;
-
     this.subscriptionSelectedProduct = this.state$.observe((data) => {
-      console.log("ik luister!");
       if (
         !data.customer.selectedProduct.hasOptions(data.customer.selectedOptions)
       ) {
@@ -42,7 +38,7 @@ export class NotificationComponent extends ScopedElementsMixin(LitElement) {
       } else {
         this.message = "Valid product selected";
       }
-    }, actions.SELECT_PRODUCT);
+    });
 
     this.subscriptionClock = this.clock$.observe((data) => {
       this.counter = data.counter;

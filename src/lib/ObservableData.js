@@ -1,8 +1,6 @@
 import { cloneDeep, isEqual } from "lodash-es";
 import { deepFreeze } from "./object-helpers.js";
 
-const DATA_CHANGED = "data-changed";
-
 export class ObservableData extends EventTarget {
   constructor(initialData) {
     super();
@@ -14,7 +12,7 @@ export class ObservableData extends EventTarget {
     return this._data;
   }
 
-  action(callback, action = null) {
+  update(callback) {
     const previousData = this.data;
     const data = cloneDeep(this.data);
 
@@ -25,27 +23,27 @@ export class ObservableData extends EventTarget {
     this._data = deepFreeze(data);
 
     this.dispatchEvent(
-      new CustomEvent(DATA_CHANGED, {
+      new CustomEvent("data-updated", {
         detail: {
           data,
           previousData,
-          action,
         },
       }),
     );
   }
 
-  observe(callback, observeAction) {
+  observe(callback) {
     const callBackWrapper = (e) => {
-      const { data, previousData, action } = e.detail;
-      if (!observeAction || observeAction === action) {
-        callback(data, previousData);
-      }
+      const { data, previousData } = e.detail;
+      callback(data, previousData);
     };
 
-    this.addEventListener(DATA_CHANGED, callBackWrapper);
+    // call the callback immediately with the current data like RxJs BehaviorSubject
+    callback(this.data, null);
+
+    this.addEventListener("data-updated", callBackWrapper);
     return new Subscription(() =>
-      this.removeEventListener(DATA_CHANGED, callBackWrapper),
+      this.removeEventListener("data-updated", callBackWrapper),
     );
   }
 

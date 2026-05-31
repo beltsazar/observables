@@ -2,7 +2,6 @@ import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { ContextConsumer } from "@lit/context";
 import { context } from "../context.js";
-import { actions } from "../state";
 import { ClockComponent } from "./clock.js";
 
 export class ProductsComponent extends ScopedElementsMixin(LitElement) {
@@ -31,21 +30,15 @@ export class ProductsComponent extends ScopedElementsMixin(LitElement) {
 
   connectedCallback() {
     super.connectedCallback();
-
     this.products = [...this.state$.data.products];
-    this.selectOptionsSubscription = this.state$.observe((data) => {
+    this.subscription = this.state$.observe((data) => {
       this.updateProducts(data);
-    }, actions.SELECT_OPTIONS);
-
-    this.addProductSubscription = this.state$.observe((data) => {
-      this.updateProducts(data);
-    }, actions.ADD_PRODUCT);
+    });
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.selectOptionsSubscription.unsubscribe();
-    this.addProductSubscription.unsubscribe();
+    this.subscription.unsubscribe();
   }
 
   updateProducts(data) {
@@ -55,10 +48,7 @@ export class ProductsComponent extends ScopedElementsMixin(LitElement) {
   }
 
   handleProductSelection(e, product) {
-    this.state$.action(
-      (data) => (data.customer.selectedProduct = product),
-      actions.SELECT_PRODUCT,
-    );
+    this.state$.update((data) => (data.customer.selectedProduct = product));
     e.preventDefault();
   }
 
