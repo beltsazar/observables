@@ -47,7 +47,7 @@ export class ObservableData extends EventTarget {
     );
   }
 
-  isChanged(data, previousData) {
+  isUpdated(data, previousData) {
     return !isEqual(data, previousData);
   }
 }

@@ -52,7 +52,7 @@ describe("ObservableData", () => {
     expect(event.data.clock.counter).to.equal(100);
     expect(event.previousData.clock.counter).to.equal(0);
     expect(
-      observable$.isChanged(
+      observable$.isUpdated(
         event.data.clock.counter,
         event.previousData.clock.counter,
       ),
@@ -83,16 +83,16 @@ describe("ObservableData", () => {
     );
     expect(event.data.products).not.to.deep.equal(event.previousData.products);
     expect(
-      observable$.isChanged(event.data.products, event.previousData.products),
+      observable$.isUpdated(event.data.products, event.previousData.products),
     ).to.equal(true);
     expect(
-      observable$.isChanged(
+      observable$.isUpdated(
         event.data.products[0],
         event.previousData.products[0],
       ),
     ).to.equal(true);
     expect(
-      observable$.isChanged(
+      observable$.isUpdated(
         event.data.products[2],
         event.previousData.products[2],
       ),
