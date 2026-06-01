@@ -1,10 +1,12 @@
 import { LitElement, css, html } from "lit";
+import { isEqual } from "lodash-es";
 import { ContextProvider } from "@lit/context";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { ObservableData } from "./lib/ObservableData.js";
 import { context } from "./context.js";
 import { model } from "./state/model.js";
 import { Clock } from "./services/Clock.js";
+import { ProductService } from "./services/ProductService.js";
 import { Product } from "./state/objects/Product.js";
 import { SelectedProductComponent } from "./components/selected-product.js";
 import { SelectorComponent } from "./components/selector.js";
@@ -13,12 +15,17 @@ import { NotificationComponent } from "./components/notification.js";
 
 export class FeatureComponent extends ScopedElementsMixin(LitElement) {
   state$ = new ObservableData(model);
+  productService$ = new ProductService();
 
   constructor() {
     super();
     new ContextProvider(this, {
       context,
-      initialValue: { state$: this.state$, clock$: new Clock() },
+      initialValue: {
+        state$: this.state$,
+        clock$: new Clock(),
+        productService$: this.productService$,
+      },
     });
     this.count = 0;
   }
@@ -40,14 +47,36 @@ export class FeatureComponent extends ScopedElementsMixin(LitElement) {
 
   connectedCallback() {
     super.connectedCallback();
-    this.subscription = this.state$.observe((data) => {
+
+    this.stateSubscription$ = this.state$.observe((data) => {
       console.log("data", data);
     });
+
+    this.productServiceSubscription$ = this.productService$.observe(
+      (data, previousData) => {
+        const { products } = data;
+        if (products.length > 0 && !isEqual(products, previousData?.products)) {
+          this.state$.update((data) => {
+            const {
+              data: { options },
+            } = this.state$;
+            products.map((product) => {
+              data.products.push(
+                new Product(product.id, product.name, [
+                  options[Math.floor(Math.random() * options.length)],
+                ]),
+              );
+            });
+          });
+        }
+      },
+    );
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.subscription.unsubscribe();
+    this.stateSubscription$.unsubscribe();
+    this.productServiceSubscription$.unsubscribe();
   }
 
   render() {
@@ -66,6 +95,9 @@ export class FeatureComponent extends ScopedElementsMixin(LitElement) {
           <div class="column">
             <div>
               <button @click="${() => this._onClick()}">Add product</button>
+              <button @click="${() => this._onLoadProducts()}">
+                Load products
+              </button>
             </div>
             <products-component></products-component>
           </div>
@@ -82,10 +114,16 @@ export class FeatureComponent extends ScopedElementsMixin(LitElement) {
   _onClick() {
     this.state$.update((data) => {
       const id = data.products.length + 1;
-      const randomOption =
-        data.options[Math.floor(Math.random() * data.options.length)];
-      data.products.push(new Product(id, `Product ${id}`, [randomOption]));
+      data.products.push(
+        new Product(id, `Product ${id}`, [
+          data.options[Math.floor(Math.random() * data.options.length)],
+        ]),
+      );
     });
+  }
+
+  async _onLoadProducts() {
+    await this.productService$.loadProducts();
   }
 
   static get styles() {

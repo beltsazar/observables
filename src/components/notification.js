@@ -6,21 +6,27 @@ import { context } from "../context.js";
 export class NotificationComponent extends ScopedElementsMixin(LitElement) {
   state$;
   clock$;
+  productService$;
 
   constructor() {
     super();
     new ContextConsumer(this, {
       context,
-      callback: ({ state$, clock$ }) => {
+      callback: ({ state$, clock$, productService$ }) => {
         this.state$ = state$;
         this.clock$ = clock$;
+        this.productService$ = productService$;
       },
     });
+    this.productLoadingMessage = "Products loading";
+    this.loadingProgress = "";
   }
 
   static get properties() {
     return {
-      message: { type: String },
+      productSelectionMessage: { type: String },
+      productLoadingMessage: { type: String },
+      loadingProgress: { type: String },
       counter: { type: Number },
     };
   }
@@ -34,28 +40,49 @@ export class NotificationComponent extends ScopedElementsMixin(LitElement) {
       } = data;
 
       if (selectedProduct && !selectedProduct.hasOptions(selectedOptions))
-        this.message =
+        this.productSelectionMessage =
           "The selected product does not contain the selected options. Please select a different product!";
       else if (selectedProduct) {
-        this.message = "Valid product selected";
+        this.productSelectionMessage = "Valid product selected!";
       } else {
-        this.message = "Please select a product ...";
+        this.productSelectionMessage = "Please select a product!";
       }
     });
 
     this.clockSubscription = this.clock$.observe((data) => {
-      this.counter = data.counter;
+      this.loadingProgress += "=";
     });
+
+    this.productServiceSubscription = this.productService$.observe(
+      (data, previousData) => {
+        const {
+          status: { isLoading },
+        } = data;
+        if (isLoading !== previousData?.status.isLoading && isLoading) {
+          this.loadingProgress = "";
+        }
+        this.isLoading = isLoading;
+      },
+    );
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
     this.selectedProductSubscription.unsubscribe();
     this.clockSubscription.unsubscribe();
+    this.productServiceSubscription.unsubscribe();
   }
 
   render() {
-    return html`<div>${this.message} (${this.counter})</div>`;
+    return html`
+      <div>${this.productSelectionMessage}</div>
+      <br />
+      ${this.isLoading
+        ? html` <div>
+            ${this.productLoadingMessage} ${this.loadingProgress}
+          </div>`
+        : ""}
+    `;
   }
 
   static get styles() {
@@ -65,8 +92,10 @@ export class NotificationComponent extends ScopedElementsMixin(LitElement) {
       }
 
       div {
+        display: inline-block;
         border: 1px solid #000;
         padding: 16px;
+        margin-bottom: 16px;
       }
 
       ul,
