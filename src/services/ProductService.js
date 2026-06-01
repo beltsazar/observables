@@ -34,13 +34,13 @@ export class ProductService extends ObservableData {
     return deferredPromise;
   }
 
-  async loadProducts() {
+  loadProducts() {
     this.update((data) => (data.status.isLoading = true));
-    const products = await this._getProductsFromAPI();
-    this.update((data) => {
-      data.status.isLoading = false;
-      data.products = products;
+    this._getProductsFromAPI().then((products) => {
+      this.update((data) => {
+        data.status.isLoading = false;
+        data.products = products;
+      });
     });
-    return this.data.products;
   }
 }

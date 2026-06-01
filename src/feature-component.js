@@ -122,8 +122,8 @@ export class FeatureComponent extends ScopedElementsMixin(LitElement) {
     });
   }
 
-  async _onLoadProducts() {
-    await this.productService$.loadProducts();
+  _onLoadProducts() {
+    this.productService$.loadProducts();
   }
 
   static get styles() {
