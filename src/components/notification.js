@@ -2,17 +2,17 @@ import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { ContextConsumer } from "@lit/context";
 import { context } from "../context.js";
-import { Clock } from "../services/Clock.js";
+import { Timer } from "../services/Timer.js";
 
 export class NotificationComponent extends ScopedElementsMixin(LitElement) {
   state$;
-  clock$ = new Clock(0);
+  timer$ = new Timer(0);
 
   constructor() {
     super();
     new ContextConsumer(this, {
       context,
-      callback: ({ state$, clock$ }) => {
+      callback: ({ state$ }) => {
         this.state$ = state$;
       },
     });
@@ -25,12 +25,13 @@ export class NotificationComponent extends ScopedElementsMixin(LitElement) {
       productSelectionMessage: { type: String },
       productLoadingMessage: { type: String },
       loadingProgress: { type: String },
+      isLoading: { type: Boolean },
     };
   }
 
   connectedCallback() {
     super.connectedCallback();
-    this.counter = this.clock$.counter;
+    this.counter = this.timer$.counter;
     this.selectedProductSubscription = this.state$.observe((data) => {
       const {
         customer: { selectedProduct, selectedOptions },
@@ -46,28 +47,27 @@ export class NotificationComponent extends ScopedElementsMixin(LitElement) {
       }
     });
 
-    this.clockSubscription = this.clock$.observe((data) => {
+    this.timerSubscription = this.timer$.observe((data) => {
       this.loadingProgress += "#";
     });
 
-    this.productServiceSubscription = this.state$.observe(
-      (data, previousData) => {
-        const {
-          status: { isLoading },
-        } = data;
-        if (isLoading && isLoading !== previousData?.status.isLoading) {
-          this.loadingProgress = "";
-        }
-        this.isLoading = isLoading;
-      },
-    );
+    this.statusSubscription = this.state$.observe((data, previousData) => {
+      const {
+        status: { isLoading },
+      } = data;
+      if (isLoading && isLoading !== previousData?.status.isLoading) {
+        this.timer$.reset();
+        this.loadingProgress = "";
+      }
+      this.isLoading = isLoading;
+    });
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
     this.selectedProductSubscription.unsubscribe();
-    this.clockSubscription.unsubscribe();
-    this.productServiceSubscription.unsubscribe();
+    this.timerSubscription.unsubscribe();
+    this.statusSubscription.unsubscribe();
   }
 
   render() {
