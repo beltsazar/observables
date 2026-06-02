@@ -33,9 +33,6 @@ export const model = {
     new Product(4, "Product 4", [options[1], options[2]]),
     new Product(5, "Product 5", [options[0], options[2]]),
   ),
-  clock: {
-    counter: 0,
-  },
   status: {
     isLoading: false,
   },
