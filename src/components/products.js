@@ -2,7 +2,6 @@ import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { ContextConsumer } from "@lit/context";
 import { context } from "../context.js";
-import { ClockComponent } from "./clock.js";
 
 export class ProductsComponent extends ScopedElementsMixin(LitElement) {
   state$;
@@ -14,12 +13,6 @@ export class ProductsComponent extends ScopedElementsMixin(LitElement) {
       callback: ({ state$ }) => (this.state$ = state$),
     });
     this.products = [];
-  }
-
-  static get scopedElements() {
-    return {
-      "clock-component": ClockComponent,
-    };
   }
 
   static get properties() {
@@ -53,7 +46,7 @@ export class ProductsComponent extends ScopedElementsMixin(LitElement) {
   }
 
   render() {
-    return html`<h2>Products<clock-component></clock-component></h2>
+    return html`<h2>Products</h2>
       <ul>
         ${this.products.map(
           (product) =>
@@ -96,13 +89,6 @@ export class ProductsComponent extends ScopedElementsMixin(LitElement) {
       a:hover {
         border: 1px solid red;
         background-color: #eee;
-      }
-
-      clock-component {
-        font-weight: normal;
-        font-size: 16px;
-        float: right;
-        margin-right: 8px;
       }
     `;
   }

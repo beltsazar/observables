@@ -2,20 +2,18 @@ import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { ContextConsumer } from "@lit/context";
 import { context } from "../context.js";
+import { Clock } from "../services/Clock.js";
 
 export class NotificationComponent extends ScopedElementsMixin(LitElement) {
   state$;
-  clock$;
-  productService$;
+  clock$ = new Clock(0);
 
   constructor() {
     super();
     new ContextConsumer(this, {
       context,
-      callback: ({ state$, clock$, productService$ }) => {
+      callback: ({ state$, clock$ }) => {
         this.state$ = state$;
-        this.clock$ = clock$;
-        this.productService$ = productService$;
       },
     });
     this.productLoadingMessage = "Products loading";
@@ -27,7 +25,6 @@ export class NotificationComponent extends ScopedElementsMixin(LitElement) {
       productSelectionMessage: { type: String },
       productLoadingMessage: { type: String },
       loadingProgress: { type: String },
-      counter: { type: Number },
     };
   }
 
@@ -50,15 +47,15 @@ export class NotificationComponent extends ScopedElementsMixin(LitElement) {
     });
 
     this.clockSubscription = this.clock$.observe((data) => {
-      this.loadingProgress += "=";
+      this.loadingProgress += "#";
     });
 
-    this.productServiceSubscription = this.productService$.observe(
+    this.productServiceSubscription = this.state$.observe(
       (data, previousData) => {
         const {
           status: { isLoading },
         } = data;
-        if (isLoading !== previousData?.status.isLoading && isLoading) {
+        if (isLoading && isLoading !== previousData?.status.isLoading) {
           this.loadingProgress = "";
         }
         this.isLoading = isLoading;

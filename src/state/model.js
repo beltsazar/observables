@@ -36,4 +36,7 @@ export const model = {
   clock: {
     counter: 0,
   },
+  status: {
+    isLoading: false,
+  },
 };

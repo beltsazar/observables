@@ -1,21 +1,18 @@
 import { LitElement, css, html } from "lit";
-import { isEqual } from "lodash-es";
 import { ContextProvider } from "@lit/context";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { ObservableData } from "./lib/ObservableData.js";
 import { context } from "./context.js";
 import { model } from "./state/model.js";
-import { Clock } from "./services/Clock.js";
-import { ProductService } from "./services/ProductService.js";
-import { Product } from "./state/objects/Product.js";
+import { Actions } from "./state/actions/Actions.js";
 import { SelectedProductComponent } from "./components/selected-product.js";
 import { SelectorComponent } from "./components/selector.js";
 import { ProductsComponent } from "./components/products.js";
 import { NotificationComponent } from "./components/notification.js";
+import { ObservableData } from "./lib/ObservableData.js";
 
 export class FeatureComponent extends ScopedElementsMixin(LitElement) {
   state$ = new ObservableData(model);
-  productService$ = new ProductService();
+  actions = new Actions(this.state$);
 
   constructor() {
     super();
@@ -23,8 +20,7 @@ export class FeatureComponent extends ScopedElementsMixin(LitElement) {
       context,
       initialValue: {
         state$: this.state$,
-        clock$: new Clock(),
-        productService$: this.productService$,
+        actions: this.actions,
       },
     });
     this.count = 0;
@@ -48,35 +44,14 @@ export class FeatureComponent extends ScopedElementsMixin(LitElement) {
   connectedCallback() {
     super.connectedCallback();
 
-    this.stateSubscription$ = this.state$.observe((data) => {
+    this.subscription = this.state$.observe((data) => {
       console.log("data", data);
     });
-
-    this.productServiceSubscription$ = this.productService$.observe(
-      (data, previousData) => {
-        const { products } = data;
-        if (products.length > 0 && !isEqual(products, previousData?.products)) {
-          this.state$.update((data) => {
-            const {
-              data: { options },
-            } = this.state$;
-            products.map((product) => {
-              data.products.push(
-                new Product(product.id, product.name, [
-                  options[Math.floor(Math.random() * options.length)],
-                ]),
-              );
-            });
-          });
-        }
-      },
-    );
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.stateSubscription$.unsubscribe();
-    this.productServiceSubscription$.unsubscribe();
+    this.subscription.unsubscribe();
   }
 
   render() {
@@ -91,10 +66,12 @@ export class FeatureComponent extends ScopedElementsMixin(LitElement) {
             <div class="selected-product">
               <selected-product-component></selected-product-component>
             </div>
+            <div class="notification">
+              <notification-component></notification-component>
+            </div>
           </div>
           <div class="column">
             <div>
-              <button @click="${() => this._onClick()}">Add product</button>
               <button @click="${() => this._onLoadProducts()}">
                 Load products
               </button>
@@ -102,28 +79,12 @@ export class FeatureComponent extends ScopedElementsMixin(LitElement) {
             <products-component></products-component>
           </div>
         </div>
-        <div class="row">
-          <div class="notification">
-            <notification-component></notification-component>
-          </div>
-        </div>
       </div>
     `;
   }
 
-  _onClick() {
-    this.state$.update((data) => {
-      const id = data.products.length + 1;
-      data.products.push(
-        new Product(id, `Product ${id}`, [
-          data.options[Math.floor(Math.random() * data.options.length)],
-        ]),
-      );
-    });
-  }
-
-  _onLoadProducts() {
-    this.productService$.loadProducts();
+  async _onLoadProducts() {
+    await this.actions.loadProducts();
   }
 
   static get styles() {
