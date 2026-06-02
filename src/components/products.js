@@ -2,6 +2,7 @@ import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { ContextConsumer } from "@lit/context";
 import { context } from "../context.js";
+import { LoadingNotificationComponent } from "./loading-notification.js";
 
 export class ProductsComponent extends ScopedElementsMixin(LitElement) {
   state$;
@@ -18,6 +19,12 @@ export class ProductsComponent extends ScopedElementsMixin(LitElement) {
   static get properties() {
     return {
       products: { type: Array },
+    };
+  }
+
+  static get scopedElements() {
+    return {
+      "loading-notification-component": LoadingNotificationComponent,
     };
   }
 
@@ -47,6 +54,7 @@ export class ProductsComponent extends ScopedElementsMixin(LitElement) {
 
   render() {
     return html`<h2>Products</h2>
+      <loading-notification-component></loading-notification-component>
       <ul>
         ${this.products.map(
           (product) =>
@@ -58,7 +66,7 @@ export class ProductsComponent extends ScopedElementsMixin(LitElement) {
               >
             </li>`,
         )}
-      </ul>`;
+      </ul> `;
   }
 
   static get styles() {
@@ -80,9 +88,9 @@ export class ProductsComponent extends ScopedElementsMixin(LitElement) {
 
       a {
         border-radius: 6px;
-        margin: 8px;
+        margin-bottom: 12px;
         display: block;
-        padding: 8px 24px;
+        padding: 8px 12px;
         border: 1px solid grey;
       }
 

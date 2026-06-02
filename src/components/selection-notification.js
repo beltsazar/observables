@@ -2,11 +2,11 @@ import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { ContextConsumer } from "@lit/context";
 import { context } from "../context.js";
-import { Timer } from "../services/Timer.js";
 
-export class NotificationComponent extends ScopedElementsMixin(LitElement) {
+export class SelectionNotificationComponent extends ScopedElementsMixin(
+  LitElement,
+) {
   state$;
-  timer$ = new Timer(0);
 
   constructor() {
     super();
@@ -16,23 +16,17 @@ export class NotificationComponent extends ScopedElementsMixin(LitElement) {
         this.state$ = state$;
       },
     });
-    this.productLoadingMessage = "Products loading";
-    this.loadingProgress = "";
   }
 
   static get properties() {
     return {
       productSelectionMessage: { type: String },
-      productLoadingMessage: { type: String },
-      loadingProgress: { type: String },
-      isLoading: { type: Boolean },
     };
   }
 
   connectedCallback() {
     super.connectedCallback();
-    this.counter = this.timer$.counter;
-    this.selectedProductSubscription = this.state$.observe((data) => {
+    this.subscription = this.state$.observe((data) => {
       const {
         customer: { selectedProduct, selectedOptions },
       } = data;
@@ -46,40 +40,15 @@ export class NotificationComponent extends ScopedElementsMixin(LitElement) {
         this.productSelectionMessage = "Please select a product!";
       }
     });
-
-    this.timerSubscription = this.timer$.observe((data) => {
-      this.loadingProgress += "#";
-    });
-
-    this.statusSubscription = this.state$.observe((data, previousData) => {
-      const {
-        status: { isLoading },
-      } = data;
-      if (isLoading && isLoading !== previousData?.status.isLoading) {
-        this.timer$.reset();
-        this.loadingProgress = "";
-      }
-      this.isLoading = isLoading;
-    });
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.selectedProductSubscription.unsubscribe();
-    this.timerSubscription.unsubscribe();
-    this.statusSubscription.unsubscribe();
+    this.subscription.unsubscribe();
   }
 
   render() {
-    return html`
-      <div>${this.productSelectionMessage}</div>
-      <br />
-      ${this.isLoading
-        ? html` <div>
-            ${this.productLoadingMessage} ${this.loadingProgress}
-          </div>`
-        : ""}
-    `;
+    return html` <div>${this.productSelectionMessage}</div>`;
   }
 
   static get styles() {

@@ -7,7 +7,7 @@ import { Actions } from "./state/actions/Actions.js";
 import { SelectedProductComponent } from "./components/selected-product.js";
 import { SelectorComponent } from "./components/selector.js";
 import { ProductsComponent } from "./components/products.js";
-import { NotificationComponent } from "./components/notification.js";
+import { SelectionNotificationComponent } from "./components/selection-notification.js";
 import { ObservableData } from "./lib/ObservableData.js";
 
 export class FeatureComponent extends ScopedElementsMixin(LitElement) {
@@ -37,13 +37,12 @@ export class FeatureComponent extends ScopedElementsMixin(LitElement) {
       "selector-component": SelectorComponent,
       "products-component": ProductsComponent,
       "selected-product-component": SelectedProductComponent,
-      "notification-component": NotificationComponent,
+      "selection-notification-component": SelectionNotificationComponent,
     };
   }
 
   connectedCallback() {
     super.connectedCallback();
-
     this.subscription = this.state$.observe((data) => {
       console.log("data", data);
     });
@@ -67,7 +66,7 @@ export class FeatureComponent extends ScopedElementsMixin(LitElement) {
               <selected-product-component></selected-product-component>
             </div>
             <div class="notification">
-              <notification-component></notification-component>
+              <selection-notification-component></selection-notification-component>
             </div>
           </div>
           <div class="column">

@@ -5,15 +5,13 @@ import { context } from "../context.js";
 
 export class SelectorComponent extends ScopedElementsMixin(LitElement) {
   state$;
-  clock$;
 
   constructor() {
     super();
     new ContextConsumer(this, {
       context,
-      callback: ({ state$, clock$ }) => {
+      callback: ({ state$ }) => {
         this.state$ = state$;
-        this.clock$ = clock$;
       },
     });
     this.products = [];
@@ -44,7 +42,6 @@ export class SelectorComponent extends ScopedElementsMixin(LitElement) {
     this.shadowRoot
       ?.querySelector('[name="optionsForm"]')
       ?.dispatchEvent(new Event("submit"));
-    this.clock$.reset();
   }
 
   render() {
