@@ -7,11 +7,13 @@ export class SelectorComponent extends ContextConsumerMixin(
   ScopedElementsMixin(LitElement),
 ) {
   state$;
+  actions;
 
   constructor() {
     super();
-    this.mapContext(context, ({ state$ }) => {
+    this.mapContext(context, ({ state$, actions }) => {
       this.state$ = state$;
+      this.actions = actions;
     });
     this.products = [];
   }
@@ -26,13 +28,13 @@ export class SelectorComponent extends ContextConsumerMixin(
 
   _onSubmit(e) {
     // Set selected customer options based on checked checkboxes
-    this.state$.update((data) => {
-      data.customer.selectedOptions = data.options.filter((option) => {
-        const form = e.target;
-        const input = form ? form.elements.namedItem(String(option.id)) : null;
-        return Boolean(input?.checked);
-      });
+    const selectedOptions = this.state$.data.options.filter((option) => {
+      const form = e.target;
+      const input = form ? form.elements.namedItem(String(option.id)) : null;
+      return Boolean(input?.checked);
     });
+
+    this.actions.selectOptions(selectedOptions);
 
     e.preventDefault();
   }

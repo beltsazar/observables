@@ -27,4 +27,14 @@ export class Actions {
       });
     });
   }
+
+  selectProduct(product) {
+    this.state$.update((data) => (data.customer.selectedProduct = product));
+  }
+
+  selectOptions(options) {
+    this.state$.update((data) => {
+      data.customer.selectedOptions = options;
+    });
+  }
 }

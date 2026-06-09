@@ -8,11 +8,13 @@ export class ProductsComponent extends ContextConsumerMixin(
   ScopedElementsMixin(LitElement),
 ) {
   state$;
+  actions;
 
   constructor() {
     super();
-    this.mapContext(context, ({ state$ }) => {
+    this.mapContext(context, ({ state$, actions }) => {
       this.state$ = state$;
+      this.actions = actions;
     });
     this.products = [];
   }
@@ -49,7 +51,7 @@ export class ProductsComponent extends ContextConsumerMixin(
   }
 
   handleProductSelection(e, product) {
-    this.state$.update((data) => (data.customer.selectedProduct = product));
+    this.actions.selectProduct(product);
     e.preventDefault();
   }
 
