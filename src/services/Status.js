@@ -1,0 +1,37 @@
+import { ObservableData } from "../lib/ObservableData.js";
+
+const model = {
+  isLoading: false,
+  isError: false,
+  isCompleted: false,
+  loadingProgress: 0,
+};
+
+export class Status extends ObservableData {
+  constructor() {
+    super(model);
+  }
+
+  startApiCall() {
+    this.update((data) => {
+      data.isLoading = true;
+      data.isError = false;
+      data.isCompleted = false;
+      data.loadingProgress = 0;
+    });
+    this.progressTimer = setInterval(
+      () => this.update((data) => data.loadingProgress++),
+      1000,
+    );
+  }
+
+  completeApiCall() {
+    this.update((data) => {
+      data.isLoading = false;
+      data.isError = false;
+      data.isCompleted = true;
+      data.loadingProgress = 0;
+    });
+    clearInterval(this.progressTimer);
+  }
+}

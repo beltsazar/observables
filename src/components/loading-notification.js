@@ -2,53 +2,38 @@ import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { ContextConsumerMixin } from "../lib/context-mixins.js";
 import { context } from "../context.js";
-import { Timer } from "../services/Timer.js";
 
 export class LoadingNotificationComponent extends ContextConsumerMixin(
   ScopedElementsMixin(LitElement),
 ) {
-  state$;
-  timer$ = new Timer(0);
+  status$;
 
   constructor() {
     super();
-    this.mapContext(context, ({ state$ }) => {
-      this.state$ = state$;
+    this.mapContext(context, ({ status$ }) => {
+      this.status$ = status$;
     });
     this.productLoadingMessage = "Products loading";
-    this.loadingProgress = "";
   }
 
   static get properties() {
     return {
       productLoadingMessage: { type: String },
-      loadingProgress: { type: String },
+      loadingProgress: { type: Number },
       isLoading: { type: Boolean },
     };
   }
 
   connectedCallback() {
     super.connectedCallback();
-
-    this.timerSubscription = this.timer$.observe((data) => {
-      this.loadingProgress += "#";
-    });
-
-    this.statusSubscription = this.state$.observe((data, previousData) => {
-      const {
-        status: { isLoading },
-      } = data;
-      if (isLoading && isLoading !== previousData?.status.isLoading) {
-        this.timer$.reset();
-        this.loadingProgress = "";
-      }
-      this.isLoading = isLoading;
+    this.statusSubscription = this.status$.observe((data) => {
+      this.isLoading = data.isLoading;
+      this.loadingProgress = data.loadingProgress;
     });
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.timerSubscription.unsubscribe();
     this.statusSubscription.unsubscribe();
   }
 

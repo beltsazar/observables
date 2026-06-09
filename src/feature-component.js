@@ -3,6 +3,7 @@ import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { ContextProviderMixin } from "./lib/context-mixins.js";
 import { context } from "./context.js";
 import { model } from "./state/model.js";
+import { Status } from "./services/Status.js";
 import { Actions } from "./state/actions/Actions.js";
 import { SelectedProductComponent } from "./components/selected-product.js";
 import { SelectorComponent } from "./components/selector.js";
@@ -14,12 +15,14 @@ export class FeatureComponent extends ContextProviderMixin(
   ScopedElementsMixin(LitElement),
 ) {
   state$ = new ObservableData(model);
-  actions = new Actions(this.state$);
+  status$ = new Status();
+  actions = new Actions(this.state$, this.status$);
 
   constructor() {
     super();
     this.createContext(context, {
       state$: this.state$,
+      status$: this.status$,
       actions: this.actions,
     });
     this.count = 0;
