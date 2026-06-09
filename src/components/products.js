@@ -1,6 +1,7 @@
 import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { ContextConsumerMixin } from "../context.js";
+import { ContextConsumerMixin } from "../lib/context-mixins.js";
+import { context } from "../context.js";
 import { LoadingNotificationComponent } from "./loading-notification.js";
 
 export class ProductsComponent extends ContextConsumerMixin(
@@ -10,7 +11,7 @@ export class ProductsComponent extends ContextConsumerMixin(
 
   constructor() {
     super();
-    this.mapContext(({ state$ }) => {
+    this.mapContext(context, ({ state$ }) => {
       this.state$ = state$;
     });
     this.products = [];

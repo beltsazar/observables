@@ -1,6 +1,7 @@
 import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { ContextConsumerMixin } from "../context.js";
+import { ContextConsumerMixin } from "../lib/context-mixins.js";
+import { context } from "../context.js";
 import { Timer } from "../services/Timer.js";
 
 export class LoadingNotificationComponent extends ContextConsumerMixin(
@@ -11,7 +12,7 @@ export class LoadingNotificationComponent extends ContextConsumerMixin(
 
   constructor() {
     super();
-    this.mapContext(({ state$ }) => {
+    this.mapContext(context, ({ state$ }) => {
       this.state$ = state$;
     });
     this.productLoadingMessage = "Products loading";

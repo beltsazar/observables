@@ -1,6 +1,7 @@
 import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { ContextProviderMixin } from "./context.js";
+import { ContextProviderMixin } from "./lib/context-mixins.js";
+import { context } from "./context.js";
 import { model } from "./state/model.js";
 import { Actions } from "./state/actions/Actions.js";
 import { SelectedProductComponent } from "./components/selected-product.js";
@@ -17,7 +18,7 @@ export class FeatureComponent extends ContextProviderMixin(
 
   constructor() {
     super();
-    this.createContext({
+    this.createContext(context, {
       state$: this.state$,
       actions: this.actions,
     });
