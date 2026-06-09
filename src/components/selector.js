@@ -1,18 +1,16 @@
 import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { ContextConsumer } from "@lit/context";
-import { context } from "../context.js";
+import { ContextConsumerMixin } from "../context.js";
 
-export class SelectorComponent extends ScopedElementsMixin(LitElement) {
+export class SelectorComponent extends ContextConsumerMixin(
+  ScopedElementsMixin(LitElement),
+) {
   state$;
 
   constructor() {
     super();
-    new ContextConsumer(this, {
-      context,
-      callback: ({ state$ }) => {
-        this.state$ = state$;
-      },
+    this.mapContext(({ state$ }) => {
+      this.state$ = state$;
     });
     this.products = [];
   }

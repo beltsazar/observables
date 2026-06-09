@@ -1,22 +1,18 @@
 import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { ContextConsumer } from "@lit/context";
-import { context } from "../context.js";
+import { ContextConsumerMixin } from "../context.js";
 import { Timer } from "../services/Timer.js";
 
-export class LoadingNotificationComponent extends ScopedElementsMixin(
-  LitElement,
+export class LoadingNotificationComponent extends ContextConsumerMixin(
+  ScopedElementsMixin(LitElement),
 ) {
   state$;
   timer$ = new Timer(0);
 
   constructor() {
     super();
-    new ContextConsumer(this, {
-      context,
-      callback: ({ state$ }) => {
-        this.state$ = state$;
-      },
+    this.mapContext(({ state$ }) => {
+      this.state$ = state$;
     });
     this.productLoadingMessage = "Products loading";
     this.loadingProgress = "";

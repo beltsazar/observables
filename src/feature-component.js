@@ -1,7 +1,6 @@
 import { LitElement, css, html } from "lit";
-import { ContextProvider } from "@lit/context";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { context } from "./context.js";
+import { ContextProviderMixin } from "./context.js";
 import { model } from "./state/model.js";
 import { Actions } from "./state/actions/Actions.js";
 import { SelectedProductComponent } from "./components/selected-product.js";
@@ -10,18 +9,17 @@ import { ProductsComponent } from "./components/products.js";
 import { SelectionNotificationComponent } from "./components/selection-notification.js";
 import { ObservableData } from "./lib/ObservableData.js";
 
-export class FeatureComponent extends ScopedElementsMixin(LitElement) {
+export class FeatureComponent extends ContextProviderMixin(
+  ScopedElementsMixin(LitElement),
+) {
   state$ = new ObservableData(model);
   actions = new Actions(this.state$);
 
   constructor() {
     super();
-    new ContextProvider(this, {
-      context,
-      initialValue: {
-        state$: this.state$,
-        actions: this.actions,
-      },
+    this.createContext({
+      state$: this.state$,
+      actions: this.actions,
     });
     this.count = 0;
   }
