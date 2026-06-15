@@ -47,14 +47,14 @@ describe("ObservableData", () => {
     observable$.observe(observerWrapper.observer);
 
     observable$.update((data) => {
-      data.clock.counter = 100;
+      data.customer.name = "Daniel Marcuse";
     });
-    expect(event.data.clock.counter).to.equal(100);
-    expect(event.previousData.clock.counter).to.equal(0);
+    expect(event.data.customer.name).to.equal("Daniel Marcuse");
+    expect(event.previousData.customer.name).to.equal("Daniel");
     expect(
-      isEqual(event.data.clock.counter, event.previousData.clock.counter),
+      isEqual(event.data.customer.name, event.previousData.customer.name),
     ).to.equal(false);
-    expect(observable$.data.clock.counter).to.equal(100);
+    expect(observable$.data.customer.name).to.equal("Daniel Marcuse");
   });
 
   it("should clone objects matching original properties", () => {

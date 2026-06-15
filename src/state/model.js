@@ -22,6 +22,7 @@ const options = [
 
 export const model = {
   customer: {
+    name: "Daniel",
     selectedProduct: null,
     selectedOptions: [],
   },
