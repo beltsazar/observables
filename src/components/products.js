@@ -12,10 +12,6 @@ export class ProductsComponent extends ContextConsumerMixin(
 
   constructor() {
     super();
-    this.mapContext(context, ({ state$, actions }) => {
-      this.state$ = state$;
-      this.actions = actions;
-    });
     this.products = [];
   }
 
@@ -31,8 +27,13 @@ export class ProductsComponent extends ContextConsumerMixin(
     };
   }
 
-  connectedCallback() {
+  async connectedCallback() {
     super.connectedCallback();
+    await this.mapContextAsync(context, ({ state$, actions }) => {
+      this.state$ = state$;
+      this.actions = actions;
+    });
+
     this.products = [...this.state$.data.products];
     this.subscription = this.state$.observe((data) => {
       this.updateProducts(data);

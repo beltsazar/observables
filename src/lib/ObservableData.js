@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-classes-per-file
 import { cloneDeep } from "lodash-es";
 import { deepFreeze } from "./object-helpers.js";
 
@@ -15,11 +16,15 @@ export class ObservableData extends EventTarget {
 
   update(callback) {
     const previousData = this.data;
+
+    // create a mutable copy of the new data object
     const data = cloneDeep(this.data);
 
     callback(data);
 
-    this._data = deepFreeze(data);
+    // create a copy of the mutated data to prevent references to nested consumer objects
+    this._data = deepFreeze(cloneDeep(data));
+
     this.dispatchEvent(
       new CustomEvent(DATA_UPDATED, {
         detail: {

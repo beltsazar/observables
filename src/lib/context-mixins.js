@@ -16,10 +16,20 @@ export const ContextConsumerMixin = (superClass) =>
   class extends superClass {
     contextConsumer;
 
-    mapContext(context, mapper) {
+    mapContext(context, mapper, resolver = null) {
       this.contextConsumer = new ContextConsumer(this, {
         context,
-        callback: (context) => mapper(context),
+        callback: (context) => {
+          mapper(context);
+          resolver?.();
+        },
       });
+    }
+
+    mapContextAsync(context, mapper) {
+      let resolver;
+      const deferredPromise = new Promise((resolve) => (resolver = resolve));
+      this.mapContext(context, mapper, resolver);
+      return deferredPromise;
     }
   };
