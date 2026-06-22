@@ -6,7 +6,7 @@ import { context } from "../context.js";
 export class LoadingNotificationComponent extends ContextConsumerMixin(
   ScopedElementsMixin(LitElement),
 ) {
-  status$;
+  context = context;
 
   constructor() {
     super();

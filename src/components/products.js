@@ -7,8 +7,7 @@ import { LoadingNotificationComponent } from "./loading-notification.js";
 export class ProductsComponent extends ContextConsumerMixin(
   ScopedElementsMixin(LitElement),
 ) {
-  state$;
-  actions;
+  context = context;
 
   constructor() {
     super();

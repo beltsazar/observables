@@ -6,7 +6,7 @@ import { context } from "../context.js";
 export class SelectionNotificationComponent extends ContextConsumerMixin(
   ScopedElementsMixin(LitElement),
 ) {
-  state$;
+  context = context;
 
   constructor() {
     super();

@@ -6,8 +6,7 @@ import { context } from "../context.js";
 export class SelectorComponent extends ContextConsumerMixin(
   ScopedElementsMixin(LitElement),
 ) {
-  state$;
-  actions;
+  context = context;
 
   constructor() {
     super();
