@@ -10,9 +10,6 @@ export class SelectedProductComponent extends ContextConsumerMixin(
 
   constructor() {
     super();
-    this.mapContext(context, ({ state$ }) => {
-      this.state$ = state$;
-    });
     this.selectedProduct = null;
   }
 
@@ -22,8 +19,8 @@ export class SelectedProductComponent extends ContextConsumerMixin(
     };
   }
 
-  connectedCallback() {
-    super.connectedCallback();
+  async connectedCallback() {
+    await super.connectedCallback();
     this.subscription = this.state$.observe((data) => {
       this.selectedProduct = data.customer.selectedProduct;
     });

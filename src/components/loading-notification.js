@@ -10,9 +10,6 @@ export class LoadingNotificationComponent extends ContextConsumerMixin(
 
   constructor() {
     super();
-    this.mapContext(context, ({ status$ }) => {
-      this.status$ = status$;
-    });
     this.productLoadingMessage = "Products loading";
   }
 
@@ -24,8 +21,8 @@ export class LoadingNotificationComponent extends ContextConsumerMixin(
     };
   }
 
-  connectedCallback() {
-    super.connectedCallback();
+  async connectedCallback() {
+    await super.connectedCallback();
     this.statusSubscription = this.status$.observe((data) => {
       this.isLoading = data.isLoading;
       this.loadingProgress = data.loadingProgress;

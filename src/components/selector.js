@@ -11,15 +11,11 @@ export class SelectorComponent extends ContextConsumerMixin(
 
   constructor() {
     super();
-    this.mapContext(context, ({ state$, actions }) => {
-      this.state$ = state$;
-      this.actions = actions;
-    });
     this.products = [];
   }
 
-  connectedCallback() {
-    super.connectedCallback();
+  async connectedCallback() {
+    await super.connectedCallback();
   }
 
   disconnectedCallback() {

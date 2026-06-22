@@ -1,4 +1,5 @@
 import { ContextConsumer, ContextProvider } from "@lit/context";
+import { context } from "../context.js";
 
 export const ContextProviderMixin = (superClass) =>
   class extends superClass {
@@ -15,6 +16,13 @@ export const ContextProviderMixin = (superClass) =>
 export const ContextConsumerMixin = (superClass) =>
   class extends superClass {
     contextConsumer;
+
+    async connectedCallback() {
+      super.connectedCallback();
+      await this.mapContextAsync(context, (contextValue) => {
+        Object.assign(this, { ...contextValue });
+      });
+    }
 
     mapContext(context, mapper, resolver = null) {
       this.contextConsumer = new ContextConsumer(this, {

@@ -10,9 +10,6 @@ export class SelectionNotificationComponent extends ContextConsumerMixin(
 
   constructor() {
     super();
-    this.mapContext(context, ({ state$ }) => {
-      this.state$ = state$;
-    });
   }
 
   static get properties() {
@@ -21,8 +18,8 @@ export class SelectionNotificationComponent extends ContextConsumerMixin(
     };
   }
 
-  connectedCallback() {
-    super.connectedCallback();
+  async connectedCallback() {
+    await super.connectedCallback();
     this.subscription = this.state$.observe((data) => {
       const {
         customer: { selectedProduct, selectedOptions },
