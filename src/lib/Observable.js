@@ -7,6 +7,7 @@ const VALUE_UPDATED = "value-updated";
 export class Observable extends EventTarget {
   constructor(initialValue) {
     super();
+    this._previousValue = undefined;
     this._value = freezeDeep(cloneDeep(initialValue));
   }
 
@@ -14,7 +15,11 @@ export class Observable extends EventTarget {
     return this._value;
   }
 
-  update(valueOrCallback) {
+  get previousValue() {
+    return this._previousValue;
+  }
+
+  setValue(valueOrCallback) {
     const previousValue = this.value;
     let newValue;
 
@@ -30,6 +35,7 @@ export class Observable extends EventTarget {
       newValue = valueOrCallback;
     }
 
+    this._previousValue = previousValue;
     this._value = newValue;
 
     this.dispatchEvent(
@@ -37,6 +43,7 @@ export class Observable extends EventTarget {
         detail: {
           newValue,
           previousValue,
+          signal: this,
         },
       }),
     );
@@ -44,11 +51,11 @@ export class Observable extends EventTarget {
 
   observe(callback) {
     const callBackWrapper = (e) => {
-      const { newValue, previousValue } = e.detail;
-      callback(newValue, previousValue);
+      const { newValue, previousValue, signal } = e.detail;
+      callback(newValue, previousValue, signal);
     };
 
-    callback(this.value, null);
+    callback(this.value, this.previousValue, this);
 
     this.addEventListener(VALUE_UPDATED, callBackWrapper);
 

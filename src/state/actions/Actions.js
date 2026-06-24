@@ -17,7 +17,7 @@ export class Actions {
     const products = await this.productService.loadProductsFromAPI();
     this.status$.completeApiCall();
 
-    this.state$.update((data) => {
+    this.state$.setValue((data) => {
       products.map((product) => {
         data.products.push(
           new Product(product.id, product.name, [
@@ -29,11 +29,11 @@ export class Actions {
   }
 
   selectProduct(product) {
-    this.state$.update((data) => (data.customer.selectedProduct = product));
+    this.state$.setValue((data) => (data.customer.selectedProduct = product));
   }
 
   selectOptions(options) {
-    this.state$.update((data) => {
+    this.state$.setValue((data) => {
       data.customer.selectedOptions = options;
     });
   }

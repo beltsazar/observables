@@ -13,20 +13,20 @@ export class Status extends Observable {
   }
 
   startApiCall() {
-    this.update((data) => {
+    this.setValue((data) => {
       data.isLoading = true;
       data.isError = false;
       data.isCompleted = false;
       data.loadingProgress = 0;
     });
     this.progressTimer = setInterval(
-      () => this.update((data) => data.loadingProgress++),
+      () => this.setValue((data) => data.loadingProgress++),
       1000,
     );
   }
 
   completeApiCall() {
-    this.update((data) => {
+    this.setValue((data) => {
       data.isLoading = false;
       data.isError = false;
       data.isCompleted = true;

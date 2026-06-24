@@ -39,14 +39,14 @@ describe("ObservableData", () => {
     expect(event.previousData).to.deep.equal(null);
     expect(callBackSpy.calledOnce).to.equal(true);
 
-    observable$.update(() => {});
+    observable$.setValue(() => {});
     expect(callBackSpy.calledTwice).to.equal(true);
   });
 
   it("should change a simple property", () => {
     observable$.observe(observerWrapper.observer);
 
-    observable$.update((data) => {
+    observable$.setValue((data) => {
       data.customer.name = "Daniel Marcuse";
     });
     expect(event.data.customer.name).to.equal("Daniel Marcuse");
@@ -60,7 +60,7 @@ describe("ObservableData", () => {
   it("should clone objects matching original properties", () => {
     observable$.observe(observerWrapper.observer);
 
-    observable$.update((data) => {});
+    observable$.setValue((data) => {});
     expect(event.data.products === event.previousData.products).not.to.equal(
       true,
     );
@@ -72,7 +72,7 @@ describe("ObservableData", () => {
     expect(observable$.value.options[1].price.amount).to.equal(200);
     expect(observable$.value.products[0].options[1].price.amount).to.equal(200);
 
-    observable$.update((data) => {
+    observable$.setValue((data) => {
       data.options[1].price.amount = 20;
     });
     expect(event.data.products === event.previousData.products).not.to.equal(
@@ -99,15 +99,15 @@ describe("ObservableData", () => {
 
     expect(callBackSpy.callCount).to.equal(2);
 
-    observable$.update(() => {});
+    observable$.setValue(() => {});
     expect(callBackSpy.callCount).to.equal(4);
 
     subscription1.unsubscribe();
-    observable$.update(() => {});
+    observable$.setValue(() => {});
     expect(callBackSpy.callCount).to.equal(5);
 
     subscription2.unsubscribe();
-    observable$.update(() => {});
+    observable$.setValue(() => {});
     expect(callBackSpy.callCount).to.equal(5);
   });
 
@@ -122,7 +122,7 @@ describe("ObservableData", () => {
 
   it("should call an object method", () => {
     observable$.observe(observerWrapper.observer);
-    observable$.update(() => {});
+    observable$.setValue(() => {});
     expect(
       observable$.value.products[0].hasOption(observable$.value.options[1]),
     ).to.equal(true);

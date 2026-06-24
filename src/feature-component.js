@@ -56,15 +56,17 @@ export class FeatureComponent extends ContextProviderMixin(
       console.log("test1$", this.test1$.value);
     });
 
-    this.test1$.update((value) => {
+    this.test1$.setValue((value) => {
       value.test = 20;
     });
 
-    this.test2$.observe((value) => {
-      console.log("test2$", this.test2$.value);
+    this.test2$.observe((value, prev, signal) => {
+      console.log("-test2$", this.test2$.value);
+      console.log("--test2$", value);
+      console.log("---test2$", signal.value);
     });
 
-    this.test2$.update(5);
+    this.test2$.setValue(5);
 
     // console.log("test1$", this.test1$.value);
     // console.log("test2$", this.test2$.value);
