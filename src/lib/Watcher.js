@@ -1,4 +1,3 @@
-// eslint-disable-next-line max-classes-per-file
 const SIGNAL_UPDATED = "signal-updated";
 
 export class Watcher extends EventTarget {

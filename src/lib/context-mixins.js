@@ -1,5 +1,4 @@
 import { ContextConsumer, ContextProvider } from "@lit/context";
-// import { context } from "../context.js";
 
 export const ContextProviderMixin = (superClass) =>
   class extends superClass {

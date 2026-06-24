@@ -10,7 +10,9 @@ import { SelectorComponent } from "./components/selector.js";
 import { ProductsComponent } from "./components/products.js";
 import { SelectionNotificationComponent } from "./components/selection-notification.js";
 import { Signal } from "./lib/Signal.js";
+import { ComputedSignal } from "./lib/ComputedSignal.js";
 import { Watcher } from "./lib/Watcher.js";
+import { signal } from "@lion/ui/docs/components/icon/assets/iconset-space.js";
 
 export class FeatureComponent extends ContextProviderMixin(
   ScopedElementsMixin(LitElement),
@@ -49,6 +51,28 @@ export class FeatureComponent extends ContextProviderMixin(
 
   connectedCallback() {
     super.connectedCallback();
+
+    this.computed$ = new ComputedSignal(
+      [this.test1$, this.test2$],
+      ([{ value: value1 }, { value: value2 }], signal) => {
+        // console.log("Computed!!!:", signal);
+        return value1.test * value2;
+      },
+    );
+
+    this.computed$.unwatch();
+
+    new Watcher([this.computed$], ([{ value }]) => {
+      console.log("computed$ !!!", value);
+    });
+
+    new Watcher(
+      [this.computed$, this.test1$],
+      ([{ value: value1 }, { value: value2 }]) => {
+        console.log("computed$ en test1!!!", value1, value2);
+      },
+    );
+
     new Watcher([this.state$], ([{ value }]) => {
       console.log("data", value);
     });
@@ -78,13 +102,15 @@ export class FeatureComponent extends ContextProviderMixin(
 
     watcher.unwatch();
 
+    console.log("signals", this.computed$.watcher.signals);
+
     // console.log("test1$", this.test1$.value);
     // console.log("test2$", this.test2$.value);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.subscription.unsubscribe();
+    // this.subscription.unsubscribe();
   }
 
   render() {

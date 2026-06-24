@@ -6,8 +6,8 @@
  *
  */
 export function freezeDeep(object) {
-  // Intended early-return for non-object values.
-  if (object && typeof object !== "object") {
+  // Intended early-return for undefined or non-object values.
+  if (!object || typeof object !== "object") {
     return object;
   }
 
