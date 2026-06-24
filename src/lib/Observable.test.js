@@ -2,7 +2,7 @@ import { expect, describe, it, beforeEach, afterEach } from "vitest";
 import { spy } from "sinon";
 import { cloneDeep, isEqual } from "lodash-es";
 import { model } from "../state/model.js";
-import { ObservableData } from "./ObservableData.js";
+import { Observable } from "./Observable.js";
 
 describe("ObservableData", () => {
   let observable$;
@@ -11,7 +11,7 @@ describe("ObservableData", () => {
   let observerWrapper;
 
   beforeEach(() => {
-    observable$ = new ObservableData(cloneDeep(model));
+    observable$ = new Observable(cloneDeep(model));
 
     event = {};
     observerWrapper = {
@@ -30,12 +30,12 @@ describe("ObservableData", () => {
   });
 
   it("should correctly instantiate an observable data object", () => {
-    expect(observable$ instanceof ObservableData).to.equal(true);
+    expect(observable$ instanceof Observable).to.equal(true);
   });
 
   it("should register observer and call it immediately with initial data", () => {
     observable$.observe(observerWrapper.observer);
-    expect(event.data).to.deep.equal(new ObservableData(cloneDeep(model)).data);
+    expect(event.data).to.deep.equal(new Observable(cloneDeep(model)).value);
     expect(event.previousData).to.deep.equal(null);
     expect(callBackSpy.calledOnce).to.equal(true);
 
@@ -54,7 +54,7 @@ describe("ObservableData", () => {
     expect(
       isEqual(event.data.customer.name, event.previousData.customer.name),
     ).to.equal(false);
-    expect(observable$.data.customer.name).to.equal("Daniel Marcuse");
+    expect(observable$.value.customer.name).to.equal("Daniel Marcuse");
   });
 
   it("should clone objects matching original properties", () => {
@@ -69,8 +69,8 @@ describe("ObservableData", () => {
 
   it("should respect deep nested child objects changes", () => {
     observable$.observe(observerWrapper.observer);
-    expect(observable$.data.options[1].price.amount).to.equal(200);
-    expect(observable$.data.products[0].options[1].price.amount).to.equal(200);
+    expect(observable$.value.options[1].price.amount).to.equal(200);
+    expect(observable$.value.products[0].options[1].price.amount).to.equal(200);
 
     observable$.update((data) => {
       data.options[1].price.amount = 20;
@@ -89,8 +89,8 @@ describe("ObservableData", () => {
       isEqual(event.data.products[2], event.previousData.products[2]),
     ).to.equal(true);
 
-    expect(observable$.data.options[1].price.amount).to.equal(20);
-    expect(observable$.data.products[0].options[1].price.amount).to.equal(20);
+    expect(observable$.value.options[1].price.amount).to.equal(20);
+    expect(observable$.value.products[0].options[1].price.amount).to.equal(20);
   });
 
   it("should be able to unsubscribe", () => {
@@ -113,10 +113,10 @@ describe("ObservableData", () => {
 
   it("should be immutable!!!", () => {
     expect(() => {
-      observable$.data.options[1].price.amount = 20;
+      observable$.value.options[1].price.amount = 20;
     }).to.throw(Error);
     expect(() => {
-      observable$.data.products[0] = {};
+      observable$.value.products[0] = {};
     }).to.throw(Error);
   });
 
@@ -124,7 +124,7 @@ describe("ObservableData", () => {
     observable$.observe(observerWrapper.observer);
     observable$.update(() => {});
     expect(
-      observable$.data.products[0].hasOption(observable$.data.options[1]),
+      observable$.value.products[0].hasOption(observable$.value.options[1]),
     ).to.equal(true);
   });
 });

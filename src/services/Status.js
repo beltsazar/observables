@@ -1,4 +1,4 @@
-import { ObservableData } from "../lib/ObservableData.js";
+import { Observable } from "../lib/Observable.js";
 
 const model = {
   isLoading: false,
@@ -7,7 +7,7 @@ const model = {
   loadingProgress: 0,
 };
 
-export class Status extends ObservableData {
+export class Status extends Observable {
   constructor() {
     super(model);
   }

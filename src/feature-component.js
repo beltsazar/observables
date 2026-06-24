@@ -9,12 +9,12 @@ import { SelectedProductComponent } from "./components/selected-product.js";
 import { SelectorComponent } from "./components/selector.js";
 import { ProductsComponent } from "./components/products.js";
 import { SelectionNotificationComponent } from "./components/selection-notification.js";
-import { ObservableData } from "./lib/ObservableData.js";
+import { Observable } from "./lib/Observable.js";
 
 export class FeatureComponent extends ContextProviderMixin(
   ScopedElementsMixin(LitElement),
 ) {
-  state$ = new ObservableData(model);
+  state$ = new Observable(model);
   status$ = new Status();
   actions = new Actions(this.state$, this.status$);
 

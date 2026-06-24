@@ -29,7 +29,7 @@ export class ProductsComponent extends ContextConsumerMixin(
   async connectedCallback() {
     await super.connectedCallback();
 
-    this.products = [...this.state$.data.products];
+    this.products = [...this.state$.value.products];
     this.subscription = this.state$.observe((data) => {
       this.updateProducts(data);
     });

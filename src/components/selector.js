@@ -23,7 +23,7 @@ export class SelectorComponent extends ContextConsumerMixin(
 
   _onSubmit(e) {
     // Set selected customer options based on checked checkboxes
-    const selectedOptions = this.state$.data.options.filter((option) => {
+    const selectedOptions = this.state$.value.options.filter((option) => {
       const form = e.target;
       const input = form ? form.elements.namedItem(String(option.id)) : null;
       return Boolean(input?.checked);
@@ -51,7 +51,7 @@ export class SelectorComponent extends ContextConsumerMixin(
         >
           <fieldset>
             <legend>Choose your product options:</legend>
-            ${this.state$.data.options.map(
+            ${this.state$.value.options.map(
               (option) =>
                 html` <div>
                   <input

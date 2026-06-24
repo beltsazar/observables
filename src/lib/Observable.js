@@ -4,26 +4,26 @@ import { deepFreeze } from "./object-helpers.js";
 
 const DATA_UPDATED = "data-updated";
 
-export class ObservableData extends EventTarget {
-  constructor(initialData) {
+export class Observable extends EventTarget {
+  constructor(initialValue) {
     super();
-    this._data = deepFreeze(cloneDeep(initialData));
+    this._value = deepFreeze(cloneDeep(initialValue));
   }
 
-  get data() {
-    return this._data;
+  get value() {
+    return this._value;
   }
 
   update(callback) {
-    const previousData = this.data;
+    const previousData = this.value;
 
     // create a mutable copy of the new data object
-    const data = cloneDeep(this.data);
+    const data = cloneDeep(this.value);
 
     callback(data);
 
     // create a copy of the mutated data to prevent references to nested consumer objects
-    this._data = deepFreeze(cloneDeep(data));
+    this._value = deepFreeze(cloneDeep(data));
 
     this.dispatchEvent(
       new CustomEvent(DATA_UPDATED, {
@@ -41,7 +41,7 @@ export class ObservableData extends EventTarget {
       callback(data, previousData);
     };
 
-    callback(this.data, null);
+    callback(this.value, null);
 
     this.addEventListener(DATA_UPDATED, callBackWrapper);
 
