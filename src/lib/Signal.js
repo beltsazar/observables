@@ -46,27 +46,4 @@ export class Signal extends EventTarget {
       }),
     );
   }
-
-  observe(callback) {
-    const callBackWrapper = (e) => {
-      const { signal } = e.detail;
-      callback(signal);
-    };
-
-    callback(this);
-
-    this.addEventListener(SIGNAL_UPDATED, callBackWrapper);
-
-    return new Subscription(() =>
-      this.removeEventListener(SIGNAL_UPDATED, callBackWrapper),
-    );
-  }
-}
-
-class Subscription {
-  unsubscribe;
-
-  constructor(unsubscribe) {
-    this.unsubscribe = unsubscribe;
-  }
 }

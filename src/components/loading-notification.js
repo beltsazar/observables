@@ -2,6 +2,7 @@ import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { ContextConsumerMixin } from "../lib/context-mixins.js";
 import { context } from "../context.js";
+import { Watcher } from "../lib/Watcher.js";
 
 export class LoadingNotificationComponent extends ContextConsumerMixin(
   ScopedElementsMixin(LitElement),
@@ -23,7 +24,7 @@ export class LoadingNotificationComponent extends ContextConsumerMixin(
 
   async connectedCallback() {
     await super.connectedCallback();
-    this.statusSubscription = this.status$.observe(({ value }) => {
+    this.watcher = new Watcher([this.status$], ([{ value }]) => {
       this.isLoading = value.isLoading;
       this.loadingProgress = value.loadingProgress;
     });
@@ -31,7 +32,7 @@ export class LoadingNotificationComponent extends ContextConsumerMixin(
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.statusSubscription.unsubscribe();
+    this.watcher.unwatch();
   }
 
   render() {

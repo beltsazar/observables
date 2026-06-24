@@ -10,6 +10,7 @@ import { SelectorComponent } from "./components/selector.js";
 import { ProductsComponent } from "./components/products.js";
 import { SelectionNotificationComponent } from "./components/selection-notification.js";
 import { Signal } from "./lib/Signal.js";
+import { Watcher } from "./lib/Watcher.js";
 
 export class FeatureComponent extends ContextProviderMixin(
   ScopedElementsMixin(LitElement),
@@ -48,24 +49,34 @@ export class FeatureComponent extends ContextProviderMixin(
 
   connectedCallback() {
     super.connectedCallback();
-    this.subscription = this.state$.observe(({ value }) => {
+    new Watcher([this.state$], ([{ value }]) => {
       console.log("data", value);
     });
 
-    this.test1$.observe(({ value }) => {
+    new Watcher([this.test1$], ([{ value }]) => {
       console.log("test1$", this.test1$.value);
+      console.log("test1$", value);
     });
+
+    const watcher = new Watcher(
+      [this.test1$, this.test2$],
+      ([{ value: value1 }, { value: value2 }], signal) => {
+        console.log("Watcher test1$:", value1, value2, signal);
+      },
+    );
 
     this.test1$.setValue((value) => {
       value.test = 20;
     });
 
-    this.test2$.observe(({ value }) => {
+    new Watcher([this.test2$], ([{ value }]) => {
       console.log("-test2$", this.test2$.value);
       console.log("--test2$", value);
     });
 
     this.test2$.setValue(5);
+
+    watcher.unwatch();
 
     // console.log("test1$", this.test1$.value);
     // console.log("test2$", this.test2$.value);

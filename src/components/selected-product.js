@@ -2,6 +2,7 @@ import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { ContextConsumerMixin } from "../lib/context-mixins.js";
 import { context } from "../context.js";
+import { Watcher } from "../lib/Watcher.js";
 
 export class SelectedProductComponent extends ContextConsumerMixin(
   ScopedElementsMixin(LitElement),
@@ -21,14 +22,14 @@ export class SelectedProductComponent extends ContextConsumerMixin(
 
   async connectedCallback() {
     await super.connectedCallback();
-    this.subscription = this.state$.observe(({ value }) => {
+    this.watcher = new Watcher([this.state$], ([{ value }]) => {
       this.selectedProduct = value.customer.selectedProduct;
     });
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.subscription.unsubscribe();
+    this.watcher.unwatch();
   }
 
   showProduct(product) {

@@ -3,6 +3,7 @@ import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { ContextConsumerMixin } from "../lib/context-mixins.js";
 import { context } from "../context.js";
 import { LoadingNotificationComponent } from "./loading-notification.js";
+import { Watcher } from "../lib/Watcher.js";
 
 export class ProductsComponent extends ContextConsumerMixin(
   ScopedElementsMixin(LitElement),
@@ -30,14 +31,14 @@ export class ProductsComponent extends ContextConsumerMixin(
     await super.connectedCallback();
 
     this.products = [...this.state$.value.products];
-    this.subscription = this.state$.observe(({ value }) => {
+    this.watcher = new Watcher([this.state$], ([{ value }]) => {
       this.updateProducts(value);
     });
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.subscription.unsubscribe();
+    this.watcher.unwatch();
   }
 
   updateProducts(data) {
