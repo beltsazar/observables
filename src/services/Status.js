@@ -1,4 +1,4 @@
-import { Signal } from "../lib/Signal.js";
+import { Signal } from "../lib/signals/Signal.js";
 
 const model = {
   isLoading: false,

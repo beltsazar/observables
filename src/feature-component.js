@@ -1,6 +1,6 @@
 import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { ContextProviderMixin } from "./lib/context-mixins.js";
+import { ContextProviderMixin } from "./lib/context/context-mixins.js";
 import { context } from "./context.js";
 import { model } from "./state/model.js";
 import { Status } from "./services/Status.js";
@@ -9,9 +9,9 @@ import { SelectedProductComponent } from "./components/selected-product.js";
 import { SelectorComponent } from "./components/selector.js";
 import { ProductsComponent } from "./components/products.js";
 import { SelectionNotificationComponent } from "./components/selection-notification.js";
-import { Signal } from "./lib/Signal.js";
-import { ComputedSignal } from "./lib/ComputedSignal.js";
-import { Watcher } from "./lib/Watcher.js";
+import { Signal } from "./lib/signals/Signal.js";
+import { ComputedSignal } from "./lib/signals/ComputedSignal.js";
+import { Watcher } from "./lib/signals/Watcher.js";
 import { signal } from "@lion/ui/docs/components/icon/assets/iconset-space.js";
 
 export class FeatureComponent extends ContextProviderMixin(

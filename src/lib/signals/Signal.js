@@ -1,5 +1,5 @@
 import { cloneDeep } from "lodash-es";
-import { freezeDeep } from "./object-helpers.js";
+import { freezeDeep } from "./utils/freezeDeep.js";
 
 const SIGNAL_UPDATED = "signal-updated";
 
