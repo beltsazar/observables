@@ -2,9 +2,9 @@
 import { cloneDeep } from "lodash-es";
 import { freezeDeep } from "./object-helpers.js";
 
-const VALUE_UPDATED = "value-updated";
+const SIGNAL_UPDATED = "signal-updated";
 
-export class Observable extends EventTarget {
+export class Signal extends EventTarget {
   constructor(initialValue) {
     super();
     this._previousValue = undefined;
@@ -39,10 +39,8 @@ export class Observable extends EventTarget {
     this._value = newValue;
 
     this.dispatchEvent(
-      new CustomEvent(VALUE_UPDATED, {
+      new CustomEvent(SIGNAL_UPDATED, {
         detail: {
-          newValue,
-          previousValue,
           signal: this,
         },
       }),
@@ -51,16 +49,16 @@ export class Observable extends EventTarget {
 
   observe(callback) {
     const callBackWrapper = (e) => {
-      const { newValue, previousValue, signal } = e.detail;
-      callback(newValue, previousValue, signal);
+      const { signal } = e.detail;
+      callback(signal);
     };
 
-    callback(this.value, this.previousValue, this);
+    callback(this);
 
-    this.addEventListener(VALUE_UPDATED, callBackWrapper);
+    this.addEventListener(SIGNAL_UPDATED, callBackWrapper);
 
     return new Subscription(() =>
-      this.removeEventListener(VALUE_UPDATED, callBackWrapper),
+      this.removeEventListener(SIGNAL_UPDATED, callBackWrapper),
     );
   }
 }

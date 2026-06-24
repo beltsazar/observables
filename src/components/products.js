@@ -30,8 +30,8 @@ export class ProductsComponent extends ContextConsumerMixin(
     await super.connectedCallback();
 
     this.products = [...this.state$.value.products];
-    this.subscription = this.state$.observe((data) => {
-      this.updateProducts(data);
+    this.subscription = this.state$.observe(({ value }) => {
+      this.updateProducts(value);
     });
   }
 

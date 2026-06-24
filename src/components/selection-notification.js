@@ -20,10 +20,10 @@ export class SelectionNotificationComponent extends ContextConsumerMixin(
 
   async connectedCallback() {
     await super.connectedCallback();
-    this.subscription = this.state$.observe((data) => {
+    this.subscription = this.state$.observe(({ value }) => {
       const {
         customer: { selectedProduct, selectedOptions },
-      } = data;
+      } = value;
 
       if (selectedProduct && !selectedProduct.hasOptions(selectedOptions))
         this.productSelectionMessage =

@@ -23,9 +23,9 @@ export class LoadingNotificationComponent extends ContextConsumerMixin(
 
   async connectedCallback() {
     await super.connectedCallback();
-    this.statusSubscription = this.status$.observe((data) => {
-      this.isLoading = data.isLoading;
-      this.loadingProgress = data.loadingProgress;
+    this.statusSubscription = this.status$.observe(({ value }) => {
+      this.isLoading = value.isLoading;
+      this.loadingProgress = value.loadingProgress;
     });
   }
 

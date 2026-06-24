@@ -1,4 +1,4 @@
-import { Observable } from "../lib/Observable.js";
+import { Signal } from "../lib/Signal.js";
 
 const model = {
   isLoading: false,
@@ -7,7 +7,7 @@ const model = {
   loadingProgress: 0,
 };
 
-export class Status extends Observable {
+export class Status extends Signal {
   constructor() {
     super(model);
   }

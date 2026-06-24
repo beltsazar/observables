@@ -9,17 +9,17 @@ import { SelectedProductComponent } from "./components/selected-product.js";
 import { SelectorComponent } from "./components/selector.js";
 import { ProductsComponent } from "./components/products.js";
 import { SelectionNotificationComponent } from "./components/selection-notification.js";
-import { Observable } from "./lib/Observable.js";
+import { Signal } from "./lib/Signal.js";
 
 export class FeatureComponent extends ContextProviderMixin(
   ScopedElementsMixin(LitElement),
 ) {
-  state$ = new Observable(model);
+  state$ = new Signal(model);
   status$ = new Status();
   actions = new Actions(this.state$, this.status$);
 
-  test1$ = new Observable({ test: 1 });
-  test2$ = new Observable(2);
+  test1$ = new Signal({ test: 1 });
+  test2$ = new Signal(2);
 
   constructor() {
     super();
@@ -48,11 +48,11 @@ export class FeatureComponent extends ContextProviderMixin(
 
   connectedCallback() {
     super.connectedCallback();
-    this.subscription = this.state$.observe((data) => {
-      // console.log("data", data);
+    this.subscription = this.state$.observe(({ value }) => {
+      console.log("data", value);
     });
 
-    this.test1$.observe((value) => {
+    this.test1$.observe(({ value }) => {
       console.log("test1$", this.test1$.value);
     });
 
@@ -60,10 +60,9 @@ export class FeatureComponent extends ContextProviderMixin(
       value.test = 20;
     });
 
-    this.test2$.observe((value, prev, signal) => {
+    this.test2$.observe(({ value }) => {
       console.log("-test2$", this.test2$.value);
       console.log("--test2$", value);
-      console.log("---test2$", signal.value);
     });
 
     this.test2$.setValue(5);
