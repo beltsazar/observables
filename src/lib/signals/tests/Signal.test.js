@@ -1,8 +1,8 @@
 import { expect, describe, it, beforeEach, afterEach } from "vitest";
 import { spy } from "sinon";
 import { cloneDeep, isEqual } from "lodash-es";
-import { model } from "../../state/model.js";
-import { Signal } from "./Signal.js";
+import { model } from "../../../state/model.js";
+import { Signal } from "../Signal.js";
 
 describe("ObservableData", () => {
   let observable$;
