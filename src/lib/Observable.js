@@ -1,13 +1,13 @@
 // eslint-disable-next-line max-classes-per-file
 import { cloneDeep } from "lodash-es";
-import { deepFreeze } from "./object-helpers.js";
+import { freezeDeep } from "./object-helpers.js";
 
-const DATA_UPDATED = "data-updated";
+const VALUE_UPDATED = "value-updated";
 
 export class Observable extends EventTarget {
   constructor(initialValue) {
     super();
-    this._value = deepFreeze(cloneDeep(initialValue));
+    this._value = freezeDeep(cloneDeep(initialValue));
   }
 
   get value() {
@@ -23,10 +23,10 @@ export class Observable extends EventTarget {
     callback(data);
 
     // create a copy of the mutated data to prevent references to nested consumer objects
-    this._value = deepFreeze(cloneDeep(data));
+    this._value = freezeDeep(cloneDeep(data));
 
     this.dispatchEvent(
-      new CustomEvent(DATA_UPDATED, {
+      new CustomEvent(VALUE_UPDATED, {
         detail: {
           data,
           previousData,
@@ -43,10 +43,10 @@ export class Observable extends EventTarget {
 
     callback(this.value, null);
 
-    this.addEventListener(DATA_UPDATED, callBackWrapper);
+    this.addEventListener(VALUE_UPDATED, callBackWrapper);
 
     return new Subscription(() =>
-      this.removeEventListener(DATA_UPDATED, callBackWrapper),
+      this.removeEventListener(VALUE_UPDATED, callBackWrapper),
     );
   }
 }

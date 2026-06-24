@@ -18,6 +18,9 @@ export class FeatureComponent extends ContextProviderMixin(
   status$ = new Status();
   actions = new Actions(this.state$, this.status$);
 
+  test1$ = new Observable({ test: 1 });
+  test2$ = new Observable(2);
+
   constructor() {
     super();
     this.createContext(context, {
@@ -46,8 +49,11 @@ export class FeatureComponent extends ContextProviderMixin(
   connectedCallback() {
     super.connectedCallback();
     this.subscription = this.state$.observe((data) => {
-      console.log("data", data);
+      // console.log("data", data);
     });
+
+    console.log("test1$", this.test1$.value);
+    console.log("test2$", this.test2$.value);
   }
 
   disconnectedCallback() {
