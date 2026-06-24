@@ -52,8 +52,22 @@ export class FeatureComponent extends ContextProviderMixin(
       // console.log("data", data);
     });
 
-    console.log("test1$", this.test1$.value);
-    console.log("test2$", this.test2$.value);
+    this.test1$.observe((value) => {
+      console.log("test1$", this.test1$.value);
+    });
+
+    this.test1$.update((value) => {
+      value.test = 20;
+    });
+
+    this.test2$.observe((value) => {
+      console.log("test2$", this.test2$.value);
+    });
+
+    this.test2$.update(5);
+
+    // console.log("test1$", this.test1$.value);
+    // console.log("test2$", this.test2$.value);
   }
 
   disconnectedCallback() {

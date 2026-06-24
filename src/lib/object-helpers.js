@@ -8,7 +8,7 @@
 export function freezeDeep(object) {
   // Intended early-return for non-object values.
   if (object && typeof object !== "object") {
-    return value;
+    return object;
   }
 
   // Retrieve all own keys (including symbols and non-enumerables).

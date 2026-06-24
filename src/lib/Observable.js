@@ -14,22 +14,29 @@ export class Observable extends EventTarget {
     return this._value;
   }
 
-  update(callback) {
-    const previousData = this.value;
+  update(valueOrCallback) {
+    const previousValue = this.value;
+    let newValue;
 
-    // create a mutable copy of the new data object
-    const data = cloneDeep(this.value);
+    if (valueOrCallback && typeof valueOrCallback === "function") {
+      // create a mutable copy of the new data object
+      newValue = cloneDeep(this.value);
 
-    callback(data);
+      valueOrCallback(newValue);
 
-    // create a copy of the mutated data to prevent references to nested consumer objects
-    this._value = freezeDeep(cloneDeep(data));
+      // create a copy of the mutated data to prevent references to nested consumer objects
+      freezeDeep(cloneDeep(newValue));
+    } else {
+      newValue = valueOrCallback;
+    }
+
+    this._value = newValue;
 
     this.dispatchEvent(
       new CustomEvent(VALUE_UPDATED, {
         detail: {
-          data,
-          previousData,
+          newValue,
+          previousValue,
         },
       }),
     );
@@ -37,8 +44,8 @@ export class Observable extends EventTarget {
 
   observe(callback) {
     const callBackWrapper = (e) => {
-      const { data, previousData } = e.detail;
-      callback(data, previousData);
+      const { newValue, previousValue } = e.detail;
+      callback(newValue, previousValue);
     };
 
     callback(this.value, null);
