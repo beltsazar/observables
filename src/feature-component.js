@@ -100,12 +100,11 @@ export class FeatureComponent extends ContextProviderMixin(
 
     this.test2$.setValue(5);
 
+    // this.computed$.setValue(1000);
+
     watcher.unwatch();
 
     console.log("signals", this.computed$.watcher.signals);
-
-    // console.log("test1$", this.test1$.value);
-    // console.log("test2$", this.test2$.value);
   }
 
   disconnectedCallback() {
