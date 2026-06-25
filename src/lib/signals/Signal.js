@@ -25,17 +25,15 @@ export class Signal extends EventTarget {
     if (valueOrCallback && typeof valueOrCallback === "function") {
       // create a mutable copy of the new data object
       newValue = cloneDeep(this.value);
-
+      // let consumer callback mutate this copy
       valueOrCallback(newValue);
-
-      // create a copy of the mutated data to prevent references to nested consumer objects
-      freezeDeep(cloneDeep(newValue));
     } else {
       newValue = valueOrCallback;
     }
 
     this._previousValue = previousValue;
-    this._value = newValue;
+    // clone the consumer value to prevent nested consumer objects to be frozen :)
+    this._value = freezeDeep(cloneDeep(newValue));
 
     this.dispatchEvent(
       new CustomEvent(SIGNAL_UPDATED, {
