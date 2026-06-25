@@ -3,21 +3,20 @@ import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { ContextProviderMixin } from "./lib/context/context-mixins.js";
 import { context } from "./context.js";
 import { model } from "./state/model.js";
+import { Product } from "./state/objects/Product.js";
 import { Status } from "./services/Status.js";
-import { Actions } from "./state/actions/Actions.js";
 import { SelectedProductComponent } from "./components/selected-product.js";
 import { SelectorComponent } from "./components/selector.js";
 import { ProductsComponent } from "./components/products.js";
 import { SelectionNotificationComponent } from "./components/selection-notification.js";
 import { Signal, ComputedSignal, Watcher } from "./lib/signals";
+import { ProductService } from "./services/ProductService.js";
 
 export class FeatureComponent extends ContextProviderMixin(
   ScopedElementsMixin(LitElement),
 ) {
   state$ = new Signal(model);
   status$ = new Status();
-  actions = new Actions(this.state$, this.status$);
-
   selectedProduct$$ = new ComputedSignal(
     [this.state$],
     ([{ value }]) => value.customer.selectedProduct,
@@ -30,6 +29,8 @@ export class FeatureComponent extends ContextProviderMixin(
     [this.state$],
     ([{ value }]) => value.products,
   );
+
+  productService = new ProductService();
 
   constructor() {
     super();
@@ -61,7 +62,7 @@ export class FeatureComponent extends ContextProviderMixin(
 
   connectedCallback() {
     super.connectedCallback();
-    this.watcher = new Watcher([this.state$], ({ value }) => {
+    this.watcher = new Watcher([this.state$], ([{ value }]) => {
       console.log("state$", value);
     });
   }
@@ -69,6 +70,22 @@ export class FeatureComponent extends ContextProviderMixin(
   disconnectedCallback() {
     super.disconnectedCallback();
     this.watcher.unwatch();
+  }
+
+  async _onLoadProducts() {
+    this.status$.startApiCall();
+    const products = await this.productService.loadProductsFromAPI();
+    this.status$.completeApiCall();
+
+    this.state$.setValue((data) => {
+      products.map((product) => {
+        data.products.push(
+          new Product(product.id, product.name, [
+            data.options[Math.floor(Math.random() * data.options.length)],
+          ]),
+        );
+      });
+    });
   }
 
   render() {
@@ -98,10 +115,6 @@ export class FeatureComponent extends ContextProviderMixin(
         </div>
       </div>
     `;
-  }
-
-  async _onLoadProducts() {
-    await this.actions.loadProducts();
   }
 
   static get styles() {

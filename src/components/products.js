@@ -49,7 +49,7 @@ export class ProductsComponent extends ContextConsumerMixin(
   }
 
   handleProductSelection(e, product) {
-    this.actions.selectProduct(product);
+    this.state$.setValue((value) => (value.customer.selectedProduct = product));
     e.preventDefault();
   }
 

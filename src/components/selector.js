@@ -29,7 +29,9 @@ export class SelectorComponent extends ContextConsumerMixin(
       return Boolean(input?.checked);
     });
 
-    this.actions.selectOptions(selectedOptions);
+    this.state$.setValue((value) => {
+      value.customer.selectedOptions = selectedOptions;
+    });
 
     e.preventDefault();
   }
