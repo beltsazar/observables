@@ -9,10 +9,7 @@ import { SelectedProductComponent } from "./components/selected-product.js";
 import { SelectorComponent } from "./components/selector.js";
 import { ProductsComponent } from "./components/products.js";
 import { SelectionNotificationComponent } from "./components/selection-notification.js";
-import { Signal } from "./lib/signals/Signal.js";
-import { ComputedSignal } from "./lib/signals/ComputedSignal.js";
-import { Watcher } from "./lib/signals/Watcher.js";
-import { signal } from "@lion/ui/docs/components/icon/assets/iconset-space.js";
+import { Signal, ComputedSignal, Watcher } from "./lib/signals";
 
 export class FeatureComponent extends ContextProviderMixin(
   ScopedElementsMixin(LitElement),
@@ -21,8 +18,18 @@ export class FeatureComponent extends ContextProviderMixin(
   status$ = new Status();
   actions = new Actions(this.state$, this.status$);
 
-  test1$ = new Signal({ test: 1 });
-  test2$ = new Signal(2);
+  selectedProduct$$ = new ComputedSignal(
+    [this.state$],
+    ([{ value }]) => value.customer.selectedProduct,
+  );
+  selectedOptions$$ = new ComputedSignal(
+    [this.state$],
+    ([{ value }]) => value.customer.selectedOptions,
+  );
+  products$$ = new ComputedSignal(
+    [this.state$],
+    ([{ value }]) => value.products,
+  );
 
   constructor() {
     super();
@@ -30,6 +37,9 @@ export class FeatureComponent extends ContextProviderMixin(
       state$: this.state$,
       status$: this.status$,
       actions: this.actions,
+      selectedProduct$$: this.selectedProduct$$,
+      selectedOptions$$: this.selectedOptions$$,
+      products$$: this.products$$,
     });
     this.count = 0;
   }
@@ -51,65 +61,14 @@ export class FeatureComponent extends ContextProviderMixin(
 
   connectedCallback() {
     super.connectedCallback();
-
-    this.computed$ = new ComputedSignal(
-      [this.test1$, this.test2$],
-      ([{ value: value1 }, { value: value2 }], signal) => {
-        // console.log("Computed!!!:", signal);
-        return value1.test * value2;
-      },
-    );
-
-    this.computed$.unwatch();
-
-    new Watcher([this.computed$], ([{ value }]) => {
-      console.log("computed$ !!!", value);
+    this.watcher = new Watcher([this.state$], ({ value }) => {
+      console.log("state$", value);
     });
-
-    new Watcher(
-      [this.computed$, this.test1$],
-      ([{ value: value1 }, { value: value2 }]) => {
-        console.log("computed$ en test1!!!", value1, value2);
-      },
-    );
-
-    new Watcher([this.state$], ([{ value }]) => {
-      console.log("data", value);
-    });
-
-    new Watcher([this.test1$], ([{ value }]) => {
-      console.log("test1$", this.test1$.value);
-      console.log("test1$", value);
-    });
-
-    const watcher = new Watcher(
-      [this.test1$, this.test2$],
-      ([{ value: value1 }, { value: value2 }], signal) => {
-        console.log("Watcher test1$:", value1, value2, signal);
-      },
-    );
-
-    this.test1$.setValue((value) => {
-      value.test = 20;
-    });
-
-    new Watcher([this.test2$], ([{ value }]) => {
-      console.log("-test2$", this.test2$.value);
-      console.log("--test2$", value);
-    });
-
-    this.test2$.setValue(5);
-
-    // this.computed$.setValue(1000);
-
-    watcher.unwatch();
-
-    console.log("signals", this.computed$.watcher.signals);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    // this.subscription.unsubscribe();
+    this.watcher.unwatch();
   }
 
   render() {

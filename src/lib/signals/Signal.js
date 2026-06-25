@@ -1,7 +1,6 @@
-import { cloneDeep } from "lodash-es";
+import { cloneDeep, isEqual } from "lodash-es";
 import { freezeDeep } from "./utils/freezeDeep.js";
-
-const SIGNAL_UPDATED = "signal-updated";
+import { SIGNAL_NOTIFICATION } from "./constants.js";
 
 export class Signal extends EventTarget {
   constructor(initialValue) {
@@ -31,16 +30,19 @@ export class Signal extends EventTarget {
       newValue = valueOrCallback;
     }
 
-    this._previousValue = previousValue;
-    // clone the consumer value to prevent nested consumer objects to be frozen :)
-    this._value = freezeDeep(cloneDeep(newValue));
+    // notify only when the next value differs from the current value
+    if (!isEqual(newValue, this.previousValue)) {
+      this._previousValue = previousValue;
+      // clone the consumer value to prevent nested consumer objects to be frozen :)
+      this._value = freezeDeep(cloneDeep(newValue));
 
-    this.dispatchEvent(
-      new CustomEvent(SIGNAL_UPDATED, {
-        detail: {
-          signal: this,
-        },
-      }),
-    );
+      this.dispatchEvent(
+        new CustomEvent(SIGNAL_NOTIFICATION, {
+          detail: {
+            signal: this,
+          },
+        }),
+      );
+    }
   }
 }

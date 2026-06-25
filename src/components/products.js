@@ -31,9 +31,12 @@ export class ProductsComponent extends ContextConsumerMixin(
     await super.connectedCallback();
 
     this.products = [...this.state$.value.products];
-    this.watcher = new Watcher([this.state$], ([{ value }]) => {
-      this.updateProducts(value);
-    });
+    this.watcher = new Watcher(
+      [this.products$$, this.selectedOptions$$],
+      ([{ value: products }, { value: selectedOptions }]) => {
+        this.updateProducts(products, selectedOptions);
+      },
+    );
   }
 
   disconnectedCallback() {
@@ -41,10 +44,8 @@ export class ProductsComponent extends ContextConsumerMixin(
     this.watcher.unwatch();
   }
 
-  updateProducts(data) {
-    this.products = [
-      ...data.products.filterByOptions(data.customer.selectedOptions),
-    ];
+  updateProducts(products, selectedOptions) {
+    this.products = [...products.filterByOptions(selectedOptions)];
   }
 
   handleProductSelection(e, product) {

@@ -1,4 +1,4 @@
-const SIGNAL_UPDATED = "signal-updated";
+import { SIGNAL_NOTIFICATION } from "./constants.js";
 
 export class Watcher extends EventTarget {
   constructor(signals = [], callback) {
@@ -21,9 +21,10 @@ export class Watcher extends EventTarget {
 
     callback(this.signals, null);
 
-    signal.addEventListener(SIGNAL_UPDATED, callBackWrapper);
+    signal.addEventListener(SIGNAL_NOTIFICATION, callBackWrapper);
 
-    return () => signal.removeEventListener(SIGNAL_UPDATED, callBackWrapper);
+    return () =>
+      signal.removeEventListener(SIGNAL_NOTIFICATION, callBackWrapper);
   }
 
   unwatch() {

@@ -21,20 +21,19 @@ export class SelectionNotificationComponent extends ContextConsumerMixin(
 
   async connectedCallback() {
     await super.connectedCallback();
-    this.watcher = new Watcher([this.state$], ([{ value }]) => {
-      const {
-        customer: { selectedProduct, selectedOptions },
-      } = value;
-
-      if (selectedProduct && !selectedProduct.hasOptions(selectedOptions))
-        this.productSelectionMessage =
-          "The selected product does not contain the selected options. Please select a different product!";
-      else if (selectedProduct) {
-        this.productSelectionMessage = "Valid product selected!";
-      } else {
-        this.productSelectionMessage = "Please select a product!";
-      }
-    });
+    this.watcher = new Watcher(
+      [this.selectedProduct$$, this.selectedOptions$$],
+      ([{ value: selectedProduct }, { value: selectedOptions }]) => {
+        if (selectedProduct && !selectedProduct.hasOptions(selectedOptions))
+          this.productSelectionMessage =
+            "The selected product does not contain the selected options. Please select a different product!";
+        else if (selectedProduct) {
+          this.productSelectionMessage = "Valid product selected!";
+        } else {
+          this.productSelectionMessage = "Please select a product!";
+        }
+      },
+    );
   }
 
   disconnectedCallback() {

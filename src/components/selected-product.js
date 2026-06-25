@@ -22,8 +22,8 @@ export class SelectedProductComponent extends ContextConsumerMixin(
 
   async connectedCallback() {
     await super.connectedCallback();
-    this.watcher = new Watcher([this.state$], ([{ value }]) => {
-      this.selectedProduct = value.customer.selectedProduct;
+    this.watcher = new Watcher([this.selectedProduct$$], ([{ value }]) => {
+      this.selectedProduct = value;
     });
   }
 
