@@ -1,6 +1,6 @@
 import { ContextConsumer, ContextProvider, createContext } from "@lit/context";
 
-export const context = createContext(Symbol("signals-context"));
+const context = createContext(Symbol("signals-context"));
 
 export const SignalProviderMixin = (superClass) =>
   class extends superClass {
