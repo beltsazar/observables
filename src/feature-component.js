@@ -59,10 +59,10 @@ export class FeatureComponent extends ContextProviderMixin(
 
   connectedCallback() {
     super.connectedCallback();
-    this.stateWatcher$ = new Watcher([this.state$], ([{ value }]) => {
+    this.stateWatcher = new Watcher([this.state$], ([{ value }]) => {
       console.debug("state$", value);
     });
-    this.productService$Watcher$ = new Watcher(
+    this.productService$Watcher = new Watcher(
       [this.productService$],
       ([{ value }]) => {
         if (value.isCompleted && value.isSuccess && value.jsonResponse) {
@@ -74,13 +74,14 @@ export class FeatureComponent extends ContextProviderMixin(
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.stateWatcher$.unwatch();
-    this.productService$Watcher$.unwatch();
+    this.stateWatcher.unwatch();
+    this.productService$Watcher.unwatch();
   }
 
   render() {
     return html`
       <h1>${this.title}</h1>
+      --${this.status?.isLoading}--
       <div class="container">
         <div class="row">
           <div class="column">
