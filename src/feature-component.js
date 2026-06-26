@@ -1,7 +1,6 @@
 import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { ContextProviderMixin } from "./lib/context/context-mixins.js";
-import { context } from "./context.js";
 import { State } from "./state/State.js";
 import { Status } from "./services/Status.js";
 import { SelectedProductComponent } from "./components/selected-product.js";

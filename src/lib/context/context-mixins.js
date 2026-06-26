@@ -1,6 +1,6 @@
 import { ContextConsumer, ContextProvider, createContext } from "@lit/context";
 
-export const contextNew = createContext("signals");
+export const context = createContext(Symbol("signals-context"));
 
 export const ContextProviderMixin = (superClass) =>
   class extends superClass {
@@ -8,7 +8,7 @@ export const ContextProviderMixin = (superClass) =>
 
     initializeContext(initialValue) {
       this.contextProvider = new ContextProvider(this, {
-        context: contextNew,
+        context,
         initialValue,
       });
     }
@@ -20,12 +20,12 @@ export const ContextConsumerMixin = (superClass) =>
 
     async connectedCallback() {
       super.connectedCallback();
-      await this.mapContextAsync(contextNew, (contextValue) => {
+      await this.mapContextAsync((contextValue) => {
         Object.assign(this, { ...contextValue });
       });
     }
 
-    mapContext(context, mapper, resolver = null) {
+    mapContext(mapper, resolver = null) {
       this.contextConsumer = new ContextConsumer(this, {
         context,
         callback: (context) => {
@@ -35,10 +35,10 @@ export const ContextConsumerMixin = (superClass) =>
       });
     }
 
-    mapContextAsync(context, mapper) {
+    mapContextAsync(mapper) {
       let resolver;
       const deferredPromise = new Promise((resolve) => (resolver = resolve));
-      this.mapContext(context, mapper, resolver);
+      this.mapContext(mapper, resolver);
       return deferredPromise;
     }
   };
