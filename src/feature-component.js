@@ -2,7 +2,7 @@ import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { ContextProviderMixin } from "./lib/context/context-mixins.js";
 import { context } from "./context.js";
-import { model } from "./state/model.js";
+import { State } from "./state/State.js";
 import { Product } from "./state/objects/Product.js";
 import { Status } from "./services/Status.js";
 import { SelectedProductComponent } from "./components/selected-product.js";
@@ -15,7 +15,7 @@ import { ProductService } from "./services/ProductService.js";
 export class FeatureComponent extends ContextProviderMixin(
   ScopedElementsMixin(LitElement),
 ) {
-  state$ = new Signal(model);
+  state$ = new State();
   status$ = new Status();
   selectedProduct$$ = new ComputedSignal(
     [this.state$],
@@ -37,7 +37,6 @@ export class FeatureComponent extends ContextProviderMixin(
     this.createContext(context, {
       state$: this.state$,
       status$: this.status$,
-      actions: this.actions,
       selectedProduct$$: this.selectedProduct$$,
       selectedOptions$$: this.selectedOptions$$,
       products$$: this.products$$,
@@ -74,18 +73,9 @@ export class FeatureComponent extends ContextProviderMixin(
 
   async _onLoadProducts() {
     this.status$.startApiCall();
-    const products = await this.productService.loadProductsFromAPI();
+    const json = await this.productService.loadProductsFromAPI();
     this.status$.completeApiCall();
-
-    this.state$.setValue((data) => {
-      products.map((product) => {
-        data.products.push(
-          new Product(product.id, product.name, [
-            data.options[Math.floor(Math.random() * data.options.length)],
-          ]),
-        );
-      });
-    });
+    this.state$.addProducts(json);
   }
 
   render() {

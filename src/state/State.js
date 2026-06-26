@@ -1,3 +1,4 @@
+import { Signal } from "../lib/signals";
 import { Option } from "./objects/Option.js";
 import { Product } from "./objects/Product.js";
 import { ProductList } from "./objects/ProductList.js";
@@ -20,7 +21,7 @@ const options = [
   new Option(3, "Option 3", prices.expensive),
 ];
 
-export const model = {
+const model = {
   customer: {
     name: "Daniel",
     selectedProduct: null,
@@ -35,3 +36,21 @@ export const model = {
     new Product(5, "Product 5", [options[0], options[2]]),
   ),
 };
+
+export class State extends Signal {
+  constructor(value = model) {
+    super(value);
+  }
+
+  addProducts(productsJson) {
+    this.setValue((state) => {
+      productsJson.map((product) => {
+        state.products.push(
+          new Product(product.id, product.name, [
+            state.options[Math.floor(Math.random() * state.options.length)],
+          ]),
+        );
+      });
+    });
+  }
+}
