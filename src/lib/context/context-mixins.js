@@ -1,12 +1,14 @@
-import { ContextConsumer, ContextProvider } from "@lit/context";
+import { ContextConsumer, ContextProvider, createContext } from "@lit/context";
+
+export const contextNew = createContext("signals");
 
 export const ContextProviderMixin = (superClass) =>
   class extends superClass {
     contextProvider;
 
-    createContext(context, initialValue) {
+    initializeContext(initialValue) {
       this.contextProvider = new ContextProvider(this, {
-        context: context,
+        context: contextNew,
         initialValue,
       });
     }
@@ -15,11 +17,10 @@ export const ContextProviderMixin = (superClass) =>
 export const ContextConsumerMixin = (superClass) =>
   class extends superClass {
     contextConsumer;
-    context; // should be set in the component that uses this mixin
 
     async connectedCallback() {
       super.connectedCallback();
-      await this.mapContextAsync(this.context, (contextValue) => {
+      await this.mapContextAsync(contextNew, (contextValue) => {
         Object.assign(this, { ...contextValue });
       });
     }

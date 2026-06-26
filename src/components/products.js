@@ -8,8 +8,6 @@ import { Watcher } from "../lib/signals/Watcher.js";
 export class ProductsComponent extends ContextConsumerMixin(
   ScopedElementsMixin(LitElement),
 ) {
-  context = context;
-
   constructor() {
     super();
     this.products = [];

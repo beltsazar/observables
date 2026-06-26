@@ -1,13 +1,10 @@
 import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { ContextConsumerMixin } from "../lib/context/context-mixins.js";
-import { context } from "../context.js";
 
 export class SelectorComponent extends ContextConsumerMixin(
   ScopedElementsMixin(LitElement),
 ) {
-  context = context;
-
   constructor() {
     super();
     this.products = [];

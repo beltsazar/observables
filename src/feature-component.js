@@ -32,7 +32,7 @@ export class FeatureComponent extends ContextProviderMixin(
 
   constructor() {
     super();
-    this.createContext(context, {
+    this.initializeContext({
       state$: this.state$,
       status$: this.status$,
       productService$: this.productService$,
