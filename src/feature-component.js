@@ -61,7 +61,7 @@ export class FeatureComponent extends ContextProviderMixin(
   connectedCallback() {
     super.connectedCallback();
     this.stateWatcher$ = new Watcher([this.state$], ([{ value }]) => {
-      console.log("state$", value);
+      console.debug("state$", value);
     });
     this.productService$Watcher$ = new Watcher(
       [this.productService$],
@@ -77,10 +77,6 @@ export class FeatureComponent extends ContextProviderMixin(
     super.disconnectedCallback();
     this.stateWatcher$.unwatch();
     this.productService$Watcher$.unwatch();
-  }
-
-  async _onLoadProducts() {
-    this.productService$.loadProductsFromAPI();
   }
 
   render() {
@@ -100,11 +96,6 @@ export class FeatureComponent extends ContextProviderMixin(
             </div>
           </div>
           <div class="column">
-            <div>
-              <button @click="${() => this._onLoadProducts()}">
-                Load products
-              </button>
-            </div>
             <products-component></products-component>
           </div>
         </div>

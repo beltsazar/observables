@@ -53,9 +53,12 @@ export class ProductsComponent extends ContextConsumerMixin(
     e.preventDefault();
   }
 
+  handleLoadProducts() {
+    this.productService$.loadProductsFromAPI();
+  }
+
   render() {
     return html`<h2>Products</h2>
-      <loading-notification-component></loading-notification-component>
       <ul>
         ${this.products.map(
           (product) =>
@@ -67,7 +70,12 @@ export class ProductsComponent extends ContextConsumerMixin(
               >
             </li>`,
         )}
-      </ul> `;
+      </ul>
+
+      <loading-notification-component></loading-notification-component>
+      <button @click="${() => this.handleLoadProducts()}">
+        Load products
+      </button> `;
   }
 
   static get styles() {
