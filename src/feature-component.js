@@ -1,6 +1,6 @@
 import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { ContextProviderMixin } from "./lib/context/context-mixins.js";
+import { SignalProviderMixin } from "./lib/context/context-mixins.js";
 import { State } from "./state/State.js";
 import { Status } from "./services/Status.js";
 import { SelectedProductComponent } from "./components/selected-product.js";
@@ -10,7 +10,7 @@ import { SelectionNotificationComponent } from "./components/selection-notificat
 import { ComputedSignal, Watcher } from "./lib/signals";
 import { ProductService } from "./services/ProductService.js";
 
-export class FeatureComponent extends ContextProviderMixin(
+export class FeatureComponent extends SignalProviderMixin(
   ScopedElementsMixin(LitElement),
 ) {
   state$ = new State();

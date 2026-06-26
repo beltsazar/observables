@@ -1,9 +1,9 @@
 import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { ContextConsumerMixin } from "../lib/context/context-mixins.js";
+import { SignalConsumerMixin } from "../lib/context/context-mixins.js";
 import { Watcher } from "../lib/signals/Watcher.js";
 
-export class SelectionNotificationComponent extends ContextConsumerMixin(
+export class SelectionNotificationComponent extends SignalConsumerMixin(
   ScopedElementsMixin(LitElement),
 ) {
   constructor() {
