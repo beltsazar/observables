@@ -1,21 +1,33 @@
 import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { SignalConsumerMixin } from "../lib/signals/mixins.js";
+import { SignalConsumerMixin, Watcher } from "../lib/signals";
 
 export class SelectorComponent extends SignalConsumerMixin(
   ScopedElementsMixin(LitElement),
 ) {
+  state$;
+
   constructor() {
     super();
-    this.products = [];
+  }
+
+  static get properties() {
+    return {
+      options: { type: Array },
+    };
   }
 
   async connectedCallback() {
-    await super.connectedCallback();
+    super.connectedCallback();
+    const { state$ } = await this.asyncSignals;
+    this.watcher = new Watcher([state$], ([{ value }]) => {
+      this.options = value.options;
+    });
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
+    this.watcher.unwatch();
   }
 
   _onSubmit(e) {
@@ -50,7 +62,7 @@ export class SelectorComponent extends SignalConsumerMixin(
         >
           <fieldset>
             <legend>Choose your product options:</legend>
-            ${this.state$.value.options.map(
+            ${this.options?.map(
               (option) =>
                 html` <div>
                   <input

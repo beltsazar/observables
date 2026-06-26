@@ -1,8 +1,7 @@
 import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { SignalConsumerMixin } from "../lib/signals/mixins.js";
 import { LoadingNotificationComponent } from "./loading-notification.js";
-import { Watcher } from "../lib/signals/Watcher.js";
+import { SignalConsumerMixin, Watcher } from "../lib/signals";
 
 export class ProductsComponent extends SignalConsumerMixin(
   ScopedElementsMixin(LitElement),
@@ -25,11 +24,10 @@ export class ProductsComponent extends SignalConsumerMixin(
   }
 
   async connectedCallback() {
-    await super.connectedCallback();
-
-    this.products = [...this.state$.value.products];
+    super.connectedCallback();
+    const { products$$, selectedOptions$$ } = await this.asyncSignals;
     this.watcher = new Watcher(
-      [this.products$$, this.selectedOptions$$],
+      [products$$, selectedOptions$$],
       ([{ value: products }, { value: selectedOptions }]) => {
         this.updateProducts(products, selectedOptions);
       },

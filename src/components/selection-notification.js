@@ -1,7 +1,6 @@
 import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { SignalConsumerMixin } from "../lib/signals/mixins.js";
-import { Watcher } from "../lib/signals/Watcher.js";
+import { SignalConsumerMixin, Watcher } from "../lib/signals";
 
 export class SelectionNotificationComponent extends SignalConsumerMixin(
   ScopedElementsMixin(LitElement),
@@ -17,9 +16,10 @@ export class SelectionNotificationComponent extends SignalConsumerMixin(
   }
 
   async connectedCallback() {
-    await super.connectedCallback();
+    super.connectedCallback();
+    const { selectedProduct$$, selectedOptions$$ } = await this.asyncSignals;
     this.watcher = new Watcher(
-      [this.selectedProduct$$, this.selectedOptions$$],
+      [selectedProduct$$, selectedOptions$$],
       ([{ value: selectedProduct }, { value: selectedOptions }]) => {
         if (selectedProduct && !selectedProduct.hasOptions(selectedOptions))
           this.productSelectionMessage =

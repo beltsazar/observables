@@ -4,41 +4,34 @@ const context = createContext(Symbol("signals-context"));
 
 export const SignalProviderMixin = (superClass) =>
   class extends superClass {
-    contextProvider;
+    #contextProvider;
 
-    initializeContext(initialValue) {
-      this.contextProvider = new ContextProvider(this, {
+    injectSignals(signals) {
+      this.#contextProvider = new ContextProvider(this, {
         context,
-        initialValue,
+        initialValue: signals,
       });
     }
   };
 
 export const SignalConsumerMixin = (superClass) =>
   class extends superClass {
-    contextConsumer;
+    #contextConsumer;
+    #asyncSignalsResolver;
+    signals;
+    asyncSignals = new Promise(
+      (resolver) => (this.#asyncSignalsResolver = resolver),
+    );
 
-    async connectedCallback() {
+    connectedCallback() {
       super.connectedCallback();
-      await this.mapContextAsync((contextValue) => {
-        Object.assign(this, { ...contextValue });
-      });
-    }
 
-    mapContext(mapper, resolver = null) {
-      this.contextConsumer = new ContextConsumer(this, {
+      this.#contextConsumer = new ContextConsumer(this, {
         context,
-        callback: (context) => {
-          mapper(context);
-          resolver?.();
+        callback: (value) => {
+          this.signals = value;
+          this.#asyncSignalsResolver(value);
         },
       });
-    }
-
-    mapContextAsync(mapper) {
-      let resolver;
-      const deferredPromise = new Promise((resolve) => (resolver = resolve));
-      this.mapContext(mapper, resolver);
-      return deferredPromise;
     }
   };

@@ -31,7 +31,7 @@ export class FeatureComponent extends SignalProviderMixin(
 
   constructor() {
     super();
-    this.initializeContext({
+    this.injectSignals({
       state$: this.state$,
       status$: this.status$,
       productService$: this.productService$,
