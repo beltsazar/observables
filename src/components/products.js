@@ -25,7 +25,7 @@ export class ProductsComponent extends SignalConsumerMixin(
 
   async connectedCallback() {
     super.connectedCallback();
-    const { products$$, selectedOptions$$ } = await this.asyncSignals;
+    const { products$$, selectedOptions$$ } = await this.signalsAsync;
     this.watcher = new Watcher(
       [products$$, selectedOptions$$],
       ([{ value: products }, { value: selectedOptions }]) => {

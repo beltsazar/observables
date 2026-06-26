@@ -17,20 +17,19 @@ export const SignalProviderMixin = (superClass) =>
 export const SignalConsumerMixin = (superClass) =>
   class extends superClass {
     #contextConsumer;
-    #asyncSignalsResolver;
+    #promiseResolver;
     signals;
-    asyncSignals = new Promise(
-      (resolver) => (this.#asyncSignalsResolver = resolver),
+    signalsAsync = new Promise(
+      (resolver) => (this.#promiseResolver = resolver),
     );
 
     connectedCallback() {
       super.connectedCallback();
-
       this.#contextConsumer = new ContextConsumer(this, {
         context,
         callback: (value) => {
           this.signals = value;
-          this.#asyncSignalsResolver(value);
+          this.#promiseResolver(value);
         },
       });
     }

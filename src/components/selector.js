@@ -5,8 +5,6 @@ import { SignalConsumerMixin, Watcher } from "../lib/signals";
 export class SelectorComponent extends SignalConsumerMixin(
   ScopedElementsMixin(LitElement),
 ) {
-  state$;
-
   constructor() {
     super();
   }
@@ -19,7 +17,7 @@ export class SelectorComponent extends SignalConsumerMixin(
 
   async connectedCallback() {
     super.connectedCallback();
-    const { state$ } = await this.asyncSignals;
+    const { state$ } = await this.signalsAsync;
     this.watcher = new Watcher([state$], ([{ value }]) => {
       this.options = value.options;
     });
