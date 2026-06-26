@@ -17,16 +17,14 @@ export class LoadingNotificationComponent extends ContextConsumerMixin(
   static get properties() {
     return {
       productLoadingMessage: { type: String },
-      loadingProgress: { type: Number },
       isLoading: { type: Boolean },
     };
   }
 
   async connectedCallback() {
     await super.connectedCallback();
-    this.watcher = new Watcher([this.status$], ([{ value }]) => {
+    this.watcher = new Watcher([this.productService$], ([{ value }]) => {
       this.isLoading = value.isLoading;
-      this.loadingProgress = value.loadingProgress;
     });
   }
 
@@ -37,11 +35,7 @@ export class LoadingNotificationComponent extends ContextConsumerMixin(
 
   render() {
     return html`
-      ${this.isLoading
-        ? html` <div>
-            ${this.productLoadingMessage} ${this.loadingProgress}
-          </div>`
-        : ""}
+      ${this.isLoading ? html` <div>${this.productLoadingMessage}</div>` : ""}
     `;
   }
 

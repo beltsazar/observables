@@ -3,13 +3,12 @@ import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { ContextProviderMixin } from "./lib/context/context-mixins.js";
 import { context } from "./context.js";
 import { State } from "./state/State.js";
-import { Product } from "./state/objects/Product.js";
 import { Status } from "./services/Status.js";
 import { SelectedProductComponent } from "./components/selected-product.js";
 import { SelectorComponent } from "./components/selector.js";
 import { ProductsComponent } from "./components/products.js";
 import { SelectionNotificationComponent } from "./components/selection-notification.js";
-import { Signal, ComputedSignal, Watcher } from "./lib/signals";
+import { ComputedSignal, Watcher } from "./lib/signals";
 import { ProductService } from "./services/ProductService.js";
 
 export class FeatureComponent extends ContextProviderMixin(
@@ -29,14 +28,14 @@ export class FeatureComponent extends ContextProviderMixin(
     [this.state$],
     ([{ value }]) => value.products,
   );
-
-  productService = new ProductService();
+  productService$ = new ProductService();
 
   constructor() {
     super();
     this.createContext(context, {
       state$: this.state$,
       status$: this.status$,
+      productService$: this.productService$,
       selectedProduct$$: this.selectedProduct$$,
       selectedOptions$$: this.selectedOptions$$,
       products$$: this.products$$,
@@ -61,21 +60,27 @@ export class FeatureComponent extends ContextProviderMixin(
 
   connectedCallback() {
     super.connectedCallback();
-    this.watcher = new Watcher([this.state$], ([{ value }]) => {
+    this.stateWatcher$ = new Watcher([this.state$], ([{ value }]) => {
       console.log("state$", value);
     });
+    this.productService$Watcher$ = new Watcher(
+      [this.productService$],
+      ([{ value }]) => {
+        if (value.isCompleted && value.isSuccess && value.jsonResponse) {
+          this.state$.addProducts(value.jsonResponse);
+        }
+      },
+    );
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.watcher.unwatch();
+    this.stateWatcher$.unwatch();
+    this.productService$Watcher$.unwatch();
   }
 
   async _onLoadProducts() {
-    this.status$.startApiCall();
-    const json = await this.productService.loadProductsFromAPI();
-    this.status$.completeApiCall();
-    this.state$.addProducts(json);
+    this.productService$.loadProductsFromAPI();
   }
 
   render() {

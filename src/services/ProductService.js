@@ -1,4 +1,18 @@
-export class ProductService {
+import { Signal } from "../lib/signals/index.js";
+
+const model = {
+  isLoading: false,
+  isCompleted: false,
+  isError: false,
+  isSuccess: false,
+  jsonResponse: null,
+};
+
+export class ProductService extends Signal {
+  constructor() {
+    super(model);
+  }
+
   _createRandomProducts() {
     const products = [];
 
@@ -12,14 +26,26 @@ export class ProductService {
     return products;
   }
 
-  async loadProductsFromAPI() {
+  fetchFromAPI() {
     let resolver;
     const deferredPromise = new Promise((resolve) => {
       resolver = resolve;
     });
     setTimeout(() => {
       resolver(this._createRandomProducts());
-    }, 5000);
+    }, 2000);
     return deferredPromise;
+  }
+
+  loadProductsFromAPI() {
+    this.setValue({ ...model, isLoading: true });
+    this.fetchFromAPI().then((jsonResponse) => {
+      this.setValue({
+        ...model,
+        isCompleted: true,
+        isSuccess: true,
+        jsonResponse,
+      });
+    });
   }
 }

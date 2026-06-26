@@ -18,12 +18,12 @@ export class Signal extends EventTarget {
   }
 
   setValue(valueOrCallback) {
-    const previousValue = this.value;
+    const currentValue = this.value;
     let newValue;
 
     if (valueOrCallback && typeof valueOrCallback === "function") {
       // create a mutable copy of the new data object
-      newValue = cloneDeep(this.value);
+      newValue = cloneDeep(currentValue);
       // let consumer callback mutate this copy
       valueOrCallback(newValue);
     } else {
@@ -31,9 +31,10 @@ export class Signal extends EventTarget {
     }
 
     // notify only when the next value differs from the current value
-    if (!isEqual(newValue, this.previousValue)) {
-      this._previousValue = previousValue;
-      // clone the consumer value to prevent nested consumer objects to be frozen :)
+    if (!isEqual(newValue, currentValue)) {
+      // the current value becomes the previous value before we update the current value
+      this._previousValue = currentValue;
+      // clone the consumer value to prevent nested consumer objects to be frozen :(=)
       this._value = freezeDeep(cloneDeep(newValue));
 
       this.dispatchEvent(
