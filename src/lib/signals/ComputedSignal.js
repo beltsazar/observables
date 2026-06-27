@@ -4,10 +4,10 @@ import { Watcher } from "./Watcher.js";
 export class ComputedSignal extends Signal {
   constructor(signals, callback) {
     // Initialize with the value computed by the callback.
-    super(callback(signals, null));
+    super(callback(signals));
 
-    this.watcher = new Watcher(signals, (signals, signal) => {
-      super.setValue(callback(signals, signal));
+    this.watcher = new Watcher(signals, (signals) => {
+      super.setValue(callback(signals));
     });
   }
 
