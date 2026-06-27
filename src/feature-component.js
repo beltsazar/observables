@@ -6,7 +6,7 @@ import { SelectedProductComponent } from "./components/selected-product.js";
 import { SelectorComponent } from "./components/selector.js";
 import { ProductsComponent } from "./components/products.js";
 import { SelectionNotificationComponent } from "./components/selection-notification.js";
-import { ComputedSignal, Watcher } from "./lib/signals";
+import { ComputedSignal } from "./lib/signals";
 import { ProductService } from "./services/ProductService.js";
 
 export class FeatureComponent extends SignalProviderMixin(
@@ -55,10 +55,10 @@ export class FeatureComponent extends SignalProviderMixin(
 
   connectedCallback() {
     super.connectedCallback();
-    this.watch([this.state$], ([{ value }]) => {
+    this.watch(this.state$, ({ value }) => {
       console.debug("state$", value);
     });
-    this.watch([this.productService$], ([{ value }]) => {
+    this.watch(this.productService$, ({ value }) => {
       if (value.isCompleted && value.isSuccess && value.jsonResponse) {
         this.state$.addProducts(value.jsonResponse);
       }

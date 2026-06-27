@@ -1,6 +1,6 @@
 import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { SignalConsumerMixin, Watcher } from "../lib/signals";
+import { SignalConsumerMixin } from "../lib/signals";
 
 export class LoadingNotificationComponent extends SignalConsumerMixin(
   ScopedElementsMixin(LitElement),
@@ -20,7 +20,7 @@ export class LoadingNotificationComponent extends SignalConsumerMixin(
   async connectedCallback() {
     super.connectedCallback();
     const { productService$ } = await this.signals;
-    this.watch([productService$], ([{ value }]) => {
+    this.watch(productService$, ({ value }) => {
       this.isLoading = value.isLoading;
     });
   }

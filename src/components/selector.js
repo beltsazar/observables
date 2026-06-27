@@ -1,6 +1,6 @@
 import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { SignalConsumerMixin, Watcher } from "../lib/signals";
+import { SignalConsumerMixin } from "../lib/signals";
 
 export class SelectorComponent extends SignalConsumerMixin(
   ScopedElementsMixin(LitElement),
@@ -19,7 +19,7 @@ export class SelectorComponent extends SignalConsumerMixin(
     super.connectedCallback();
     const { state$ } = await this.signals;
     this.state$ = state$;
-    this.watch([state$], ([{ value }]) => {
+    this.watch(state$, ({ value }) => {
       this.options = value.options;
     });
   }
