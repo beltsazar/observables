@@ -11,7 +11,7 @@ export class SelectionNotificationComponent extends SignalConsumerMixin(
 
   static get properties() {
     return {
-      productSelectionMessage: { type: String },
+      productSelectionMessage: { type: String, state: true },
     };
   }
 

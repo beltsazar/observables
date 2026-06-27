@@ -29,20 +29,18 @@ export class FeatureComponent extends SignalProviderMixin(
 
   constructor() {
     super();
-    this.injectSignals({
+    this.provideSignals({
       state$: this.state$,
       productService$: this.productService$,
       selectedProduct$$: this.selectedProduct$$,
       selectedOptions$$: this.selectedOptions$$,
       products$$: this.products$$,
     });
-    this.count = 0;
   }
 
   static get properties() {
     return {
-      title: { type: String },
-      status: { type: Object, state: true },
+      title: { type: String, state: true },
     };
   }
 

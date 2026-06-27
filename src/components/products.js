@@ -13,7 +13,7 @@ export class ProductsComponent extends SignalConsumerMixin(
 
   static get properties() {
     return {
-      products: { type: Array },
+      products: { type: Array, state: true },
     };
   }
 

@@ -8,7 +8,7 @@ export const SignalProviderMixin = (superClass) =>
     #contextProvider;
     #watchers = [];
 
-    injectSignals(signals) {
+    provideSignals(signals) {
       this.#contextProvider = new ContextProvider(this, {
         context,
         initialValue: signals,

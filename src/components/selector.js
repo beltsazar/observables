@@ -11,7 +11,7 @@ export class SelectorComponent extends SignalConsumerMixin(
 
   static get properties() {
     return {
-      options: { type: Array },
+      options: { type: Array, state: true },
     };
   }
 

@@ -12,8 +12,8 @@ export class LoadingNotificationComponent extends SignalConsumerMixin(
 
   static get properties() {
     return {
-      productLoadingMessage: { type: String },
-      isLoading: { type: Boolean },
+      productLoadingMessage: { type: String, state: true },
+      isLoading: { type: Boolean, state: true },
     };
   }
 
