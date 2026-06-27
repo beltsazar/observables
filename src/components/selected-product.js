@@ -7,21 +7,18 @@ export class SelectedProductComponent extends SignalConsumerMixin(
 ) {
   constructor() {
     super();
-    this.selectedProduct = null;
   }
 
   static get properties() {
     return {
-      selectedProduct: { type: Object },
+      product: { type: Object, state: true },
     };
   }
 
   async connectedCallback() {
     super.connectedCallback();
     const { selectedProduct$$ } = await this.signalsAsync;
-    this.watch([selectedProduct$$], ([{ value }]) => {
-      this.selectedProduct = value;
-    });
+    this.mapStateToSignals({ product: selectedProduct$$ });
   }
 
   disconnectedCallback() {
@@ -39,8 +36,8 @@ export class SelectedProductComponent extends SignalConsumerMixin(
 
   render() {
     return html`<h2>Selection</h2>
-      ${this.selectedProduct
-        ? html`${this.showProduct(this.selectedProduct)}`
+      ${this.product
+        ? html`${this.showProduct(this.product)}`
         : "No product selected yet"} `;
   }
 

@@ -42,6 +42,7 @@ export class FeatureComponent extends SignalProviderMixin(
   static get properties() {
     return {
       title: { type: String },
+      status: { type: Object, state: true },
     };
   }
 
@@ -73,7 +74,6 @@ export class FeatureComponent extends SignalProviderMixin(
   render() {
     return html`
       <h1>${this.title}</h1>
-      --${this.status?.isLoading}--
       <div class="container">
         <div class="row">
           <div class="column">

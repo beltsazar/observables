@@ -54,4 +54,14 @@ export const SignalConsumerMixin = (superClass) =>
     watch(signals, callback) {
       this.#watchers.push(new Watcher(signals, callback));
     }
+
+    mapStateToSignals(map) {
+      for (const [property, signal] of Object.entries(map)) {
+        new Watcher([signal], ([signal]) => {
+          this[property] = signal.value;
+          // make sure that changes trigger a render update in the component
+          // this.requestUpdate();
+        });
+      }
+    }
   };
