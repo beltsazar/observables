@@ -20,14 +20,13 @@ export class LoadingNotificationComponent extends SignalConsumerMixin(
   async connectedCallback() {
     super.connectedCallback();
     const { productService$ } = await this.signalsAsync;
-    this.watcher = new Watcher([productService$], ([{ value }]) => {
+    this.watch([productService$], ([{ value }]) => {
       this.isLoading = value.isLoading;
     });
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.watcher.unwatch();
   }
 
   render() {

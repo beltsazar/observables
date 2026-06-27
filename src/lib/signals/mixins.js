@@ -1,16 +1,27 @@
 import { ContextConsumer, ContextProvider, createContext } from "@lit/context";
+import { Watcher } from "./Watcher.js";
 
 const context = createContext(Symbol("signals-context"));
 
 export const SignalProviderMixin = (superClass) =>
   class extends superClass {
     #contextProvider;
+    #watchers = [];
 
     injectSignals(signals) {
       this.#contextProvider = new ContextProvider(this, {
         context,
         initialValue: signals,
       });
+    }
+
+    disconnectedCallback() {
+      super.disconnectedCallback();
+      this.#watchers.forEach((watcher) => watcher.unwatch());
+    }
+
+    watch(signals, callback) {
+      this.#watchers.push(new Watcher(signals, callback));
     }
   };
 
@@ -33,5 +44,14 @@ export const SignalConsumerMixin = (superClass) =>
           this.#promiseResolver(value);
         },
       });
+    }
+
+    disconnectedCallback() {
+      super.disconnectedCallback();
+      this.#watchers.forEach((watcher) => watcher.unwatch());
+    }
+
+    watch(signals, callback) {
+      this.#watchers.push(new Watcher(signals, callback));
     }
   };

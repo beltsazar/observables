@@ -29,7 +29,7 @@ export class ProductsComponent extends SignalConsumerMixin(
       await this.signalsAsync;
     this.state$ = state$;
     this.productService$ = productService$;
-    this.watcher = new Watcher(
+    this.watch(
       [products$$, selectedOptions$$],
       ([{ value: products }, { value: selectedOptions }]) => {
         this.updateProducts(products, selectedOptions);
@@ -39,7 +39,6 @@ export class ProductsComponent extends SignalConsumerMixin(
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.watcher.unwatch();
   }
 
   updateProducts(products, selectedOptions) {

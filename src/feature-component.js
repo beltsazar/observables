@@ -56,23 +56,18 @@ export class FeatureComponent extends SignalProviderMixin(
 
   connectedCallback() {
     super.connectedCallback();
-    this.stateWatcher = new Watcher([this.state$], ([{ value }]) => {
+    this.watch([this.state$], ([{ value }]) => {
       console.debug("state$", value);
     });
-    this.productService$Watcher = new Watcher(
-      [this.productService$],
-      ([{ value }]) => {
-        if (value.isCompleted && value.isSuccess && value.jsonResponse) {
-          this.state$.addProducts(value.jsonResponse);
-        }
-      },
-    );
+    this.watch([this.productService$], ([{ value }]) => {
+      if (value.isCompleted && value.isSuccess && value.jsonResponse) {
+        this.state$.addProducts(value.jsonResponse);
+      }
+    });
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.stateWatcher.unwatch();
-    this.productService$Watcher.unwatch();
   }
 
   render() {

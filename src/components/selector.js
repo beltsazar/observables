@@ -19,14 +19,13 @@ export class SelectorComponent extends SignalConsumerMixin(
     super.connectedCallback();
     const { state$ } = await this.signalsAsync;
     this.state$ = state$;
-    this.watcher = new Watcher([state$], ([{ value }]) => {
+    this.watch([state$], ([{ value }]) => {
       this.options = value.options;
     });
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.watcher.unwatch();
   }
 
   _onSubmit(e) {

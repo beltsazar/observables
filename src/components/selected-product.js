@@ -19,14 +19,13 @@ export class SelectedProductComponent extends SignalConsumerMixin(
   async connectedCallback() {
     super.connectedCallback();
     const { selectedProduct$$ } = await this.signalsAsync;
-    this.watcher = new Watcher([selectedProduct$$], ([{ value }]) => {
+    this.watch([selectedProduct$$], ([{ value }]) => {
       this.selectedProduct = value;
     });
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.watcher.unwatch();
   }
 
   showProduct(product) {
