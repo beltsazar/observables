@@ -39,13 +39,14 @@ export class ProductService extends Signal {
 
   loadProductsFromAPI() {
     this.setValue({ ...model, isLoading: true });
-    this.fetchFromAPI().then((jsonResponse) => {
+    return this.fetchFromAPI().then((jsonResponse) => {
       this.setValue({
         ...model,
         isCompleted: true,
         isSuccess: true,
         jsonResponse,
       });
+      return jsonResponse;
     });
   }
 }
