@@ -3,7 +3,6 @@ import { SIGNAL_NOTIFICATION } from "./constants.js";
 export class Watcher extends EventTarget {
   constructor(signals, callback) {
     super();
-
     this.isMultipleSignals = Array.isArray(signals);
     this.signals = this.isMultipleSignals ? signals : [signals];
     this.callback = callback;

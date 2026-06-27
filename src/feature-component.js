@@ -14,17 +14,14 @@ export class FeatureComponent extends SignalProviderMixin(
 ) {
   state$ = new State();
   selectedProduct$$ = new ComputedSignal(
-    [this.state$],
-    ([{ value }]) => value.customer.selectedProduct,
+    this.state$,
+    ({ value }) => value.customer.selectedProduct,
   );
   selectedOptions$$ = new ComputedSignal(
-    [this.state$],
-    ([{ value }]) => value.customer.selectedOptions,
+    this.state$,
+    ({ value }) => value.customer.selectedOptions,
   );
-  products$$ = new ComputedSignal(
-    [this.state$],
-    ([{ value }]) => value.products,
-  );
+  products$$ = new ComputedSignal(this.state$, ({ value }) => value.products);
   productService$ = new ProductService();
 
   constructor() {
