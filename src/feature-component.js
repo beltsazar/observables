@@ -2,7 +2,6 @@ import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { SignalProviderMixin } from "./lib/signals/mixins.js";
 import { State } from "./state/State.js";
-import { Status } from "./services/Status.js";
 import { SelectedProductComponent } from "./components/selected-product.js";
 import { SelectorComponent } from "./components/selector.js";
 import { ProductsComponent } from "./components/products.js";
@@ -14,7 +13,6 @@ export class FeatureComponent extends SignalProviderMixin(
   ScopedElementsMixin(LitElement),
 ) {
   state$ = new State();
-  status$ = new Status();
   selectedProduct$$ = new ComputedSignal(
     [this.state$],
     ([{ value }]) => value.customer.selectedProduct,
@@ -33,7 +31,6 @@ export class FeatureComponent extends SignalProviderMixin(
     super();
     this.injectSignals({
       state$: this.state$,
-      status$: this.status$,
       productService$: this.productService$,
       selectedProduct$$: this.selectedProduct$$,
       selectedOptions$$: this.selectedOptions$$,

@@ -18,6 +18,7 @@ export const SignalConsumerMixin = (superClass) =>
   class extends superClass {
     #contextConsumer;
     #promiseResolver;
+    #watchers = [];
     signals;
     signalsAsync = new Promise(
       (resolver) => (this.#promiseResolver = resolver),
