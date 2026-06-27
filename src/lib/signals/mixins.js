@@ -1,15 +1,14 @@
 import { ContextConsumer, ContextProvider, createContext } from "@lit/context";
 import { Watcher } from "./Watcher.js";
 
-const context = createContext(Symbol("signals-context"));
+const context = createContext(Symbol("signals"));
 
 export const SignalProviderMixin = (superClass) =>
   class extends superClass {
-    #contextProvider;
     #watchers = [];
 
     provideSignals(signals) {
-      this.#contextProvider = new ContextProvider(this, {
+      new ContextProvider(this, {
         context,
         initialValue: signals,
       });
@@ -27,23 +26,12 @@ export const SignalProviderMixin = (superClass) =>
 
 export const SignalConsumerMixin = (superClass) =>
   class extends superClass {
-    #contextConsumer;
-    #promiseResolver;
     #watchers = [];
     signals;
-    signalsAsync = new Promise(
-      (resolver) => (this.#promiseResolver = resolver),
-    );
 
-    connectedCallback() {
-      super.connectedCallback();
-      this.#contextConsumer = new ContextConsumer(this, {
-        context,
-        callback: (value) => {
-          this.signals = value;
-          this.#promiseResolver(value);
-        },
-      });
+    constructor() {
+      super();
+      this.signals = this.consumeSignals();
     }
 
     disconnectedCallback() {
@@ -57,11 +45,25 @@ export const SignalConsumerMixin = (superClass) =>
 
     mapStateToSignals(map) {
       for (const [property, signal] of Object.entries(map)) {
-        new Watcher([signal], ([signal]) => {
-          this[property] = signal.value;
-          // make sure that changes trigger a render update in the component
-          // this.requestUpdate();
-        });
+        this.#watchers.push(
+          new Watcher([signal], ([signal]) => {
+            this[property] = signal.value;
+          }),
+        );
       }
+    }
+
+    consumeSignals() {
+      let promiseResolver;
+      const deferredPromise = new Promise(
+        (resolver) => (promiseResolver = resolver),
+      );
+      new ContextConsumer(this, {
+        context,
+        callback: (value) => {
+          promiseResolver(value);
+        },
+      });
+      return deferredPromise;
     }
   };

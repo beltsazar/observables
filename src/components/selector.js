@@ -17,7 +17,7 @@ export class SelectorComponent extends SignalConsumerMixin(
 
   async connectedCallback() {
     super.connectedCallback();
-    const { state$ } = await this.signalsAsync;
+    const { state$ } = await this.signals;
     this.state$ = state$;
     this.watch([state$], ([{ value }]) => {
       this.options = value.options;
