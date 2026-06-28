@@ -5,11 +5,19 @@ import { Watcher } from "../core/Watcher.js";
 export const SignalConsumerMixin = (superClass) =>
   class extends superClass {
     #watchers = [];
-    signals;
 
-    constructor() {
-      super();
-      this.signals = this.consumeSignals();
+    consumeSignals() {
+      let promiseResolver;
+      const deferredPromise = new Promise(
+        (resolver) => (promiseResolver = resolver),
+      );
+      new ContextConsumer(this, {
+        context,
+        callback: (value) => {
+          promiseResolver(value);
+        },
+      });
+      return deferredPromise;
     }
 
     disconnectedCallback() {
@@ -29,19 +37,5 @@ export const SignalConsumerMixin = (superClass) =>
           }),
         );
       }
-    }
-
-    consumeSignals() {
-      let promiseResolver;
-      const deferredPromise = new Promise(
-        (resolver) => (promiseResolver = resolver),
-      );
-      new ContextConsumer(this, {
-        context,
-        callback: (value) => {
-          promiseResolver(value);
-        },
-      });
-      return deferredPromise;
     }
   };

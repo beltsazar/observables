@@ -17,7 +17,7 @@ export class SelectedProductComponent extends SignalConsumerMixin(
 
   async connectedCallback() {
     super.connectedCallback();
-    const { selectedProduct$$ } = await this.signals;
+    const { selectedProduct$$ } = await this.consumeSignals();
     this.mapStateToSignals({ product: selectedProduct$$ });
   }
 

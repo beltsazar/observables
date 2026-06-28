@@ -23,7 +23,10 @@ export class FeatureComponent extends SignalProviderMixin(
       this.state$,
       ({ value }) => value.customer.selectedOptions,
     );
-    this.products$$ = new ComputedSignal(this.state$, ({ value }) => value.products);
+    this.products$$ = new ComputedSignal(
+      this.state$,
+      ({ value }) => value.products,
+    );
     this.productService$ = new ProductService();
 
     // provide signals to child components
