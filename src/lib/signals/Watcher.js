@@ -1,22 +1,20 @@
 import { SIGNAL_NOTIFICATION } from "./constants.js";
 
 export class Watcher extends EventTarget {
-  constructor(signals, callback) {
+  constructor(signalOrArray, callback) {
     super();
-    this.isMultipleSignalsArgument = Array.isArray(signals);
-    this.signals = this.isMultipleSignalsArgument ? signals : [signals];
+    this.isSignalsAsArray = Array.isArray(signalOrArray);
+    this.signals = this.isSignalsAsArray ? signalOrArray : [signalOrArray];
     this.callback = callback;
-    this._subscriptions = new Set();
-    this.signals.forEach((signal) => {
-      const subscription = this.watch(signal, callback);
-      this._subscriptions.add(subscription);
-    });
+    this.subscriptions = new Set();
+    // subscribe an observer to each signal
+    this.signals.forEach((signal) =>
+      this.subscriptions.add(this.watch(signal, callback)),
+    );
   }
 
   watch(signal, callback) {
-    const signals = this.isMultipleSignalsArgument
-      ? this.signals
-      : this.signals[0];
+    const signals = this.isSignalsAsArray ? this.signals : this.signals[0];
     const callBackWrapper = () => {
       callback(signals);
     };
@@ -28,6 +26,6 @@ export class Watcher extends EventTarget {
   }
 
   dispose() {
-    this._subscriptions.forEach((unwatch) => unwatch());
+    this.subscriptions.forEach((unwatch) => unwatch());
   }
 }
