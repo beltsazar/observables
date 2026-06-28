@@ -1,7 +1,7 @@
 import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { LoadingNotificationComponent } from "./loading-notification.js";
 import { SignalConsumerMixin } from "../lib/signals";
+import { LoadingNotificationComponent } from "./loading-notification.js";
 
 export class ProductsComponent extends SignalConsumerMixin(
   ScopedElementsMixin(LitElement),

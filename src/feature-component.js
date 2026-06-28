@@ -1,12 +1,11 @@
 import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { SignalProviderMixin } from "./lib/signals/mixins/mixins.js";
 import { State } from "./state/State.js";
 import { SelectedProductComponent } from "./components/selected-product.js";
 import { SelectorComponent } from "./components/selector.js";
 import { ProductsComponent } from "./components/products.js";
 import { SelectionNotificationComponent } from "./components/selection-notification.js";
-import { ComputedSignal } from "./lib/signals";
+import { ComputedSignal, SignalProviderMixin } from "./lib/signals";
 import { ProductService } from "./services/ProductService.js";
 
 export class FeatureComponent extends SignalProviderMixin(
