@@ -1,6 +1,6 @@
 import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { SignalProviderMixin } from "./lib/signals/mixins.js";
+import { SignalProviderMixin } from "./lib/signals/mixins/mixins.js";
 import { State } from "./state/State.js";
 import { SelectedProductComponent } from "./components/selected-product.js";
 import { SelectorComponent } from "./components/selector.js";

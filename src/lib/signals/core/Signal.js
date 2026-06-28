@@ -1,5 +1,5 @@
 import { cloneDeep, isEqual } from "lodash-es";
-import { freezeDeep } from "./utils/freezeDeep.js";
+import { freezeDeep } from "../utils/freezeDeep.js";
 import { SIGNAL_NOTIFICATION } from "./constants.js";
 
 export class Signal extends EventTarget {

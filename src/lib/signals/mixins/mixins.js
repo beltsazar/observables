@@ -1,5 +1,5 @@
 import { ContextConsumer, ContextProvider, createContext } from "@lit/context";
-import { Watcher } from "./Watcher.js";
+import { Watcher } from "../core/Watcher.js";
 
 const context = createContext(Symbol("signals"));
 
