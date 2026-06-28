@@ -1,32 +1,29 @@
 import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
+import { SignalsMixin } from "./lib/signals";
 import { State } from "./state/State.js";
 import { SelectedProductComponent } from "./components/selected-product.js";
 import { SelectorComponent } from "./components/selector.js";
 import { ProductsComponent } from "./components/products.js";
 import { SelectionNotificationComponent } from "./components/selection-notification.js";
-import { ComputedSignal, SignalProviderMixin } from "./lib/signals";
 import { ProductService } from "./services/ProductService.js";
 
-export class FeatureComponent extends SignalProviderMixin(
+export class FeatureComponent extends SignalsMixin(
   ScopedElementsMixin(LitElement),
 ) {
   constructor() {
     super();
     // setup application signals
     this.state$ = new State();
-    this.selectedProduct$$ = new ComputedSignal(
+    this.selectedProduct$$ = this.computed(
       this.state$,
       ({ value }) => value.customer.selectedProduct,
     );
-    this.selectedOptions$$ = new ComputedSignal(
+    this.selectedOptions$$ = this.computed(
       this.state$,
       ({ value }) => value.customer.selectedOptions,
     );
-    this.products$$ = new ComputedSignal(
-      this.state$,
-      ({ value }) => value.products,
-    );
+    this.products$$ = this.computed(this.state$, ({ value }) => value.products);
     this.productService$ = new ProductService();
 
     // provide signals to child components
@@ -68,9 +65,6 @@ export class FeatureComponent extends SignalProviderMixin(
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.selectedProduct$$.dispose();
-    this.selectedOptions$$.dispose();
-    this.products$$.dispose();
   }
 
   render() {

@@ -1,9 +1,9 @@
 import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { SignalConsumerMixin } from "../lib/signals";
+import { SignalsMixin } from "../lib/signals";
 import { LoadingNotificationComponent } from "./loading-notification.js";
 
-export class ProductsComponent extends SignalConsumerMixin(
+export class ProductsComponent extends SignalsMixin(
   ScopedElementsMixin(LitElement),
 ) {
   constructor() {

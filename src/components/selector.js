@@ -1,8 +1,8 @@
 import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { SignalConsumerMixin } from "../lib/signals";
+import { SignalsMixin } from "../lib/signals";
 
-export class SelectorComponent extends SignalConsumerMixin(
+export class SelectorComponent extends SignalsMixin(
   ScopedElementsMixin(LitElement),
 ) {
   constructor() {
