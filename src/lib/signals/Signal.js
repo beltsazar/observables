@@ -36,7 +36,7 @@ export class Signal extends EventTarget {
       this._previousValue = currentValue;
       // clone the consumer value to prevent nested consumer objects to be frozen :(=)
       this._value = freezeDeep(cloneDeep(newValue));
-
+      // notify event listeners
       this.dispatchEvent(new Event(SIGNAL_NOTIFICATION));
     }
   }
