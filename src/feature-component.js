@@ -11,20 +11,22 @@ import { ProductService } from "./services/ProductService.js";
 export class FeatureComponent extends SignalProviderMixin(
   ScopedElementsMixin(LitElement),
 ) {
-  state$ = new State();
-  selectedProduct$$ = new ComputedSignal(
-    this.state$,
-    ({ value }) => value.customer.selectedProduct,
-  );
-  selectedOptions$$ = new ComputedSignal(
-    this.state$,
-    ({ value }) => value.customer.selectedOptions,
-  );
-  products$$ = new ComputedSignal(this.state$, ({ value }) => value.products);
-  productService$ = new ProductService();
-
   constructor() {
     super();
+    // setup application signals
+    this.state$ = new State();
+    this.selectedProduct$$ = new ComputedSignal(
+      this.state$,
+      ({ value }) => value.customer.selectedProduct,
+    );
+    this.selectedOptions$$ = new ComputedSignal(
+      this.state$,
+      ({ value }) => value.customer.selectedOptions,
+    );
+    this.products$$ = new ComputedSignal(this.state$, ({ value }) => value.products);
+    this.productService$ = new ProductService();
+
+    // provide signals to child components
     this.provideSignals({
       state$: this.state$,
       productService$: this.productService$,
