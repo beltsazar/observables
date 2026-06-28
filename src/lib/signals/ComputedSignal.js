@@ -3,7 +3,7 @@ import { Watcher } from "./Watcher.js";
 
 export class ComputedSignal extends Signal {
   constructor(signals, callback) {
-    // Initialize with the value computed by the callback.
+    // initialize with the value computed by the callback.
     super(callback(signals));
 
     this.watcher = new Watcher(signals, (signals) => {
