@@ -64,9 +64,9 @@ export class FeatureComponent extends SignalProviderMixin(
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.selectedProduct$$.unwatch();
-    this.selectedOptions$$.unwatch();
-    this.products$$.unwatch();
+    this.selectedProduct$$.dispose();
+    this.selectedOptions$$.dispose();
+    this.products$$.dispose();
   }
 
   render() {

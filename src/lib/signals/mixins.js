@@ -16,7 +16,7 @@ export const SignalProviderMixin = (superClass) =>
 
     disconnectedCallback() {
       super.disconnectedCallback();
-      this.#watchers.forEach((watcher) => watcher.unwatch());
+      this.#watchers.forEach((watcher) => watcher.dispose());
     }
 
     watch(signals, callback) {
@@ -36,7 +36,7 @@ export const SignalConsumerMixin = (superClass) =>
 
     disconnectedCallback() {
       super.disconnectedCallback();
-      this.#watchers.forEach((watcher) => watcher.unwatch());
+      this.#watchers.forEach((watcher) => watcher.dispose());
     }
 
     watch(signals, callback) {

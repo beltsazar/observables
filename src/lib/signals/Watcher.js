@@ -27,7 +27,7 @@ export class Watcher extends EventTarget {
       signal.removeEventListener(SIGNAL_NOTIFICATION, callBackWrapper);
   }
 
-  unwatch() {
+  dispose() {
     this._subscriptions.forEach((unwatch) => unwatch());
   }
 }

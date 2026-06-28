@@ -17,7 +17,7 @@ export class ComputedSignal extends Signal {
     );
   }
 
-  unwatch() {
-    this.watcher.unwatch();
+  dispose() {
+    this.watcher.dispose();
   }
 }
