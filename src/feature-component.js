@@ -2,38 +2,21 @@ import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { SignalsMixin } from "./lib/signals";
 import { State } from "./state/State.js";
+import { Products } from "./signals/Products.js";
+import { ProductOptions } from "./signals/ProductOptions.js";
+import { SelectedProduct } from "./signals/SelectedProduct.js";
+import { ProductFilter } from "./signals/ProductFilter.js";
 import { SelectedProductComponent } from "./components/selected-product.js";
 import { SelectorComponent } from "./components/selector.js";
 import { ProductsComponent } from "./components/products.js";
 import { SelectionNotificationComponent } from "./components/selection-notification.js";
-import { ProductService } from "./services/ProductService.js";
+import { ProductsAPI } from "./services/ProductsAPI.js";
 
 export class FeatureComponent extends SignalsMixin(
   ScopedElementsMixin(LitElement),
 ) {
   constructor() {
     super();
-    // setup application signals
-    this.state$ = new State();
-    this.selectedProduct$$ = this.computed(
-      this.state$,
-      ({ value }) => value.customer.selectedProduct,
-    );
-    this.selectedOptions$$ = this.computed(
-      this.state$,
-      ({ value }) => value.customer.selectedOptions,
-    );
-    this.products$$ = this.computed(this.state$, ({ value }) => value.products);
-    this.productService$ = new ProductService();
-
-    // provide signals to child components
-    this.provideSignals({
-      state$: this.state$,
-      productService$: this.productService$,
-      selectedProduct$$: this.selectedProduct$$,
-      selectedOptions$$: this.selectedOptions$$,
-      products$$: this.products$$,
-    });
   }
 
   static get properties() {
@@ -51,16 +34,75 @@ export class FeatureComponent extends SignalsMixin(
     };
   }
 
-  connectedCallback() {
+  async connectedCallback() {
     super.connectedCallback();
-    this.watch(this.state$, ({ value }) => {
-      console.debug("state$", value);
+
+    // setup shared signals
+    this.state$ = new State();
+
+    this.products$ = new Products();
+    this.productOptions$ = new ProductOptions();
+    this.selectedProduct$ = new SelectedProduct();
+    this.productFilter$ = new ProductFilter();
+
+    this.filteredProducts$$ = this.computed(
+      [this.products$, this.productFilter$],
+      ([products, { value: productFilter }]) => {
+        return products.filteredProductsByOptions(productFilter.options);
+      },
+    );
+
+    this.selectedProduct$$ = this.computed(
+      this.state$,
+      ({ value }) => value.customer.selectedProduct,
+    );
+    this.selectedOptions$$ = this.computed(
+      this.state$,
+      ({ value }) => value.customer.selectedOptions,
+    );
+    this.products$$ = this.computed(this.state$, ({ value }) => value.products);
+    this.productsAPI$ = new ProductsAPI();
+
+    // provide shared signals to child components
+    this.provideSignals({
+      state$: this.state$,
+
+      products$: this.products$,
+      productOptions$: this.productOptions$,
+      selectedProduct$: this.selectedProduct$,
+      productFilter$: this.productFilter$,
+      filteredProducts$$: this.filteredProducts$$,
+
+      productsAPI$: this.productsAPI$,
+      selectedProduct$$: this.selectedProduct$$,
+      selectedOptions$$: this.selectedOptions$$,
+      products$$: this.products$$,
     });
-    this.watch(this.productService$, ({ value }) => {
-      if (value.isCompleted && value.isSuccess && value.jsonResponse) {
-        this.state$.addProducts(value.jsonResponse);
+
+    this.watch(this.productsAPI$, ({ value: result }) => {
+      if (result.isCompleted && result.isSuccess && result.json) {
+        console.log(result);
+        this.products$.setValue((products) => {
+          result.json.products.forEach((product) => products.push(product));
+        });
+        this.productOptions$.setValue(result.json.options);
       }
     });
+
+    // this.watch(this.products$, ({ value }) => {
+    //   console.log('products$', value)
+    // });
+    // this.watch(this.selectedProduct$, ({ value }) => {
+    //   console.log('selectedProduct$', value)
+    // });
+    // this.watch(this.productFilter$, ({ value }) => {
+    //   console.log('productFilter$', value)
+    // });
+    this.watch(this.filteredProducts$$, ({ value }) => {
+      console.log("filteredProducts$$", value);
+    });
+
+    await this.productsAPI$.fetchProducts();
   }
 
   disconnectedCallback() {

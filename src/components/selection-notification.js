@@ -17,16 +17,21 @@ export class SelectionNotificationComponent extends SignalsMixin(
 
   async connectedCallback() {
     super.connectedCallback();
-    const { selectedProduct$$, selectedOptions$$ } =
+    const { selectedProduct$, filteredProducts$$ } =
       await this.consumeSignals();
     this.watch(
-      [selectedProduct$$, selectedOptions$$],
-      ([{ value: selectedProduct }, { value: selectedOptions }]) => {
-        if (selectedProduct && !selectedProduct.hasOptions(selectedOptions))
-          this.productSelectionMessage =
-            "The selected product does not contain the selected options. Please select a different product!";
-        else if (selectedProduct) {
+      [selectedProduct$, filteredProducts$$],
+      ([{ value: selectedProduct }, { value: filteredProducts$$ }]) => {
+        if (
+          selectedProduct &&
+          filteredProducts$$
+            .map((product) => product.id)
+            .includes(selectedProduct.id)
+        ) {
           this.productSelectionMessage = "Valid product selected!";
+        } else if (selectedProduct) {
+          this.productSelectionMessage =
+            "The selected product does not match the filter. Please select a different product!";
         } else {
           this.productSelectionMessage = "Please select a product!";
         }

@@ -25,33 +25,24 @@ export class ProductsComponent extends SignalsMixin(
 
   async connectedCallback() {
     super.connectedCallback();
-    const { state$, products$$, selectedOptions$$, productService$ } =
+    const { filteredProducts$$, selectedProduct$, productsAPI$ } =
       await this.consumeSignals();
-    this.state$ = state$;
-    this.productService$ = productService$;
-    this.watch(
-      [products$$, selectedOptions$$],
-      ([{ value: products }, { value: selectedOptions }]) => {
-        this.updateProducts(products, selectedOptions);
-      },
-    );
+    this.selectedProduct$ = selectedProduct$;
+    this.productsAPI$ = productsAPI$;
+    this.mapStateToSignals({ products: filteredProducts$$ });
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
   }
 
-  updateProducts(products, selectedOptions) {
-    this.products = [...products.filterByOptions(selectedOptions)];
-  }
-
   handleProductSelection(e, product) {
-    this.state$.setValue((value) => (value.customer.selectedProduct = product));
+    this.selectedProduct$.setValue(product);
     e.preventDefault();
   }
 
-  handleLoadProducts() {
-    this.productService$.loadProductsFromAPI();
+  async handleLoadProducts() {
+    await this.productsAPI$.fetchProducts();
   }
 
   render() {

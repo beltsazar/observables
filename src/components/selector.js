@@ -7,6 +7,7 @@ export class SelectorComponent extends SignalsMixin(
 ) {
   constructor() {
     super();
+    this.options = [];
   }
 
   static get properties() {
@@ -17,10 +18,13 @@ export class SelectorComponent extends SignalsMixin(
 
   async connectedCallback() {
     super.connectedCallback();
-    const { state$ } = await this.consumeSignals();
-    this.state$ = state$;
-    this.watch(state$, ({ value }) => {
-      this.options = value.options;
+    const { products$, productFilter$, productOptions$ } =
+      await this.consumeSignals();
+    this.products$ = products$;
+    this.productOptions$ = productOptions$;
+    this.productFilter$ = productFilter$;
+    this.watch(productOptions$, ({ value }) => {
+      this.options = value;
     });
   }
 
@@ -30,14 +34,14 @@ export class SelectorComponent extends SignalsMixin(
 
   _onSubmit(e) {
     // Set selected customer options based on checked checkboxes
-    const selectedOptions = this.state$.value.options.filter((option) => {
+    const selectedOptions = this.productOptions$.value.filter((option) => {
       const form = e.target;
       const input = form ? form.elements.namedItem(String(option.id)) : null;
       return Boolean(input?.checked);
     });
 
-    this.state$.setValue((value) => {
-      value.customer.selectedOptions = selectedOptions;
+    this.productFilter$.setValue((value) => {
+      value.options = selectedOptions;
     });
 
     e.preventDefault();
@@ -60,7 +64,7 @@ export class SelectorComponent extends SignalsMixin(
         >
           <fieldset>
             <legend>Choose your product options:</legend>
-            ${this.options?.map(
+            ${this.options.map(
               (option) =>
                 html` <div>
                   <input

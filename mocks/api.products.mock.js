@@ -1,6 +1,8 @@
 import { defineMock } from "vite-plugin-mock-dev-server";
+import { products, options } from "./data/products.js";
 
 export default defineMock({
   url: "/api/products",
-  body: [{ id: 1, name: "Product 2", options: [] }],
+  body: { products, options },
+  delay: 2000,
 });
