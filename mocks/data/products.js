@@ -1,6 +1,6 @@
-import { Option } from "../../src/state/objects/Option.js";
-import { Product } from "../../src/state/objects/Product.js";
-import { ProductList } from "../../src/state/objects/ProductList.js";
+import { Option } from "./objects/Option.js";
+import { Product } from "./objects/Product.js";
+import { ProductList } from "./objects/ProductList.js";
 
 const prices = {
   cheap: {

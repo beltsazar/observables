@@ -18,14 +18,10 @@ export class SelectorComponent extends SignalsMixin(
 
   async connectedCallback() {
     super.connectedCallback();
-    const { products$, productFilter$, productOptions$ } =
-      await this.consumeSignals();
-    this.products$ = products$;
+    const { productFilter$, productOptions$ } = await this.consumeSignals();
     this.productOptions$ = productOptions$;
     this.productFilter$ = productFilter$;
-    this.watch(productOptions$, ({ value }) => {
-      this.options = value;
-    });
+    this.mapStateToSignals({ options: productOptions$ });
   }
 
   disconnectedCallback() {
@@ -34,7 +30,7 @@ export class SelectorComponent extends SignalsMixin(
 
   _onSubmit(e) {
     // Set selected customer options based on checked checkboxes
-    const selectedOptions = this.productOptions$.value.filter((option) => {
+    const selectedOptions = this.options.filter((option) => {
       const form = e.target;
       const input = form ? form.elements.namedItem(String(option.id)) : null;
       return Boolean(input?.checked);

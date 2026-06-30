@@ -4,5 +4,5 @@ import { products, options } from "./data/products.js";
 export default defineMock({
   url: "/api/products",
   body: { products, options },
-  delay: 2000,
+  delay: 0,
 });

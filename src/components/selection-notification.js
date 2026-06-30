@@ -21,10 +21,10 @@ export class SelectionNotificationComponent extends SignalsMixin(
       await this.consumeSignals();
     this.watch(
       [selectedProduct$, filteredProducts$$],
-      ([{ value: selectedProduct }, { value: filteredProducts$$ }]) => {
+      ([{ value: selectedProduct }, { value: filteredProducts }]) => {
         if (
           selectedProduct &&
-          filteredProducts$$
+          filteredProducts
             .map((product) => product.id)
             .includes(selectedProduct.id)
         ) {
