@@ -36,9 +36,7 @@ export class SelectorComponent extends SignalsMixin(
       return Boolean(input?.checked);
     });
 
-    this.productFilter$.setValue((value) => {
-      value.options = selectedOptions;
-    });
+    this.productFilter$.setSelectedOptions(selectedOptions);
 
     e.preventDefault();
   }

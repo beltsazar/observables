@@ -6,4 +6,10 @@ export class ProductFilter extends Signal {
       options: [],
     });
   }
+
+  setSelectedOptions(selectedOptions = []) {
+    this.setValue((value) => {
+      value.options = selectedOptions;
+    });
+  }
 }

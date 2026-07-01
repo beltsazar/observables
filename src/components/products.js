@@ -37,7 +37,7 @@ export class ProductsComponent extends SignalsMixin(
   }
 
   handleProductSelection(e, product) {
-    this.selectedProduct$.setValue(product);
+    this.selectedProduct$.setSelectedProduct(product);
     e.preventDefault();
   }
 
