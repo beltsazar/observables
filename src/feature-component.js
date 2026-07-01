@@ -19,15 +19,15 @@ export class FeatureComponent extends SignalsMixin(
     super();
 
     // signals
-    const products$ = new Products();
-    const productOptions$ = new ProductOptions();
+    const productsAPI$ = new ProductsAPI();
+    const products$ = new Products(productsAPI$);
+    const productOptions$ = new ProductOptions(productsAPI$);
     const selectedProduct$ = new SelectedProduct();
     const productFilter$ = new ProductFilter();
-    const productsAPI$ = new ProductsAPI();
 
     // computed signals
     const filteredProducts$$ = this.registerComputed(
-      new FilteredProducts([products$, productFilter$]),
+      new FilteredProducts(products$, productFilter$),
     );
 
     // provide shared signals to child components
@@ -40,18 +40,9 @@ export class FeatureComponent extends SignalsMixin(
       filteredProducts$$,
     });
 
-    // watch signals
-    this.watch(productsAPI$, ({ value: result }) => {
-      if (result.isCompleted && result.isSuccess && result.json) {
-        products$.setValue((products) => {
-          result.json.products.forEach((product) => products.push(product));
-        });
-        productOptions$.setValue(result.json.options);
-      }
-    });
-
     // share signals on element
-    this.productsAPI$ = productsAPI$;
+    this.products$ = products$;
+    this.productOptions$ = productOptions$;
   }
 
   static get properties() {
@@ -71,7 +62,10 @@ export class FeatureComponent extends SignalsMixin(
 
   async connectedCallback() {
     super.connectedCallback();
-    await this.productsAPI$.fetchProducts();
+    await Promise.all([
+      this.products$.fetchProducts(),
+      this.productOptions$.fetchOptions(),
+    ]);
   }
 
   disconnectedCallback() {

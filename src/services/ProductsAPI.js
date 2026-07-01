@@ -5,7 +5,6 @@ const model = {
   isCompleted: false,
   isError: false,
   isSuccess: false,
-  json: null,
 };
 
 export class ProductsAPI extends Signal {
@@ -23,7 +22,6 @@ export class ProductsAPI extends Signal {
       ...model,
       isCompleted: true,
       isSuccess: true,
-      json,
     });
 
     return json;
