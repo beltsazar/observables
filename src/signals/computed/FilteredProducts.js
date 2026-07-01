@@ -2,11 +2,11 @@ import { ComputedSignal } from "../../lib/signals/index.js";
 
 export class FilteredProducts extends ComputedSignal {
   constructor([products$, productFilter$]) {
-    super([products$, productFilter$], () => {
-      const products = products$.value;
-      const filterOptions = productFilter$.value.options;
-      return getProductsFilteredByOptions(products, filterOptions);
-    });
+    super(
+      [products$, productFilter$],
+      ([{ value: products }, { value: productFilter }]) =>
+        getProductsFilteredByOptions(products, productFilter.options),
+    );
   }
 }
 
