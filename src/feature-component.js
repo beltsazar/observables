@@ -5,11 +5,12 @@ import { Products } from "./signals/Products.js";
 import { ProductOptions } from "./signals/ProductOptions.js";
 import { SelectedProduct } from "./signals/SelectedProduct.js";
 import { ProductFilter } from "./signals/ProductFilter.js";
+import { FilteredProducts } from "./signals/computed/FilteredProducts.js";
+import { ProductsAPI } from "./services/ProductsAPI.js";
 import { SelectedProductComponent } from "./components/selected-product.js";
 import { SelectorComponent } from "./components/selector.js";
 import { ProductsComponent } from "./components/products.js";
 import { SelectionNotificationComponent } from "./components/selection-notification.js";
-import { ProductsAPI } from "./services/ProductsAPI.js";
 
 export class FeatureComponent extends SignalsMixin(
   ScopedElementsMixin(LitElement),
@@ -25,11 +26,8 @@ export class FeatureComponent extends SignalsMixin(
     const productsAPI$ = new ProductsAPI();
 
     // computed signals
-    const filteredProducts$$ = this.computed(
-      [products$, productFilter$],
-      ([products, { value: productFilter }]) => {
-        return products.filteredProductsByOptions(productFilter.options);
-      },
+    const filteredProducts$$ = this.registerComputed(
+      new FilteredProducts([products$, productFilter$]),
     );
 
     // provide shared signals to child components

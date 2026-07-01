@@ -20,8 +20,8 @@ export class LoadingNotificationComponent extends SignalsMixin(
   async connectedCallback() {
     super.connectedCallback();
     const { productsAPI$ } = await this.consumeSignals();
-    this.watch(productsAPI$, ({ value }) => {
-      this.isLoading = value.isLoading;
+    this.mapStateToSignals({
+      isLoading: this.computed(productsAPI$, ({ value }) => value.isLoading),
     });
   }
 

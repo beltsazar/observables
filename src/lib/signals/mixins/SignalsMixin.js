@@ -49,6 +49,11 @@ export const SignalsMixin = (superClass) =>
       return computedSignal;
     }
 
+    registerComputed(computedSignal) {
+      this.#computedSignals.push(computedSignal);
+      return computedSignal;
+    }
+
     mapStateToSignals(map) {
       for (const [property, signal] of Object.entries(map)) {
         this.#watchers.push(
