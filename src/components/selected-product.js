@@ -1,6 +1,6 @@
 import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { SignalsMixin } from "../lib/signals";
+import { SignalsMixin } from "../lib/signals/index.js";
 
 export class SelectedProductComponent extends SignalsMixin(
   ScopedElementsMixin(LitElement),
@@ -25,6 +25,7 @@ export class SelectedProductComponent extends SignalsMixin(
     super.disconnectedCallback();
   }
 
+  // eslint-disable-next-line class-methods-use-this
   showProduct(product) {
     return html`
       <h3>${product.name}</h3>
@@ -36,9 +37,11 @@ export class SelectedProductComponent extends SignalsMixin(
 
   render() {
     return html`<h2>Selection</h2>
-      ${this.product
-        ? html`${this.showProduct(this.product)}`
-        : "No product selected yet"} `;
+      ${
+        this.product
+          ? html`${this.showProduct(this.product)}`
+          : "No product selected yet"
+      } `;
   }
 
   static get styles() {

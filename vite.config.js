@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [
     mockDevServerPlugin({
       prefix: ["/api"],
-      dir: "mocks",
+      dir: "demo/mocks",
       log: "info",
       reload: "true",
     }),

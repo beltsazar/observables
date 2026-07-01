@@ -1,6 +1,6 @@
 import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { SignalsMixin } from "./lib/signals";
+import { SignalsMixin } from "./lib/signals/index.js";
 import { Products } from "./signals/Products.js";
 import { ProductOptions } from "./signals/ProductOptions.js";
 import { SelectedProduct } from "./signals/SelectedProduct.js";
@@ -58,7 +58,7 @@ export class FeatureComponent extends SignalsMixin(
 
   static get properties() {
     return {
-      title: { type: String, state: true },
+      heading: { type: String },
     };
   }
 
@@ -82,7 +82,7 @@ export class FeatureComponent extends SignalsMixin(
 
   render() {
     return html`
-      <h1>${this.title}</h1>
+      <h1>${this.heading}</h1>
       <div class="container">
         <div class="row">
           <div class="column">

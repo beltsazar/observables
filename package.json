@@ -8,7 +8,13 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest --coverage",
-    "format": "npx prettier . --write"
+    "lint": "npm run lint:eslint && npm run lint:prettier",
+    "format": "npm run format:eslint && npm run format:prettier",
+    "lint:eslint": "eslint --ext .js,.html . --ignore-pattern .gitignore",
+    "format:eslint": "eslint --ext .js,.html . --fix --ignore-pattern .gitignore",
+    "lint:prettier": "prettier \"**/*.js\" --check --ignore-path .gitignore",
+    "format:prettier": "prettier \"**/*.js\" --write --ignore-path .gitignore"
+
   },
   "dependencies": {
     "@lion/ui": "^0.17.0",
@@ -19,8 +25,12 @@
     "lodash-es": "^4.18.1"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@open-wc/eslint-config": "^13.1.0",
     "@vitest/coverage-v8": "^4.1.6",
-    "prettier": "^3.8.3",
+    "eslint": "^10.6.0",
+    "globals": "^17.7.0",
+    "prettier": "^3.9.4",
     "sinon": "^22.0.0",
     "vite": "^8.0.12",
     "vite-plugin-mock-dev-server": "^2.4.1",

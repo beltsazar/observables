@@ -1,8 +1,9 @@
 import { expect, describe, it, beforeEach, afterEach } from "vitest";
 import { spy } from "sinon";
 import { cloneDeep, isEqual } from "lodash-es";
-import { state } from "../../../../state/State.js";
 import { Signal } from "../Signal.js";
+
+const state = {};
 
 describe("ObservableData", () => {
   let observable$;
@@ -60,7 +61,7 @@ describe("ObservableData", () => {
   it("should clone objects matching original properties", () => {
     observable$.observe(observerWrapper.observer);
 
-    observable$.setValue((data) => {});
+    observable$.setValue(() => {});
     expect(event.data.products === event.previousData.products).not.to.equal(
       true,
     );

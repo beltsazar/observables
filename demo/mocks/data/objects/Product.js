@@ -1,5 +1,3 @@
-import { Option } from "./Option.js";
-
 /**
  * A product with options.
  * @param id

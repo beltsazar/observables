@@ -11,6 +11,7 @@ export class ComputedSignal extends Signal {
     });
   }
 
+  // eslint-disable-next-line class-methods-use-this
   setValue() {
     throw new Error(
       "Cannot set value of a ComputedSignal directly. It is derived from other signals.",
