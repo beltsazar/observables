@@ -16,6 +16,44 @@ export class FeatureComponent extends SignalsMixin(
 ) {
   constructor() {
     super();
+
+    // signals
+    const products$ = new Products();
+    const productOptions$ = new ProductOptions();
+    const selectedProduct$ = new SelectedProduct();
+    const productFilter$ = new ProductFilter();
+    const productsAPI$ = new ProductsAPI();
+
+    // computed signals
+    const filteredProducts$$ = this.computed(
+      [products$, productFilter$],
+      ([products, { value: productFilter }]) => {
+        return products.filteredProductsByOptions(productFilter.options);
+      },
+    );
+
+    // provide shared signals to child components
+    this.provideSignals({
+      products$,
+      productOptions$,
+      selectedProduct$,
+      productFilter$,
+      productsAPI$,
+      filteredProducts$$,
+    });
+
+    // watch signals
+    this.watch(productsAPI$, ({ value: result }) => {
+      if (result.isCompleted && result.isSuccess && result.json) {
+        products$.setValue((products) => {
+          result.json.products.forEach((product) => products.push(product));
+        });
+        productOptions$.setValue(result.json.options);
+      }
+    });
+
+    // share signals on element
+    this.productsAPI$ = productsAPI$;
   }
 
   static get properties() {
@@ -35,39 +73,6 @@ export class FeatureComponent extends SignalsMixin(
 
   async connectedCallback() {
     super.connectedCallback();
-
-    this.products$ = new Products();
-    this.productOptions$ = new ProductOptions();
-    this.selectedProduct$ = new SelectedProduct();
-    this.productFilter$ = new ProductFilter();
-    this.productsAPI$ = new ProductsAPI();
-
-    this.filteredProducts$$ = this.computed(
-      [this.products$, this.productFilter$],
-      ([products, { value: productFilter }]) => {
-        return products.filteredProductsByOptions(productFilter.options);
-      },
-    );
-
-    // provide shared signals to child components
-    this.provideSignals({
-      products$: this.products$,
-      productOptions$: this.productOptions$,
-      selectedProduct$: this.selectedProduct$,
-      productFilter$: this.productFilter$,
-      productsAPI$: this.productsAPI$,
-      filteredProducts$$: this.filteredProducts$$,
-    });
-
-    this.watch(this.productsAPI$, ({ value: result }) => {
-      if (result.isCompleted && result.isSuccess && result.json) {
-        this.products$.setValue((products) => {
-          result.json.products.forEach((product) => products.push(product));
-        });
-        this.productOptions$.setValue(result.json.options);
-      }
-    });
-
     await this.productsAPI$.fetchProducts();
   }
 
