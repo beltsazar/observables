@@ -5,7 +5,7 @@ export class FilteredProducts extends ComputedSignal {
     super(
       [products$, productFilter$],
       ([{ value: products }, { value: productFilter }]) => {
-        products.filterByOptions(productFilter.options);
+        return products.filterByOptions(productFilter.options);
       },
     );
   }
