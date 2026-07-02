@@ -1,6 +1,6 @@
-import { Option } from "./objects/Option.js";
-import { Product } from "./objects/Product.js";
-import { ProductList } from "./objects/ProductList.js";
+import { Option } from "../../../src/transformers/products/objects/Option.js";
+import { Product } from "../../../src/transformers/products/objects/Product.js";
+import { ProductList } from "../../../src/transformers/products/objects/ProductList.js";
 
 export const options = [
   new Option(1, "Versatile"),
