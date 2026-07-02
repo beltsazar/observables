@@ -8,11 +8,13 @@ export class Product {
   id;
   name;
   options = [];
+  price;
 
-  constructor(id, name, options = []) {
+  constructor(id, name, options = [], price = 0) {
     this.id = id;
     this.name = name;
     this.options = options;
+    this.price = price;
   }
 
   /**

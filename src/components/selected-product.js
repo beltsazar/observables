@@ -31,6 +31,7 @@ export class SelectedProductComponent extends SignalsMixin(
       <h3>${product.name}</h3>
       <ul>
         ${product.options.map((option) => html`<li>${option.name}</li>`)}
+        <li>Price: &euro; ${product.price}</li>
       </ul>
     `;
   }
