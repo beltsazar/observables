@@ -57,7 +57,7 @@ export const SignalsMixin = (superClass) =>
     mapStateToSignals(map) {
       for (const [property, signal] of Object.entries(map)) {
         this.#watchers.push(
-          new Watcher([signal], ([signal]) => {
+          new Watcher(signal, () => {
             this[property] = signal.value;
           }),
         );

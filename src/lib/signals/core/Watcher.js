@@ -14,9 +14,11 @@ export class Watcher extends EventTarget {
   }
 
   watch(signal, callback) {
+    // register a callback that will be called when the signal notifies
     const callBackWrapper = () => {
       callback(this.signals);
     };
+    // call the callback once to initialize the value
     callback(this.signals);
 
     signal.addEventListener(SIGNAL_NOTIFICATION, callBackWrapper);
