@@ -9,11 +9,13 @@ export class ProductsComponent extends SignalsMixin(
   constructor() {
     super();
     this.products = [];
+    this.fetchProducts = {};
   }
 
   static get properties() {
     return {
       products: { type: Array, state: true },
+      fetchProducts: { type: Object, state: true },
       isLoading: { type: Boolean, state: true },
       isError: { type: Boolean, state: true },
     };
@@ -33,6 +35,11 @@ export class ProductsComponent extends SignalsMixin(
     this.products$ = products$;
     this.mapStateToSignals({
       products: filteredProducts$$,
+      productsApiStatus: productsAPI$,
+      fetchProducts: this.computed(
+        productsAPI$,
+        ({ value }) => value.fetchProducts,
+      ),
       isLoading: this.computed(
         productsAPI$,
         ({ value }) => value.fetchProducts?.isLoading,
@@ -75,15 +82,15 @@ export class ProductsComponent extends SignalsMixin(
       <loading-notification-component></loading-notification-component>
 
       ${
-      this.isError
-        ? html`<div class="error-message">
-            Something went wrong. Please try again later.
-          </div>`
-        : ""
-    }
+        this.fetchProducts.isError
+          ? html`<div class="error-message">
+              Something went wrong. Please try again later.
+            </div>`
+          : ""
+      }
 
       <button
-        ?disabled=${this.isLoading}
+        ?disabled=${this.fetchProducts.isLoading}
         @click="${() => this.handleLoadProducts()}"
       >
         More products ...
