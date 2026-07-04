@@ -41,10 +41,16 @@ export class SelectorComponent extends SignalsMixin(
     e.preventDefault();
   }
 
-  _onClick() {
+  optionsChanged() {
     this.shadowRoot
       ?.querySelector('[name="optionsForm"]')
       ?.dispatchEvent(new Event("submit"));
+  }
+
+  productNameChanged(e) {
+    console.error(e.target.value);
+    const productName = e.target.value;
+    this.productFilter$.setProductName(productName);
   }
 
   render() {
@@ -57,7 +63,7 @@ export class SelectorComponent extends SignalsMixin(
           }}
         >
           <fieldset>
-            <legend>Choose your product options:</legend>
+            <legend>Product options:</legend>
             ${this.options.map(
               (option) =>
                 html` <div>
@@ -65,11 +71,22 @@ export class SelectorComponent extends SignalsMixin(
                     type="checkbox"
                     id="${option.id}"
                     name="${option.id}"
-                    @click=${() => this._onClick()}
+                    @click=${(e) => this.optionsChanged(e)}
                   />
                   <label for="${option.id}">${option.name}</label>
                 </div>`,
             )}
+          </fieldset>
+
+          <fieldset>
+            <legend>Product name:</legend>
+            <input
+              @keyup=${(e) => this.productNameChanged(e)}
+              type="text"
+              id="name"
+              name="name"
+              size="15"
+            />
           </fieldset>
         </form>
       </div>`;
