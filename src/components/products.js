@@ -89,7 +89,7 @@ export class ProductsComponent extends SignalsMixin(
           : ""
       }
       ${
-        this.saveSelectedProductService.isLoading
+        this.saveSelectedProductService.isPending
           ? html`<div class="message save-loading ">
               Saving selected product ...
             </div>`
@@ -109,7 +109,7 @@ export class ProductsComponent extends SignalsMixin(
       }
 
       <button
-        ?disabled=${this.fetchProductsService.isLoading}
+        ?disabled=${this.fetchProductsService.isPending}
         @click="${() => this.handleLoadProducts()}"
       >
         More products ...

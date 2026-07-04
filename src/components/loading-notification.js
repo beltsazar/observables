@@ -13,7 +13,7 @@ export class LoadingNotificationComponent extends SignalsMixin(
   static get properties() {
     return {
       productLoadingMessage: { type: String, state: true },
-      isLoading: { type: Boolean, state: true },
+      isPending: { type: Boolean, state: true },
     };
   }
 
@@ -21,9 +21,9 @@ export class LoadingNotificationComponent extends SignalsMixin(
     super.connectedCallback();
     const { productsAPI$ } = await this.consumeSignals();
     this.mapStateToSignals({
-      isLoading: this.computed(
+      isPending: this.computed(
         productsAPI$,
-        ({ value }) => value.fetchProducts?.isLoading,
+        ({ value }) => value.fetchProducts?.isPending,
       ),
     });
   }
@@ -34,7 +34,7 @@ export class LoadingNotificationComponent extends SignalsMixin(
 
   render() {
     return html`
-      ${this.isLoading ? html` <div>${this.productLoadingMessage}</div>` : ""}
+      ${this.isPending ? html` <div>${this.productLoadingMessage}</div>` : ""}
     `;
   }
 

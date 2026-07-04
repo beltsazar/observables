@@ -1,7 +1,7 @@
 import { Signal } from "../lib/signals/index.js";
 
 const status = {
-  isLoading: false,
+  isPending: false,
   isCompleted: false,
   isError: false,
   isSuccess: false,
@@ -22,7 +22,7 @@ export class ProductsAPI extends Signal {
 
   setLoading(endpoint) {
     this.setValue((collection) => {
-      collection[endpoint] = { ...status, isLoading: true };
+      collection[endpoint] = { ...status, isPending: true };
     });
   }
 

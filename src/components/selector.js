@@ -13,7 +13,7 @@ export class SelectorComponent extends SignalsMixin(
   static get properties() {
     return {
       options: { type: Array, state: true },
-      isLoading: { type: Boolean, state: true },
+      isPending: { type: Boolean, state: true },
     };
   }
 
@@ -25,9 +25,9 @@ export class SelectorComponent extends SignalsMixin(
     this.productFilter$ = productFilter$;
     this.mapStateToSignals({
       options: productOptions$,
-      isLoading: this.computed(
+      isPending: this.computed(
         productsAPI$,
-        ({ value }) => value.fetchProductOptions?.isLoading,
+        ({ value }) => value.fetchProductOptions?.isPending,
       ),
     });
   }
@@ -61,7 +61,7 @@ export class SelectorComponent extends SignalsMixin(
   }
 
   render() {
-    if (this.isLoading) {
+    if (this.isPending) {
       return html`<div class="loading">Loading...</div>`;
     }
 
