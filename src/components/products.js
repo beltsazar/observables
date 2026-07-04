@@ -103,7 +103,8 @@ export class ProductsComponent extends SignalsMixin(
           : ""
       }
       ${
-        this.saveSelectedProductService.isSuccess
+        this.saveSelectedProductService.isSuccess &&
+        !this.saveSelectedProductService.isPending
           ? html`<div class="message save-successful">Saved successfully!</div>`
           : ""
       }
@@ -114,7 +115,10 @@ export class ProductsComponent extends SignalsMixin(
       >
         More products ...
       </button>
-      <button ?disabled=${false} @click="${() => this.saveSelectedProduct()}">
+      <button
+        ?disabled=${this.saveSelectedProductService.isPending}
+        @click="${() => this.saveSelectedProduct()}"
+      >
         Save selected product
       </button> `;
   }
