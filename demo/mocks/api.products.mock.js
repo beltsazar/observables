@@ -13,6 +13,16 @@ export default defineMock([
     },
   },
   {
+    url: "/api/products/selectedProduct",
+    body: { success: true },
+    delay: 1000,
+    error: {
+      probability: 0.3, // 30% chance of returning error
+      status: 503,
+      statusText: "Service Unavailable",
+    },
+  },
+  {
     url: "/api/products/options",
     body: options,
     delay: 1000,

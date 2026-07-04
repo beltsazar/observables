@@ -22,7 +22,7 @@ export class FeatureComponent extends SignalsMixin(
     const productsAPI$ = new ProductsAPI();
     const products$ = new Products(productsAPI$);
     const productOptions$ = new ProductOptions(productsAPI$);
-    const selectedProduct$ = new SelectedProduct();
+    const selectedProduct$ = new SelectedProduct(productsAPI$);
     const productFilter$ = new ProductFilter();
 
     // computed signals

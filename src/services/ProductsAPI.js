@@ -10,8 +10,9 @@ const status = {
 };
 
 const endPoints = {
-  fetchProducts: { ...status },
+  fetchProductsService: { ...status },
   fetchProductOptions: { ...status },
+  saveSelectedProduct: { ...status },
 };
 
 export class ProductsAPI extends Signal {
@@ -71,5 +72,29 @@ export class ProductsAPI extends Signal {
 
   async fetchProductOptions() {
     return this.fetchEndpoint("fetchProductOptions", "/api/products/options");
+  }
+
+  async saveSelectedProduct(product) {
+    this.setLoading("saveSelectedProduct");
+
+    try {
+      const response = await fetch("/api/products/selectedProduct", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: JSON.stringify(product),
+      });
+      if (response.ok) {
+        const json = await response.json();
+        this.setSuccess("saveSelectedProduct", json);
+        return json;
+      } else {
+        this.setError("saveSelectedProduct", response.status);
+        return null;
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
 }

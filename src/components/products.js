@@ -9,15 +9,15 @@ export class ProductsComponent extends SignalsMixin(
   constructor() {
     super();
     this.products = [];
-    this.fetchProducts = {};
+    this.fetchProductsService = {};
+    this.saveSelectedProductService = {};
   }
 
   static get properties() {
     return {
       products: { type: Array, state: true },
-      fetchProducts: { type: Object, state: true },
-      isLoading: { type: Boolean, state: true },
-      isError: { type: Boolean, state: true },
+      fetchProductsService: { type: Object, state: true },
+      saveSelectedProductService: { type: Object, state: true },
     };
   }
 
@@ -36,17 +36,13 @@ export class ProductsComponent extends SignalsMixin(
     this.mapStateToSignals({
       products: filteredProducts$$,
       productsApiStatus: productsAPI$,
-      fetchProducts: this.computed(
+      fetchProductsService: this.computed(
         productsAPI$,
         ({ value }) => value.fetchProducts,
       ),
-      isLoading: this.computed(
+      saveSelectedProductService: this.computed(
         productsAPI$,
-        ({ value }) => value.fetchProducts?.isLoading,
-      ),
-      isError: this.computed(
-        productsAPI$,
-        ({ value }) => value.fetchProducts?.isError,
+        ({ value }) => value.saveSelectedProduct,
       ),
     });
   }
@@ -62,6 +58,10 @@ export class ProductsComponent extends SignalsMixin(
 
   async handleLoadProducts() {
     await this.products$.fetchProducts();
+  }
+
+  async saveSelectedProduct() {
+    await this.selectedProduct$.saveSelectedProduct();
   }
 
   render() {
@@ -82,18 +82,40 @@ export class ProductsComponent extends SignalsMixin(
       <loading-notification-component></loading-notification-component>
 
       ${
-        this.fetchProducts.isError
-          ? html`<div class="error-message">
+        this.fetchProductsService.isError
+          ? html`<div class="message products-error">
               Something went wrong. Please try again later.
             </div>`
           : ""
       }
+      ${
+        this.saveSelectedProductService.isLoading
+          ? html`<div class="message save-loading ">
+              Saving selected product ...
+            </div>`
+          : ""
+      }
+      ${
+        this.saveSelectedProductService.isError
+          ? html`<div class="message save-error">
+              Saving was not possible. Please try again later.
+            </div>`
+          : ""
+      }
+      ${
+        this.saveSelectedProductService.isSuccess
+          ? html`<div class="message save-successful">Saved successfully!</div>`
+          : ""
+      }
 
       <button
-        ?disabled=${this.fetchProducts.isLoading}
+        ?disabled=${this.fetchProductsService.isLoading}
         @click="${() => this.handleLoadProducts()}"
       >
         More products ...
+      </button>
+      <button ?disabled=${false} @click="${() => this.saveSelectedProduct()}">
+        Save selected product
       </button> `;
   }
 
@@ -127,8 +149,25 @@ export class ProductsComponent extends SignalsMixin(
         background-color: #eee;
       }
 
-      .error-message {
+      .message {
+        border: 2px solid black;
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+
+      .save-loading {
+        border: 2px solid black;
+      }
+
+      .products-error,
+      .save-error {
         border: 2px solid red;
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+
+      .save-successful {
+        border: 2px solid green;
         padding: 16px;
         margin-bottom: 16px;
       }
