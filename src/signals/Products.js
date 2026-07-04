@@ -9,8 +9,11 @@ export class Products extends Signal {
 
   async fetchProducts() {
     const json = await this.productsAPI$.fetchProducts();
+    if (!json) {
+      console.error("Failed to fetch products");
+      return;
+    }
     const products = jsonToModel(json);
-
     this.setValue((currentProducts) => {
       // append new products to the current products array :)
       products.forEach((product) => currentProducts.push(product));

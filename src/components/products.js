@@ -14,6 +14,8 @@ export class ProductsComponent extends SignalsMixin(
   static get properties() {
     return {
       products: { type: Array, state: true },
+      isLoading: { type: Boolean, state: true },
+      isError: { type: Boolean, state: true },
     };
   }
 
@@ -25,11 +27,21 @@ export class ProductsComponent extends SignalsMixin(
 
   async connectedCallback() {
     super.connectedCallback();
-    const { filteredProducts$$, selectedProduct$, products$ } =
+    const { filteredProducts$$, selectedProduct$, products$, productsAPI$ } =
       await this.consumeSignals();
     this.selectedProduct$ = selectedProduct$;
     this.products$ = products$;
-    this.mapStateToSignals({ products: filteredProducts$$ });
+    this.mapStateToSignals({
+      products: filteredProducts$$,
+      isLoading: this.computed(
+        productsAPI$,
+        ({ value }) => value.fetchProducts?.isLoading,
+      ),
+      isError: this.computed(
+        productsAPI$,
+        ({ value }) => value.fetchProducts?.isError,
+      ),
+    });
   }
 
   disconnectedCallback() {
@@ -61,8 +73,20 @@ export class ProductsComponent extends SignalsMixin(
       </ul>
 
       <loading-notification-component></loading-notification-component>
-      <button @click="${() => this.handleLoadProducts()}">
-        Load products
+
+      ${
+      this.isError
+        ? html`<div class="error-message">
+            Something went wrong. Please try again later.
+          </div>`
+        : ""
+    }
+
+      <button
+        ?disabled=${this.isLoading}
+        @click="${() => this.handleLoadProducts()}"
+      >
+        More products ...
       </button> `;
   }
 
@@ -94,6 +118,12 @@ export class ProductsComponent extends SignalsMixin(
       a:hover {
         border: 1px solid red;
         background-color: #eee;
+      }
+
+      .error-message {
+        border: 2px solid red;
+        padding: 16px;
+        margin-bottom: 16px;
       }
     `;
   }

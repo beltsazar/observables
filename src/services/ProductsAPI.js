@@ -5,6 +5,8 @@ const status = {
   isCompleted: false,
   isError: false,
   isSuccess: false,
+  json: null,
+  statusCode: null,
 };
 
 const endPoints = {
@@ -17,41 +19,57 @@ export class ProductsAPI extends Signal {
     super(endPoints);
   }
 
-  async fetchProducts() {
+  setLoading(endpoint) {
     this.setValue((collection) => {
-      collection.fetchProducts = { ...status, isLoading: true };
+      collection[endpoint] = { ...status, isLoading: true };
     });
+  }
 
-    const response = await fetch("/api/products");
-    const json = await response.json();
-
+  setSuccess(endpoint, json) {
     this.setValue((collection) => {
-      collection.fetchProducts = {
+      collection[endpoint] = {
         ...status,
         isCompleted: true,
         isSuccess: true,
+        json,
       };
     });
+  }
 
-    return json;
+  setError(endpoint, statusCode) {
+    this.setValue((collection) => {
+      collection[endpoint] = {
+        ...status,
+        isCompleted: true,
+        isError: true,
+        statusCode,
+      };
+    });
+  }
+
+  async fetchEndpoint(name, url) {
+    this.setLoading(name);
+
+    try {
+      const response = await fetch(url);
+      if (response.ok) {
+        const json = await response.json();
+        this.setSuccess(name, json);
+        return json;
+      } else {
+        this.setError(name, response.status);
+        return null;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async fetchProducts() {
+    return this.fetchEndpoint("fetchProducts", "/api/products");
   }
 
   async fetchProductOptions() {
-    this.setValue((collection) => {
-      collection.fetchProductOptions = { ...status, isLoading: true };
-    });
-
-    const response = await fetch("/api/products/options");
-    const json = await response.json();
-
-    this.setValue((collection) => {
-      collection.fetchProductOptions = {
-        ...status,
-        isCompleted: true,
-        isSuccess: true,
-      };
-    });
-
-    return json;
+    return this.fetchEndpoint("fetchProductOptions", "/api/products/options");
   }
 }
