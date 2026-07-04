@@ -9,6 +9,7 @@ const status = {
 
 const endPoints = {
   fetchProducts: { ...status },
+  fetchProductOptions: { ...status },
 };
 
 export class ProductsAPI extends Signal {
@@ -26,6 +27,25 @@ export class ProductsAPI extends Signal {
 
     this.setValue((collection) => {
       collection.fetchProducts = {
+        ...status,
+        isCompleted: true,
+        isSuccess: true,
+      };
+    });
+
+    return json;
+  }
+
+  async fetchProductOptions() {
+    this.setValue((collection) => {
+      collection.fetchProductOptions = { ...status, isLoading: true };
+    });
+
+    const response = await fetch("/api/products/options");
+    const json = await response.json();
+
+    this.setValue((collection) => {
+      collection.fetchProductOptions = {
         ...status,
         isCompleted: true,
         isSuccess: true,

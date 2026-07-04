@@ -13,15 +13,23 @@ export class SelectorComponent extends SignalsMixin(
   static get properties() {
     return {
       options: { type: Array, state: true },
+      isLoading: { type: Boolean, state: true },
     };
   }
 
   async connectedCallback() {
     super.connectedCallback();
-    const { productFilter$, productOptions$ } = await this.consumeSignals();
+    const { productFilter$, productOptions$, productsAPI$ } =
+      await this.consumeSignals();
     this.productOptions$ = productOptions$;
     this.productFilter$ = productFilter$;
-    this.mapStateToSignals({ options: productOptions$ });
+    this.mapStateToSignals({
+      options: productOptions$,
+      isLoading: this.computed(
+        productsAPI$,
+        ({ value }) => value.fetchProductOptions?.isLoading,
+      ),
+    });
   }
 
   disconnectedCallback() {
@@ -48,12 +56,15 @@ export class SelectorComponent extends SignalsMixin(
   }
 
   productNameChanged(e) {
-    console.error(e.target.value);
     const productName = e.target.value;
     this.productFilter$.setProductName(productName);
   }
 
   render() {
+    if (this.isLoading) {
+      return html`<div class="loading">Loading...</div>`;
+    }
+
     return html`<h2>Filter products</h2>
       <div class="select-options">
         <form
@@ -102,6 +113,9 @@ export class SelectorComponent extends SignalsMixin(
 
       fieldset {
         margin-bottom: 16px;
+      }
+      .loading {
+        padding-top: 16px;
       }
     `;
   }

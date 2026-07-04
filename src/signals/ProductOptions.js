@@ -7,9 +7,7 @@ export class ProductOptions extends Signal {
   }
 
   async fetchOptions() {
-    const json = await this.productsAPI$.fetchProducts();
-    const options = json.options;
-
-    this.setValue(options);
+    const json = await this.productsAPI$.fetchProductOptions();
+    this.setValue(json);
   }
 }

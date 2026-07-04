@@ -9,7 +9,7 @@ export class Products extends Signal {
 
   async fetchProducts() {
     const json = await this.productsAPI$.fetchProducts();
-    const products = jsonToModel(json.products);
+    const products = jsonToModel(json);
 
     this.setValue((currentProducts) => {
       // append new products to the current products array :)
