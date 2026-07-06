@@ -45,7 +45,6 @@ export class SelectorComponent extends SignalsMixin(
     });
 
     this.productFilter$.setSelectedOptions(selectedOptions);
-
     e.preventDefault();
   }
 

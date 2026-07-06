@@ -1,7 +1,6 @@
 import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { ComputedSignal, SignalsMixin } from "../lib/signals/index.js";
-import { LoadingNotificationComponent } from "./loading-notification.js";
+import { SignalsMixin } from "../lib/signals/index.js";
 import { ApiNotificationsComponent } from "./api-notifications.js";
 
 export class ProductsComponent extends SignalsMixin(
@@ -17,10 +16,6 @@ export class ProductsComponent extends SignalsMixin(
   static get properties() {
     return {
       products: { type: Array, state: true },
-      isPendingShown: { type: Boolean, state: true },
-      isSuccessShown: { type: Boolean, state: true },
-      isErrorShown: { type: Boolean, state: true },
-      isFetchProductsErrorShown: { type: Boolean, state: true },
       saveSelectedProductsStatus: { type: Object, state: true },
       fetchProductsStatus: { type: Object, state: true },
     };
@@ -28,7 +23,6 @@ export class ProductsComponent extends SignalsMixin(
 
   static get scopedElements() {
     return {
-      "loading-notification-component": LoadingNotificationComponent,
       "api-notifications-component": ApiNotificationsComponent,
     };
   }
@@ -39,60 +33,16 @@ export class ProductsComponent extends SignalsMixin(
       await this.consumeSignals();
     this.selectedProduct$ = selectedProduct$;
     this.products$ = products$;
-
-    const saveSelectedProductsStatus$ = this.registerComputed(
-      new ComputedSignal(
+    this.mapStateToSignals({
+      products: filteredProducts$$,
+      saveSelectedProductsStatus: this.computed(
         productsAPI$,
         ({ value }) => value.saveSelectedProduct,
       ),
-    );
-    this.watch(
-      saveSelectedProductsStatus$,
-      ({ value: { isCompleted, isSuccess, isError, isPending } }) => {
-        if (isCompleted && isSuccess) {
-          this.isSuccessShown = true;
-          clearTimeout(this.isSaveSuccessfulShownTimeout);
-          this.isSaveSuccessfulShownTimeout = setTimeout(() => {
-            this.isSuccessShown = false;
-          }, 3000);
-        } else {
-          this.isSuccessShown = false;
-        }
-
-        if (isCompleted && isError) {
-          this.isErrorShown = true;
-          clearTimeout(this.isSaveErrorShownTimeout);
-          this.isSaveErrorShownTimeout = setTimeout(() => {
-            this.isErrorShown = false;
-          }, 3000);
-        } else {
-          this.isErrorShown = false;
-        }
-
-        this.isPendingShown = isPending;
-      },
-    );
-
-    const fetchProductsStatus$ = this.registerComputed(
-      new ComputedSignal(productsAPI$, ({ value }) => value.fetchProducts),
-    );
-    this.watch(fetchProductsStatus$, ({ value: { isCompleted, isError } }) => {
-      if (isCompleted && isError) {
-        this.isFetchProductsErrorShown = true;
-        clearTimeout(this.isFetchProductsErrorShownTimeout);
-        this.isFetchProductsErrorShownTimeout = setTimeout(() => {
-          this.isFetchProductsErrorShown = false;
-        }, 3000);
-      } else {
-        this.isFetchProductsErrorShown = false;
-      }
-    });
-
-    this.mapStateToSignals({
-      products: filteredProducts$$,
-      productsApiStatus: productsAPI$,
-      saveSelectedProductsStatus: saveSelectedProductsStatus$,
-      fetchProductsStatus: fetchProductsStatus$,
+      fetchProductsStatus: this.computed(
+        productsAPI$,
+        ({ value }) => value.fetchProducts,
+      ),
     });
   }
 
@@ -128,15 +78,13 @@ export class ProductsComponent extends SignalsMixin(
         )}
       </ul>
 
-      <!--      <loading-notification-component></loading-notification-component>-->
-
       <api-notifications-component
         api-name="productsAPI$"
         endpoint="fetchProducts"
       >
         <div slot="pending">Loading products ...</div>
         <div slot="error">
-          Products could not be loaded ... please try later
+          Products could not be loaded ... Please try again later.
         </div>
       </api-notifications-component>
 
@@ -150,13 +98,13 @@ export class ProductsComponent extends SignalsMixin(
       </api-notifications-component>
 
       <button
-        ?disabled=${this.fetchProductsStatus.isPending}
+        ?disabled=${this.fetchProductsStatus.isPending || this.saveSelectedProductsStatus.isPending}
         @click="${() => this.handleLoadProducts()}"
       >
         More products ...
       </button>
       <button
-        ?disabled=${this.saveSelectedProductsStatus.isPending}
+        ?disabled=${this.saveSelectedProductsStatus.isPending || this.fetchProductsStatus.isPending}
         @click="${() => this.saveSelectedProduct()}"
       >
         Save selected product
