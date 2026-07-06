@@ -2,6 +2,7 @@ import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { ComputedSignal, SignalsMixin } from "../lib/signals/index.js";
 import { LoadingNotificationComponent } from "./loading-notification.js";
+import { ApiNotificationsComponent } from "./api-notifications.js";
 
 export class ProductsComponent extends SignalsMixin(
   ScopedElementsMixin(LitElement),
@@ -16,9 +17,9 @@ export class ProductsComponent extends SignalsMixin(
   static get properties() {
     return {
       products: { type: Array, state: true },
-      isSaveProductPendingShown: { type: Boolean, state: true },
-      isSaveProductSuccessfulShown: { type: Boolean, state: true },
-      isSaveProductErrorShown: { type: Boolean, state: true },
+      isPendingShown: { type: Boolean, state: true },
+      isSuccessShown: { type: Boolean, state: true },
+      isErrorShown: { type: Boolean, state: true },
       isFetchProductsErrorShown: { type: Boolean, state: true },
       saveSelectedProductsStatus: { type: Object, state: true },
       fetchProductsStatus: { type: Object, state: true },
@@ -28,6 +29,7 @@ export class ProductsComponent extends SignalsMixin(
   static get scopedElements() {
     return {
       "loading-notification-component": LoadingNotificationComponent,
+      "api-notifications-component": ApiNotificationsComponent,
     };
   }
 
@@ -48,26 +50,26 @@ export class ProductsComponent extends SignalsMixin(
       saveSelectedProductsStatus$,
       ({ value: { isCompleted, isSuccess, isError, isPending } }) => {
         if (isCompleted && isSuccess) {
-          this.isSaveProductSuccessfulShown = true;
+          this.isSuccessShown = true;
           clearTimeout(this.isSaveSuccessfulShownTimeout);
           this.isSaveSuccessfulShownTimeout = setTimeout(() => {
-            this.isSaveProductSuccessfulShown = false;
+            this.isSuccessShown = false;
           }, 3000);
         } else {
-          this.isSaveProductSuccessfulShown = false;
+          this.isSuccessShown = false;
         }
 
         if (isCompleted && isError) {
-          this.isSaveProductErrorShown = true;
+          this.isErrorShown = true;
           clearTimeout(this.isSaveErrorShownTimeout);
           this.isSaveErrorShownTimeout = setTimeout(() => {
-            this.isSaveProductErrorShown = false;
+            this.isErrorShown = false;
           }, 3000);
         } else {
-          this.isSaveProductErrorShown = false;
+          this.isErrorShown = false;
         }
 
-        this.isSaveProductPendingShown = isPending;
+        this.isPendingShown = isPending;
       },
     );
 
@@ -126,34 +128,26 @@ export class ProductsComponent extends SignalsMixin(
         )}
       </ul>
 
-      <loading-notification-component></loading-notification-component>
+      <!--      <loading-notification-component></loading-notification-component>-->
 
-      ${
-        this.isFetchProductsErrorShown
-          ? html`<div class="message products-error">
-              Something went wrong. Please try again later.
-            </div>`
-          : ""
-      }
-      ${
-        this.isSaveProductPendingShown
-          ? html`<div class="message save-loading ">
-              Saving selected product ...
-            </div>`
-          : ""
-      }
-      ${
-        this.isSaveProductErrorShown
-          ? html`<div class="message save-error">
-              Saving was not possible. Please try again later.
-            </div>`
-          : ""
-      }
-      ${
-        this.isSaveProductSuccessfulShown
-          ? html`<div class="message save-successful">Saved successfully!</div>`
-          : ""
-      }
+      <api-notifications-component
+        api-name="productsAPI$"
+        endpoint="fetchProducts"
+      >
+        <div slot="pending">Loading products ...</div>
+        <div slot="error">
+          Products could not be loaded ... please try later
+        </div>
+      </api-notifications-component>
+
+      <api-notifications-component
+        api-name="productsAPI$"
+        endpoint="saveSelectedProduct"
+      >
+        <div slot="pending">Saving selected product ...</div>
+        <div slot="error">Something went wrong. Please try again later.</div>
+        <div slot="success">Saved successfully!</div>
+      </api-notifications-component>
 
       <button
         ?disabled=${this.fetchProductsStatus.isPending}
