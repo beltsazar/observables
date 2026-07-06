@@ -96,6 +96,7 @@ export class SelectorComponent extends SignalsMixin(
               id="name"
               name="name"
               size="15"
+              placeholder="e.g. paper"
             />
           </fieldset>
         </form>
