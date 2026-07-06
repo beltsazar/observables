@@ -7,7 +7,7 @@ export default defineMock([
     body: products,
     delay: 2000,
     error: {
-      probability: 0.3, // 30% chance of returning error
+      probability: 0.5, // 30% chance of returning error
       status: 503,
       statusText: "Service Unavailable",
     },
@@ -17,7 +17,7 @@ export default defineMock([
     body: { success: true },
     delay: 1000,
     error: {
-      probability: 0.3, // 30% chance of returning error
+      probability: 0.5, // 30% chance of returning error
       status: 503,
       statusText: "Service Unavailable",
     },

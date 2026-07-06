@@ -10,7 +10,7 @@ const status = {
 };
 
 const endPoints = {
-  fetchProductsService: { ...status },
+  fetchProducts: { ...status },
   fetchProductOptions: { ...status },
   saveSelectedProduct: { ...status },
 };

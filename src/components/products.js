@@ -1,6 +1,6 @@
 import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { SignalsMixin } from "../lib/signals/index.js";
+import { ComputedSignal, SignalsMixin } from "../lib/signals/index.js";
 import { LoadingNotificationComponent } from "./loading-notification.js";
 
 export class ProductsComponent extends SignalsMixin(
@@ -9,15 +9,19 @@ export class ProductsComponent extends SignalsMixin(
   constructor() {
     super();
     this.products = [];
-    this.fetchProductsService = {};
-    this.saveSelectedProductService = {};
+    this.saveSelectedProductsStatus = {};
+    this.fetchProductsStatus = {};
   }
 
   static get properties() {
     return {
       products: { type: Array, state: true },
-      fetchProductsService: { type: Object, state: true },
-      saveSelectedProductService: { type: Object, state: true },
+      isSaveProductPendingShown: { type: Boolean, state: true },
+      isSaveProductSuccessfulShown: { type: Boolean, state: true },
+      isSaveProductErrorShown: { type: Boolean, state: true },
+      isFetchProductsErrorShown: { type: Boolean, state: true },
+      saveSelectedProductsStatus: { type: Object, state: true },
+      fetchProductsStatus: { type: Object, state: true },
     };
   }
 
@@ -33,17 +37,60 @@ export class ProductsComponent extends SignalsMixin(
       await this.consumeSignals();
     this.selectedProduct$ = selectedProduct$;
     this.products$ = products$;
-    this.mapStateToSignals({
-      products: filteredProducts$$,
-      productsApiStatus: productsAPI$,
-      fetchProductsService: this.computed(
-        productsAPI$,
-        ({ value }) => value.fetchProducts,
-      ),
-      saveSelectedProductService: this.computed(
+
+    const saveSelectedProductsStatus$ = this.registerComputed(
+      new ComputedSignal(
         productsAPI$,
         ({ value }) => value.saveSelectedProduct,
       ),
+    );
+    this.watch(
+      saveSelectedProductsStatus$,
+      ({ value: { isCompleted, isSuccess, isError, isPending } }) => {
+        if (isCompleted && isSuccess) {
+          this.isSaveProductSuccessfulShown = true;
+          clearTimeout(this.isSaveSuccessfulShownTimeout);
+          this.isSaveSuccessfulShownTimeout = setTimeout(() => {
+            this.isSaveProductSuccessfulShown = false;
+          }, 3000);
+        } else {
+          this.isSaveProductSuccessfulShown = false;
+        }
+
+        if (isCompleted && isError) {
+          this.isSaveProductErrorShown = true;
+          clearTimeout(this.isSaveErrorShownTimeout);
+          this.isSaveErrorShownTimeout = setTimeout(() => {
+            this.isSaveProductErrorShown = false;
+          }, 3000);
+        } else {
+          this.isSaveProductErrorShown = false;
+        }
+
+        this.isSaveProductPendingShown = isPending;
+      },
+    );
+
+    const fetchProductsStatus$ = this.registerComputed(
+      new ComputedSignal(productsAPI$, ({ value }) => value.fetchProducts),
+    );
+    this.watch(fetchProductsStatus$, ({ value: { isCompleted, isError } }) => {
+      if (isCompleted && isError) {
+        this.isFetchProductsErrorShown = true;
+        clearTimeout(this.isFetchProductsErrorShownTimeout);
+        this.isFetchProductsErrorShownTimeout = setTimeout(() => {
+          this.isFetchProductsErrorShown = false;
+        }, 3000);
+      } else {
+        this.isFetchProductsErrorShown = false;
+      }
+    });
+
+    this.mapStateToSignals({
+      products: filteredProducts$$,
+      productsApiStatus: productsAPI$,
+      saveSelectedProductsStatus: saveSelectedProductsStatus$,
+      fetchProductsStatus: fetchProductsStatus$,
     });
   }
 
@@ -82,41 +129,40 @@ export class ProductsComponent extends SignalsMixin(
       <loading-notification-component></loading-notification-component>
 
       ${
-        this.fetchProductsService.isError
+        this.isFetchProductsErrorShown
           ? html`<div class="message products-error">
               Something went wrong. Please try again later.
             </div>`
           : ""
       }
       ${
-        this.saveSelectedProductService.isPending
+        this.isSaveProductPendingShown
           ? html`<div class="message save-loading ">
               Saving selected product ...
             </div>`
           : ""
       }
       ${
-        this.saveSelectedProductService.isError
+        this.isSaveProductErrorShown
           ? html`<div class="message save-error">
               Saving was not possible. Please try again later.
             </div>`
           : ""
       }
       ${
-        this.saveSelectedProductService.isSuccess &&
-        !this.saveSelectedProductService.isPending
+        this.isSaveProductSuccessfulShown
           ? html`<div class="message save-successful">Saved successfully!</div>`
           : ""
       }
 
       <button
-        ?disabled=${this.fetchProductsService.isPending}
+        ?disabled=${this.fetchProductsStatus.isPending}
         @click="${() => this.handleLoadProducts()}"
       >
         More products ...
       </button>
       <button
-        ?disabled=${this.saveSelectedProductService.isPending}
+        ?disabled=${this.saveSelectedProductsStatus.isPending}
         @click="${() => this.saveSelectedProduct()}"
       >
         Save selected product
