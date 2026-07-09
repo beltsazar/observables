@@ -14,12 +14,12 @@
     "format:eslint": "eslint --ext .js,.html . --fix --ignore-pattern .gitignore",
     "lint:prettier": "prettier \"**/*.js\" --check --ignore-path .gitignore",
     "format:prettier": "prettier \"**/*.js\" --write --ignore-path .gitignore"
-
   },
   "dependencies": {
     "@lion/ui": "^0.17.0",
     "@lit/context": "^1.1.6",
     "@open-wc/scoped-elements": "^3.0.6",
+    "@vitest/coverage-istanbul": "^4.1.10",
     "@webcomponents/scoped-custom-element-registry": "^0.0.10",
     "lit": "^3.3.2",
     "lodash-es": "^4.18.1"
