@@ -43,7 +43,7 @@ export class Signal {
       this._previousValue = currentValue;
       // clone the consumer value to prevent nested consumer objects to be frozen :(=)
       this._value = freezeDeep(cloneDeep(newValue));
-      // notify event listeners
+      // notify watchers
       this._watchers.forEach((watcher) => watcher.notify(this));
     }
   }

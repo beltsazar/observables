@@ -1,6 +1,5 @@
-export class Watcher extends EventTarget {
+export class Watcher {
   constructor(signals, callback) {
-    super();
     this.signals = signals;
     this.callback = callback;
 
