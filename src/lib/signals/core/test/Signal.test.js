@@ -8,7 +8,7 @@ const nested = {
 };
 
 describe("Signal", () => {
-  it("should correctly instantiate an observable data object", () => {
+  it("should correctly instantiate a Signal object", () => {
     expect(new Signal() instanceof Signal).to.equal(true);
   });
 
