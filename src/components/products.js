@@ -1,4 +1,5 @@
 import { LitElement, css, html } from "lit";
+import { classMap } from "lit/directives/class-map.js";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
 import { SignalsMixin } from "../lib/signals/index.js";
 import { ApiNotificationsComponent } from "./api-notifications.js";
@@ -9,6 +10,7 @@ export class ProductsComponent extends SignalsMixin(
   constructor() {
     super();
     this.products = [];
+    this.selectedProduct = {};
     this.saveSelectedProductsStatus = {};
     this.fetchProductsStatus = {};
   }
@@ -16,6 +18,7 @@ export class ProductsComponent extends SignalsMixin(
   static get properties() {
     return {
       products: { type: Array, state: true },
+      selectedProduct: { type: Object, state: true },
       saveSelectedProductsStatus: { type: Object, state: true },
       fetchProductsStatus: { type: Object, state: true },
     };
@@ -35,6 +38,7 @@ export class ProductsComponent extends SignalsMixin(
     this.products$ = products$;
     this.mapStateToSignals({
       products: filteredProducts$$,
+      selectedProduct: selectedProduct$,
       saveSelectedProductsStatus: this.computed(
         productsAPI$,
         ({ value }) => value.saveSelectedProduct,
@@ -70,6 +74,7 @@ export class ProductsComponent extends SignalsMixin(
           (product) =>
             html`<li>
               <a
+                class="${classMap({ selected: product?.id === this.selectedProduct?.id })}"
                 href="#"
                 @click="${(e) => this.handleProductSelection(e, product)}"
                 >${product.name}</a
@@ -136,7 +141,8 @@ export class ProductsComponent extends SignalsMixin(
         border: 1px solid grey;
       }
 
-      a:hover {
+      a:hover,
+      .selected {
         border: 1px solid red;
         background-color: #eee;
       }
