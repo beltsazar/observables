@@ -17,10 +17,10 @@ export class SelectorComponent extends SignalsMixin(
     };
   }
 
-  async connectedCallback() {
+  connectedCallback() {
     super.connectedCallback();
     const { productFilter$, productOptions$, productsAPI$ } =
-      await this.consumeSignals();
+      this.consumeSignals();
     this.productOptions$ = productOptions$;
     this.productFilter$ = productFilter$;
     this.mapStateToSignals({

@@ -30,10 +30,10 @@ export class ProductsComponent extends SignalsMixin(
     };
   }
 
-  async connectedCallback() {
+  connectedCallback() {
     super.connectedCallback();
     const { filteredProducts$$, selectedProduct$, products$, productsAPI$ } =
-      await this.consumeSignals();
+      this.consumeSignals();
     this.selectedProduct$ = selectedProduct$;
     this.products$ = products$;
     this.mapStateToSignals({
