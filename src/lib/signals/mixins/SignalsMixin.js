@@ -1,9 +1,8 @@
 import { ContextConsumer, ContextProvider, createContext } from "@lit/context";
 import { ComputedSignal } from "../core/ComputedSignal.js";
 import { Watcher } from "../core/Watcher.js";
-import { randomString } from "../utils/randomString.js";
 
-const context = createContext(Symbol(randomString(10)));
+const context = createContext(Symbol("signals-context"));
 
 export const SignalsMixin = (superClass) =>
   class extends superClass {

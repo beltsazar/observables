@@ -2,9 +2,9 @@ export class Watcher {
   constructor(signals, callback) {
     this.signals = signals;
     this.callback = callback;
-
     // convert possible single value to an array
     [this.signals].flat().forEach((signal) => signal.addWatcher(this));
+    // provide the initial value to the callback immediately
     this.callback(this.signals);
   }
 
