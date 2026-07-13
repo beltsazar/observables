@@ -9,6 +9,7 @@ export const SignalsMixin = (superClass) =>
     #computedSignals = [];
     #watchers = [];
 
+    // use inside the constructor of the parent component
     provideSignals(signals) {
       new ContextProvider(this, {
         context,
@@ -16,7 +17,13 @@ export const SignalsMixin = (superClass) =>
       });
     }
 
+    // use inside the connectedCallback of the child component
     consumeSignals() {
+      return new ContextConsumer(this, { context }).value;
+    }
+
+    // use inside the async connectedCallback of the child component
+    consumeSignalsAsync() {
       let promiseResolver;
       const deferredPromise = new Promise(
         (resolver) => (promiseResolver = resolver),
