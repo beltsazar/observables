@@ -19,4 +19,11 @@ export class Products extends Signal {
       products.forEach((product) => currentProducts.push(product));
     });
   }
+
+  async saveSelectedProduct(product) {
+    const json = await this.productsAPI$.saveProduct(product);
+    if (!json) {
+      console.error("Failed to save product");
+    }
+  }
 }

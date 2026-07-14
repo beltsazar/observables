@@ -11,7 +11,7 @@ export class ProductsComponent extends SignalsMixin(
     super();
     this.products = [];
     this.selectedProduct = {};
-    this.saveSelectedProductsStatus = {};
+    this.saveProductStatus = {};
     this.fetchProductsStatus = {};
   }
 
@@ -19,7 +19,7 @@ export class ProductsComponent extends SignalsMixin(
     return {
       products: { type: Array, state: true },
       selectedProduct: { type: Object, state: true },
-      saveSelectedProductsStatus: { type: Object, state: true },
+      saveProductStatus: { type: Object, state: true },
       fetchProductsStatus: { type: Object, state: true },
     };
   }
@@ -39,9 +39,9 @@ export class ProductsComponent extends SignalsMixin(
     this.mapStateToSignals({
       products: filteredProducts$$,
       selectedProduct: selectedProduct$,
-      saveSelectedProductsStatus: this.computed(
+      saveProductStatus: this.computed(
         productsAPI$,
-        ({ value }) => value.saveSelectedProduct,
+        ({ value }) => value.saveProduct,
       ),
       fetchProductsStatus: this.computed(
         productsAPI$,
@@ -95,7 +95,7 @@ export class ProductsComponent extends SignalsMixin(
 
       <api-notifications-component
         api-name="productsAPI$"
-        endpoint="saveSelectedProduct"
+        endpoint="saveProduct"
       >
         <div slot="pending">Saving selected product ...</div>
         <div slot="error">Something went wrong. Please try again later.</div>
@@ -103,13 +103,13 @@ export class ProductsComponent extends SignalsMixin(
       </api-notifications-component>
 
       <button
-        ?disabled=${this.fetchProductsStatus.isPending || this.saveSelectedProductsStatus.isPending}
+        ?disabled=${this.fetchProductsStatus.isPending || this.saveProductStatus.isPending}
         @click="${() => this.handleLoadProducts()}"
       >
         More products ...
       </button>
       <button
-        ?disabled=${this.saveSelectedProductsStatus.isPending || this.fetchProductsStatus.isPending}
+        ?disabled=${this.saveProductStatus.isPending || this.fetchProductsStatus.isPending}
         @click="${() => this.saveSelectedProduct()}"
       >
         Save selected product

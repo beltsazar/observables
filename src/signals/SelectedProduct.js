@@ -1,9 +1,9 @@
 import { Signal } from "../lib/signals/index.js";
 
 export class SelectedProduct extends Signal {
-  constructor(productsAPI$) {
+  constructor(products$) {
     super(null);
-    this.productsAPI$ = productsAPI$;
+    this.products$ = products$;
   }
 
   setSelectedProduct(product) {
@@ -11,6 +11,6 @@ export class SelectedProduct extends Signal {
   }
 
   async saveSelectedProduct() {
-    await this.productsAPI$.saveSelectedProduct(this.value);
+    await this.products$.saveSelectedProduct(this.value);
   }
 }

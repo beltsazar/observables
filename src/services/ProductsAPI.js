@@ -12,7 +12,7 @@ const status = {
 const endPoints = {
   fetchProducts: { ...status },
   fetchProductOptions: { ...status },
-  saveSelectedProduct: { ...status },
+  saveProduct: { ...status },
 };
 
 export class ProductsAPI extends Signal {
@@ -74,8 +74,8 @@ export class ProductsAPI extends Signal {
     return this.fetchEndpoint("fetchProductOptions", "/api/products/options");
   }
 
-  async saveSelectedProduct(product) {
-    this.setLoading("saveSelectedProduct");
+  async saveProduct(product) {
+    this.setLoading("saveProduct");
 
     try {
       const response = await fetch("/api/products/selectedProduct", {
@@ -87,10 +87,10 @@ export class ProductsAPI extends Signal {
       });
       if (response.ok) {
         const json = await response.json();
-        this.setSuccess("saveSelectedProduct", json);
+        this.setSuccess("saveProduct", json);
         return json;
       } else {
-        this.setError("saveSelectedProduct", response.status);
+        this.setError("saveProduct", response.status);
         return null;
       }
     } catch (error) {
