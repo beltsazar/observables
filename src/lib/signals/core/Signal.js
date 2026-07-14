@@ -1,7 +1,15 @@
 import { cloneDeep, isEqual } from "lodash-es";
 import { freezeDeep } from "../utils/freezeDeep.js";
 
+/**
+ * Signal class that holds a value and notifies watchers when the value changes.
+ * It supports both direct value assignment and callback-based updates.
+ */
 export class Signal {
+  /**
+   * @param {*} initialValue - The initial value to be deeply cloned and frozen.
+   * @return {Object} A new instance of the class.
+   */
   constructor(initialValue) {
     this._previousValue = undefined;
     this._value = freezeDeep(cloneDeep(initialValue));

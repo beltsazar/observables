@@ -1,4 +1,11 @@
+/**
+ * Watcher class that listens to changes in signals and calls a callback when they occur.
+ */
 export class Watcher {
+  /**
+   * @param {Signal | Signal[]} signals - The signal or array of signals to watch.
+   * @param {function} callback - The callback function to be called when the signals change.
+   */
   constructor(signals, callback) {
     this.signals = signals;
     this.callback = callback;
