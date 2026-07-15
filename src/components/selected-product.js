@@ -31,8 +31,8 @@ export class SelectedProductComponent extends SignalsMixin(
       <h3>${product.name}</h3>
       <ul>
         ${product.options.map((option) => html`<li>${option.name}</li>`)}
-        <li>Price: &euro; ${product.price}</li>
       </ul>
+      <p>Price: &euro; ${product.price}</p>
     `;
   }
 
@@ -59,12 +59,9 @@ export class SelectedProductComponent extends SignalsMixin(
         padding: 0;
       }
 
-      ul,
-      ul li {
-        margin: 0;
+      ul {
+        margin: 16px;
         padding: 0;
-        text-indent: 0;
-        list-style-type: none;
       }
     `;
   }

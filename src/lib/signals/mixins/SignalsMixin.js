@@ -22,21 +22,6 @@ export const SignalsMixin = (superClass) =>
       return new ContextConsumer(this, { context }).value;
     }
 
-    // use inside the async connectedCallback of the child component
-    consumeSignalsAsync() {
-      let promiseResolver;
-      const deferredPromise = new Promise(
-        (resolver) => (promiseResolver = resolver),
-      );
-      new ContextConsumer(this, {
-        context,
-        callback: (value) => {
-          promiseResolver(value);
-        },
-      });
-      return deferredPromise;
-    }
-
     disconnectedCallback() {
       super.disconnectedCallback();
       this.#watchers.forEach((watcher) => watcher.dispose());
