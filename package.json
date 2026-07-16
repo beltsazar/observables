@@ -1,7 +1,9 @@
 {
-  "name": "observables",
-  "private": true,
-  "version": "0.0.0",
+  "name": "@beltsazar/observables",
+  "version": "1.0.0",
+  "author": "Daniel Marcuse",
+  "description": "Compact implementation of Signals for JavaScript",
+  "main": "src/lib/signals/index.js",
   "type": "module",
   "scripts": {
     "dev": "vite",
