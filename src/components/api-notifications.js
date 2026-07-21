@@ -1,9 +1,9 @@
 import { LitElement, css, html } from "lit";
 import { classMap } from "lit/directives/class-map.js";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { SignalsMixin } from "../lib/signals/index.js";
+import { SignalsConsumerMixin } from "../lib/signals/index.js";
 
-export class ApiNotificationsComponent extends SignalsMixin(
+export class ApiNotificationsComponent extends SignalsConsumerMixin(
   ScopedElementsMixin(LitElement),
 ) {
   constructor() {
@@ -24,7 +24,7 @@ export class ApiNotificationsComponent extends SignalsMixin(
 
   connectedCallback() {
     super.connectedCallback();
-    const api$ = this.consumeSignals()[this.apiName];
+    const api$ = this.sharedSignals[this.apiName];
     this.watch(
       this.computed(api$, ({ value }) => value[this.endpoint]),
       ({ value: { isCompleted, isSuccess, isError, isPending } }) => {

@@ -1,46 +1,21 @@
 import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { SignalsMixin } from "./lib/signals/index.js";
-import { Products } from "./signals/Products.js";
-import { ProductOptions } from "./signals/ProductOptions.js";
-import { SelectedProduct } from "./signals/SelectedProduct.js";
-import { ProductFilter } from "./signals/ProductFilter.js";
-import { FilteredProducts } from "./signals/computed/FilteredProducts.js";
-import { ProductsAPI } from "./services/ProductsAPI.js";
+import { SignalsProviderMixin } from "./lib/signals/index.js";
+import { createSharedSignals } from "./signals/index.js";
 import { SelectedProductComponent } from "./components/selected-product.js";
 import { SelectorComponent } from "./components/selector.js";
 import { ProductsComponent } from "./components/products.js";
 import { SelectionNotificationComponent } from "./components/selection-notification.js";
 
-export class FeatureComponent extends SignalsMixin(
+export class FeatureComponent extends SignalsProviderMixin(
   ScopedElementsMixin(LitElement),
 ) {
   constructor() {
     super();
+    this.sharedSignals = createSharedSignals();
 
-    // signals
-    const productsAPI$ = new ProductsAPI();
-    const products$ = new Products(productsAPI$);
-    const productOptions$ = new ProductOptions(productsAPI$);
-    const selectedProduct$ = new SelectedProduct(products$);
-    const productFilter$ = new ProductFilter();
-
-    // computed signals
-    const filteredProducts$$ = this.registerComputed(
-      new FilteredProducts(products$, productFilter$),
-    );
-
-    // provide shared signals to child components
-    this.provideSignals({
-      products$,
-      productOptions$,
-      selectedProduct$,
-      productFilter$,
-      productsAPI$,
-      filteredProducts$$,
-    });
-
-    // share signals on element
+    // use signals in this element
+    const { products$, productOptions$ } = this.sharedSignals;
     this.products$ = products$;
     this.productOptions$ = productOptions$;
   }

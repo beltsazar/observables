@@ -1,8 +1,8 @@
 import { LitElement, css, html } from "lit";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { SignalsMixin } from "../lib/signals/index.js";
+import { SignalsConsumerMixin } from "../lib/signals/index.js";
 
-export class SelectionNotificationComponent extends SignalsMixin(
+export class SelectionNotificationComponent extends SignalsConsumerMixin(
   ScopedElementsMixin(LitElement),
 ) {
   constructor() {
@@ -17,7 +17,7 @@ export class SelectionNotificationComponent extends SignalsMixin(
 
   connectedCallback() {
     super.connectedCallback();
-    const { selectedProduct$, filteredProducts$$ } = this.consumeSignals();
+    const { selectedProduct$, filteredProducts$$ } = this.sharedSignals;
     this.watch(
       [selectedProduct$, filteredProducts$$],
       ([{ value: selectedProduct }, { value: filteredProducts }]) => {

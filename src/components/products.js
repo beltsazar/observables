@@ -1,10 +1,10 @@
 import { LitElement, css, html } from "lit";
 import { classMap } from "lit/directives/class-map.js";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { SignalsMixin } from "../lib/signals/index.js";
+import { SignalsConsumerMixin } from "../lib/signals/index.js";
 import { ApiNotificationsComponent } from "./api-notifications.js";
 
-export class ProductsComponent extends SignalsMixin(
+export class ProductsComponent extends SignalsConsumerMixin(
   ScopedElementsMixin(LitElement),
 ) {
   constructor() {
@@ -33,7 +33,7 @@ export class ProductsComponent extends SignalsMixin(
   connectedCallback() {
     super.connectedCallback();
     const { filteredProducts$$, selectedProduct$, products$, productsAPI$ } =
-      this.consumeSignals();
+      this.sharedSignals;
     this.selectedProduct$ = selectedProduct$;
     this.products$ = products$;
     this.mapStateToSignals({
