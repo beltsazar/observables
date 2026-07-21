@@ -38,7 +38,7 @@ export class SelectorComponent extends SignalsConsumerMixin(
 
   _onSubmit(e) {
     // Set selected customer options based on checked checkboxes
-    const selectedOptions = this.options.filter((option) => {
+    const selectedOptions = this.options.filter(option => {
       const form = e.target;
       const input = form ? form.elements.namedItem(String(option.id)) : null;
       return Boolean(input?.checked);
@@ -68,20 +68,20 @@ export class SelectorComponent extends SignalsConsumerMixin(
       <div class="select-options">
         <form
           name="optionsForm"
-          @submit=${(e) => {
+          @submit=${e => {
             this._onSubmit(e);
           }}
         >
           <fieldset>
             <legend>Product options:</legend>
             ${this.options.map(
-              (option) =>
+              option =>
                 html` <div>
                   <input
                     type="checkbox"
                     id="${option.id}"
                     name="${option.id}"
-                    @click=${(e) => this.optionsChanged(e)}
+                    @click=${e => this.optionsChanged(e)}
                   />
                   <label for="${option.id}">${option.name}</label>
                 </div>`,
@@ -91,7 +91,7 @@ export class SelectorComponent extends SignalsConsumerMixin(
           <fieldset>
             <legend>Product name:</legend>
             <input
-              @keyup=${(e) => this.productNameChanged(e)}
+              @keyup=${e => this.productNameChanged(e)}
               type="text"
               id="name"
               name="name"

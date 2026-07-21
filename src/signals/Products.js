@@ -14,9 +14,9 @@ export class Products extends Signal {
       return;
     }
     const products = jsonToModel(json);
-    this.setValue((currentProducts) => {
+    this.setValue(currentProducts => {
       // append new products to the current products array :)
-      products.forEach((product) => currentProducts.push(product));
+      products.forEach(product => currentProducts.push(product));
     });
   }
 

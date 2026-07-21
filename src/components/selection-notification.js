@@ -24,7 +24,7 @@ export class SelectionNotificationComponent extends SignalsConsumerMixin(
         if (
           selectedProduct &&
           filteredProducts
-            .map((product) => product.id)
+            .map(product => product.id)
             .includes(selectedProduct.id)
         ) {
           this.productSelectionMessage = "Valid product selected!";

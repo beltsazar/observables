@@ -22,10 +22,10 @@ export class Product {
    * @param option
    */
   hasOption(option) {
-    return this.options.map((option) => option.id).includes(option.id);
+    return this.options.map(option => option.id).includes(option.id);
   }
 
   hasOptions(options) {
-    return options.every((option) => this.hasOption(option));
+    return options.every(option => this.hasOption(option));
   }
 }

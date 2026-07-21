@@ -3,7 +3,7 @@ import { Signal } from "../core/Signal.js";
 import { ComputedSignal } from "../core/ComputedSignal.js";
 import { Watcher } from "../core/Watcher.js";
 
-export const SignalsBaseMixin = (superClass) =>
+export const SignalsBaseMixin = superClass =>
   class extends superClass {
     #computedSignals = [];
     #watchers = [];
@@ -33,10 +33,8 @@ export const SignalsBaseMixin = (superClass) =>
     }
 
     cleanupSignalObservers() {
-      this.#watchers.forEach((watcher) => watcher.dispose());
-      this.#computedSignals.forEach((computedSignal) =>
-        computedSignal.dispose(),
-      );
+      this.#watchers.forEach(watcher => watcher.dispose());
+      this.#computedSignals.forEach(computedSignal => computedSignal.dispose());
     }
 
     disconnectedCallback() {

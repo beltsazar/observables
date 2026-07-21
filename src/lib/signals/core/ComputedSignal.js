@@ -15,7 +15,7 @@ export class ComputedSignal extends Signal {
     super(callback(signals));
 
     // create a watcher that will update the value when any of the signals change.
-    this.watcher = new Watcher(signals, (signals) => {
+    this.watcher = new Watcher(signals, signals => {
       super.setValue(callback(signals));
     });
   }

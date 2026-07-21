@@ -21,13 +21,13 @@ export class ProductsAPI extends Signal {
   }
 
   setLoading(endpoint) {
-    this.setValue((collection) => {
+    this.setValue(collection => {
       collection[endpoint] = { ...status, isPending: true };
     });
   }
 
   setSuccess(endpoint, json) {
-    this.setValue((collection) => {
+    this.setValue(collection => {
       collection[endpoint] = {
         ...status,
         isCompleted: true,
@@ -38,7 +38,7 @@ export class ProductsAPI extends Signal {
   }
 
   setError(endpoint, statusCode) {
-    this.setValue((collection) => {
+    this.setValue(collection => {
       collection[endpoint] = {
         ...status,
         isCompleted: true,

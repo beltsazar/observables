@@ -71,12 +71,12 @@ export class ProductsComponent extends SignalsConsumerMixin(
     return html`<h2>Products</h2>
       <ul>
         ${this.products.map(
-          (product) =>
+          product =>
             html`<li>
               <a
                 class="${classMap({ selected: product?.id === this.selectedProduct?.id })}"
                 href="#"
-                @click="${(e) => this.handleProductSelection(e, product)}"
+                @click="${e => this.handleProductSelection(e, product)}"
                 >${product.name}</a
               >
             </li>`,

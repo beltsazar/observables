@@ -6,7 +6,7 @@ export function jsonToModel(productsJson = []) {
   const products = new ProductList(...productsJson);
   products.forEach((product, index) => {
     const options = product.options.map(
-      (option) => new Option(option.id, option.name),
+      option => new Option(option.id, option.name),
     );
     products[index] = new Product(
       product.id,

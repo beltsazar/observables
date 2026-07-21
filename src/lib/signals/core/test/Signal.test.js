@@ -25,7 +25,7 @@ describe("Signal", () => {
     expect(signal$.value === nested).to.equal(false);
     expect(signal$.value).to.deep.equal(nested);
     expect(signal$.value.customer.name).to.deep.equal("Customer");
-    signal$.setValue((value) => {
+    signal$.setValue(value => {
       value.customer.name = "Another Customer";
     });
     expect(signal$.value.customer.name).to.equal("Another Customer");
@@ -38,7 +38,7 @@ describe("Signal", () => {
     signal$.setValue(nested);
     expect(signal$.value === oldValue).to.equal(true);
 
-    signal$.setValue((value) => {
+    signal$.setValue(value => {
       value.customer.name = "Another Customer";
     });
     expect(signal$.value === oldValue).to.not.equal(true);

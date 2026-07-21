@@ -4,11 +4,11 @@ export class ProductList extends Array {
    * @param options
    */
   filterByOptions(options) {
-    return this.filter((product) => product.hasOptions(options));
+    return this.filter(product => product.hasOptions(options));
   }
 
   filterByProductName(productName) {
-    return this.filter((product) =>
+    return this.filter(product =>
       product.name.toUpperCase().includes(productName.toUpperCase()),
     );
   }

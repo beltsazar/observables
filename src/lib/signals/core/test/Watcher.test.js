@@ -14,7 +14,7 @@ describe("Watcher", () => {
   it("should change watch a single signal", () => {
     let result;
     const signal$ = new Signal(0);
-    const watcher = new Watcher(signal$, (signal) => {
+    const watcher = new Watcher(signal$, signal => {
       result = signal.value;
     });
     expect(result).to.equal(0);

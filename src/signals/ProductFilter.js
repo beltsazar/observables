@@ -9,13 +9,13 @@ export class ProductFilter extends Signal {
   }
 
   setSelectedOptions(selectedOptions = []) {
-    this.setValue((value) => {
+    this.setValue(value => {
       value.options = selectedOptions;
     });
   }
 
   setProductName(productName) {
-    this.setValue((value) => {
+    this.setValue(value => {
       value.productName = productName;
     });
   }
