@@ -14,15 +14,25 @@ export class FeatureComponent extends SignalsProviderMixin(
     super();
     this.sharedSignals = createSharedSignals();
 
-    // use signals in this element
+    // use shared signals in this element
     const { products$, productOptions$ } = this.sharedSignals;
     this.products$ = products$;
     this.productOptions$ = productOptions$;
+
+    // local signal only in this element
+    const counter$ = this.signal(0);
+    setInterval(() => {
+      counter$.setValue(counter$.value + 1);
+    }, 1000);
+    this.mapStateToSignals({
+      counter: counter$,
+    });
   }
 
   static get properties() {
     return {
       heading: { type: String },
+      counter: { type: Number, state: true },
     };
   }
 
@@ -67,6 +77,7 @@ export class FeatureComponent extends SignalsProviderMixin(
             <products-component></products-component>
           </div>
         </div>
+        ${this.counter}
       </div>
     `;
   }

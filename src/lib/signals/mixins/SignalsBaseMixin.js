@@ -1,13 +1,21 @@
+import { Signal } from "../core/Signal.js";
 import { ComputedSignal } from "../core/ComputedSignal.js";
 import { Watcher } from "../core/Watcher.js";
 
 export const SignalsBaseMixin = (superClass) =>
   class extends superClass {
+    #signals$ = [];
     #computedSignals = [];
     #watchers = [];
 
     watch(signals, callback) {
       this.#watchers.push(new Watcher(signals, callback));
+    }
+
+    signal(initialValue) {
+      const signal = new Signal(initialValue);
+      this.#signals$.push(signal);
+      return signal;
     }
 
     computed(signals, callback) {
