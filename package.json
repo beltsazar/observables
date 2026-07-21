@@ -1,8 +1,8 @@
 {
-  "name": "@beltsazar/observables",
-  "version": "1.0.0",
+  "name": "@beltsazar/signals",
+  "version": "0.0.1",
   "author": "Daniel Marcuse",
-  "description": "Compact implementation of Signals for JavaScript",
+  "description": "Implementation of Signals for JavaScript and LitElement",
   "main": "src/lib/signals/index.js",
   "type": "module",
   "scripts": {
@@ -17,11 +17,11 @@
     "lint:prettier": "prettier \"**/*.js\" --check --ignore-path .gitignore",
     "format:prettier": "prettier \"**/*.js\" --write --ignore-path .gitignore"
   },
+  "repository": "git@github.com:beltsazar/signals.git",
   "dependencies": {
     "@lion/ui": "^0.17.0",
     "@lit/context": "^1.1.6",
     "@open-wc/scoped-elements": "^3.0.6",
-    "@vitest/coverage-istanbul": "^4.1.10",
     "@webcomponents/scoped-custom-element-registry": "^0.0.10",
     "lit": "^3.3.2",
     "lodash-es": "^4.18.1"
@@ -30,6 +30,7 @@
     "@eslint/js": "^10.0.1",
     "@open-wc/eslint-config": "^13.1.0",
     "@vitest/coverage-v8": "^4.1.6",
+    "@vitest/coverage-istanbul": "^4.1.10",
     "eslint": "^10.6.0",
     "globals": "^17.7.0",
     "prettier": "^3.9.4",
