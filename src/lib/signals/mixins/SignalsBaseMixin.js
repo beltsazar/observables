@@ -1,10 +1,10 @@
+/* eslint-disable class-methods-use-this */
 import { Signal } from "../core/Signal.js";
 import { ComputedSignal } from "../core/ComputedSignal.js";
 import { Watcher } from "../core/Watcher.js";
 
 export const SignalsBaseMixin = (superClass) =>
   class extends superClass {
-    #signals$ = [];
     #computedSignals = [];
     #watchers = [];
 
@@ -13,9 +13,7 @@ export const SignalsBaseMixin = (superClass) =>
     }
 
     signal(initialValue) {
-      const signal = new Signal(initialValue);
-      this.#signals$.push(signal);
-      return signal;
+      return new Signal(initialValue);
     }
 
     computed(signals, callback) {
