@@ -1,7 +1,7 @@
 import { LitElement, css, html } from "lit";
 import { classMap } from "lit/directives/class-map.js";
 import { ScopedElementsMixin } from "@open-wc/scoped-elements/lit-element.js";
-import { SignalsConsumerMixin } from "../lib/signals/index.js";
+import { SignalsConsumerMixin } from "../../packages/signals/index.js";
 
 export class ApiNotificationsComponent extends SignalsConsumerMixin(
   ScopedElementsMixin(LitElement),

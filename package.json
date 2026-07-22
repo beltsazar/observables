@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "author": "Daniel Marcuse",
   "description": "Implementation of Signals for JavaScript and LitElement",
-  "main": "src/lib/signals/index.js",
+  "main": "packages/signals/index.js",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -18,6 +18,11 @@
     "format:prettier": "prettier \"**/*.js\" --write --ignore-path .gitignore"
   },
   "repository": "git@github.com:beltsazar/signals.git",
+  "exports": {
+    ".": {
+      "default": "./packages/signals/index.js"
+    }
+  },
   "dependencies": {
     "@lion/ui": "^0.17.0",
     "@lit/context": "^1.1.6",

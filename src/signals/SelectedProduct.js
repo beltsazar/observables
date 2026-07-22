@@ -1,4 +1,4 @@
-import { Signal } from "../lib/signals/index.js";
+import { Signal } from "../../packages/signals/index.js";
 
 export class SelectedProduct extends Signal {
   constructor(products$) {
