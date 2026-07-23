@@ -13,11 +13,14 @@ export default defineConfig([
     plugins: { js },
     extends: ["js/recommended"],
     languageOptions: { globals: globals.browser },
-    rules: {
-      // allow console.error, but not console.log and console.warn
-      "no-console": ["error", { allow: ["error"] }],
-    },
   },
   openWcConfig,
   ...storybook.configs["flat/recommended"],
+  {
+    rules: {
+      // allow console.error, but not console.log and console.warn
+      "no-console": ["error", { allow: ["error"] }],
+      "arrow-parens": "off",
+    },
+  },
 ]);

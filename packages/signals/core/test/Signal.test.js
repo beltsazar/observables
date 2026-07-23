@@ -4,6 +4,7 @@ import { Signal } from "../Signal.js";
 const nested = {
   customer: {
     name: "Customer",
+    age: 56,
   },
 };
 

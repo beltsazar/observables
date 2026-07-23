@@ -5,13 +5,11 @@ import { Watcher } from "../Watcher.js";
 describe("Watcher", () => {
   it("should correctly instantiate Watcher object", () => {
     const watcher = new Watcher(new Signal(0), () => {});
-    expect(new Watcher(new Signal(0), () => {}) instanceof Watcher).to.equal(
-      true,
-    );
+    expect(watcher instanceof Watcher).to.equal(true);
     watcher.dispose();
   });
 
-  it("should change watch a single signal", () => {
+  it("should watch a single signal", () => {
     let result;
     const signal$ = new Signal(0);
     const watcher = new Watcher(signal$, signal => {
