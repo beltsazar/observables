@@ -1,5 +1,5 @@
 import { html } from "lit";
-import { http, delay, HttpResponse } from 'msw'
+import { http, delay, HttpResponse } from "msw";
 import "../packages/example-feature/src/feature-component.js";
 
 import { Option } from "../packages/example-feature/src/transformers/products/objects/Option.js";
@@ -41,11 +41,11 @@ export const Default = {
           await delay(1000);
           return HttpResponse.json(products);
         }),
-        http.get("/api/products/options", async() => {
+        http.get("/api/products/options", async () => {
           await delay();
           return HttpResponse.json(options);
         }),
-        http.post("/api/products/selectedProduct", async() => {
+        http.post("/api/products/selectedProduct", async () => {
           await delay();
           return HttpResponse.json({ success: true });
         }),

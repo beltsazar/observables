@@ -14,8 +14,8 @@
     "format": "npm run format:eslint && npm run format:prettier",
     "lint:eslint": "eslint --ext .js,.html . --ignore-pattern .gitignore",
     "format:eslint": "eslint --ext .js,.html . --fix --ignore-pattern .gitignore",
-    "lint:prettier": "prettier \"**/*.js\" --check --ignore-path .gitignore",
-    "format:prettier": "prettier \"**/*.js\" --write --ignore-path .gitignore",
+    "lint:prettier": "prettier \"**/*.{js,html}\" --check --ignore-path .gitignore --ignore-path .prettierignore",
+    "format:prettier": "prettier \"**/*.{js,html}\" --write --ignore-path .gitignore --ignore-path .prettierignore",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "storybook:build": "npx http-server ./storybook-static"
