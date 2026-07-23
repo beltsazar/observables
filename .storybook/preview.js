@@ -1,3 +1,8 @@
+import { initialize, mswLoader } from "msw-storybook-addon";
+
+// Initialize MSW
+initialize();
+
 /** @type { import('@storybook/web-components-vite').Preview } */
 const preview = {
   parameters: {
@@ -8,6 +13,7 @@ const preview = {
       },
     },
   },
+  loaders: [mswLoader],
 };
 
 export default preview;

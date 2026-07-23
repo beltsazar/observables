@@ -8,8 +8,9 @@ const config = {
        <script
       defer
       type="module"
-      src="./node_modules/@webcomponents/scoped-custom-element-registry/scoped-custom-element-registry.min.js"
+      src="/scoped-custom-element-registry.min.js"
     ></script>
   `,
+  staticDirs: ["../public"],
 };
 export default config;
