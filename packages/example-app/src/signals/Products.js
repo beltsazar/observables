@@ -1,4 +1,4 @@
-import { Signal } from "../../packages/signals/index.js";
+import { Signal } from "../../../signals/index.js";
 import { jsonToModel } from "../transformers/products/jsonToModel.js";
 
 export class Products extends Signal {

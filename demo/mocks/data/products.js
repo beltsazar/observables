@@ -1,6 +1,6 @@
-import { Option } from "../../../src/transformers/products/objects/Option.js";
-import { Product } from "../../../src/transformers/products/objects/Product.js";
-import { ProductList } from "../../../src/transformers/products/objects/ProductList.js";
+import { Option } from "../../../packages/example-app/src/transformers/products/objects/Option.js";
+import { Product } from "../../../packages/example-app/src/transformers/products/objects/Product.js";
+import { ProductList } from "../../../packages/example-app/src/transformers/products/objects/ProductList.js";
 
 export const options = [
   new Option(1, "Versatile"),

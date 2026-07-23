@@ -1,4 +1,4 @@
-import { ComputedSignal } from "../../../packages/signals/index.js";
+import { ComputedSignal } from "../../../../signals/index.js";
 
 export class FilteredProducts extends ComputedSignal {
   constructor(products$, productFilter$) {
