@@ -1,6 +1,7 @@
-import js from "@eslint/js";
 import globals from "globals";
+import js from "@eslint/js";
 import openWcConfig from "@open-wc/eslint-config";
+import storybook from "eslint-plugin-storybook";
 import { defineConfig } from "eslint/config";
 
 export default defineConfig([
@@ -15,4 +16,5 @@ export default defineConfig([
     },
   },
   openWcConfig,
+  ...storybook.configs["flat/recommended"],
 ]);

@@ -15,7 +15,9 @@
     "lint:eslint": "eslint --ext .js,.html . --ignore-pattern .gitignore",
     "format:eslint": "eslint --ext .js,.html . --fix --ignore-pattern .gitignore",
     "lint:prettier": "prettier \"**/*.js\" --check --ignore-path .gitignore",
-    "format:prettier": "prettier \"**/*.js\" --write --ignore-path .gitignore"
+    "format:prettier": "prettier \"**/*.js\" --write --ignore-path .gitignore",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "repository": "git@github.com:beltsazar/signals.git",
   "exports": {
@@ -41,6 +43,9 @@
     "sinon": "^22.0.0",
     "vite": "^8.0.12",
     "vite-plugin-mock-dev-server": "^2.4.1",
-    "vitest": "^4.1.6"
+    "vitest": "^4.1.6",
+    "storybook": "^10.5.3",
+    "@storybook/web-components-vite": "^10.5.3",
+    "eslint-plugin-storybook": "^10.5.3"
   }
 }
